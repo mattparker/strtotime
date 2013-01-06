@@ -40,6 +40,23 @@ $changes = array(
 	"last day of"
 );
 
+$appendChanges = array(
+	"first Tuesday of",
+	"next Thursday of",
+	"second Fri of",
+	"third Wednesday of",
+	"last Sat of",
+	"fourth Sunday of",
+	"fifth Monday of",
+	"sixth Mon of",
+	"seventh Tue of",
+	"eighth Wed of",
+	"ninth Thu of",
+	"tenth Sat of",
+	"eleventh Friday of",
+	"twelfth Saturday of"
+);
+
 
 $extras = array(
 	"back of 8am",
@@ -52,7 +69,8 @@ $extras = array(
 	"front of 20",
 
 	//"first Wednesday of June 2013",
-	"next Wednesday 2012/05/16"
+	"first Wednesday of 2012/05/16",
+
 );
 
 // All the tests
@@ -105,7 +123,21 @@ foreach ($dates as $d) {
 			$tests[] = "\n\t\t'Formatted date `" . $fd . "` with change `" . $c . "` should give `" . $res2 . "`': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res2 . ", strtotime('" . $fd . " " . $c . "'));\n"
-				. "\t\t}";				
+				. "\t\t}";
+
+		}
+
+		foreach ($appendChanges as $c) {
+
+			$res3 = strtotime($c . " " . $orig_ts);
+			if ($res3 === false) {
+				$res3 = 'false';
+			}
+			$tests[] = "\n\t\t'strtotime(`" . $c . " " . $orig_ts . "`) (" . date("Y-m-d H:i:s") . ") should give `" . $res3 . "` (" . date("Y-m-d H:i:s") . ")': "
+				. " function () {\n"
+				. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $orig_ts . "'));\n"
+				. "\t\t}";
+
 		}
 
 	}

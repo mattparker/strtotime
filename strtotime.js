@@ -22,7 +22,7 @@ YUI.add('strtotime', function (Y) {
             //// Define variables
             var ms = baseTimestamp * 1000 || new Date().getTime(),
                 parsedDate,
-                copyTime = time,
+                copyTime,
 
                 // whether we've managed to parse a time/date from the time string given
                 hasTime = false,
@@ -149,31 +149,44 @@ YUI.add('strtotime', function (Y) {
                 _findWeekdayOf = function (ts, tofind) {
                     var tmp = new Date(ts),
                         tmt,
+                        thisWeek,
                         addWeeks;
 
-                    tmp.setUTCDate(1);
-                    // iterate through until we're on the correct day
-                    while (tmp.getUTCDay() < tofind.dayIndex) {
-                        tmp = new Date(tmp.getTime() + 86400000);
+                    // 'last' needs handling differently:
+                    if (tofind.weekIndex === 'last') {
+                        // this is the hard one:
+                        // find the last day of the month and do it again 
+                        // backwarods
+                        tmp.setUTCDate(_findLastDayOf(ts));
+                        while (tmp.getUTCDay() !== tofind.dayIndex) {
+                            tmp = new Date(tmp.getTime() - 86400000);
+                        }
+                        return tmp.getTime();
                     }
+
+                    //thisWeek = Math.floor(new Date(ts).getUTCDate() / 7);
+
 
                     // now add on the right number of weeks
                     switch (tofind.weekIndex) {
                         case 'next':
-                            addWeeks = 1;
+                            addWeeks = 0;//thisWeek;
                             break;
                         case 'previous':
-                            addWeeks = -1;
+                            addWeeks = -1;//thisWeek - 1;
                             break;
                         case 'first':
                             addWeeks = 0;
-                        case 'last':
-                            // this is the hard one:
+                            tmp.setUTCDate(1);
                             break;
-
                         default:
                             addWeeks = parseInt(tofind.weekIndex, 10);
                             break;
+                    }
+
+                    // iterate through until we're on the correct day
+                    while (tmp.getUTCDay() !== tofind.dayIndex) {
+                        tmp = new Date(tmp.getTime() + 86400000);
                     }
 
                     tmt = tmp.getTime();
@@ -496,8 +509,13 @@ YUI.add('strtotime', function (Y) {
                                     dayIndex: dowIndex,
                                     weekIndex: aRes[1]
                                 }
-                            })
+                            });
                         }
+                        updateAbs({
+                            h: 0,
+                            i: 0,
+                            s: 0
+                        });
                     }},
 
 
@@ -527,6 +545,8 @@ YUI.add('strtotime', function (Y) {
 
 
             time = Y.Lang.trim(time);
+            
+            copyTime = time;
 
 
             // Go through, looking for the relevant regexps 
@@ -619,7 +639,7 @@ YUI.add('strtotime', function (Y) {
     strtotime.DAYFULL = INTL.A ? INTL.A : ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     strtotime.DAYABBR = INTL.a ? INTL.a : ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     // Note the 1-based array
-    strtotime.RELTEXTNUMBER = ['first','second','third','fourth','fifth','sixth','seventh','eight','eighth','ninth','tenth','eleventh','twelfth'];
+    strtotime.RELTEXTNUMBER = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
     strtotime.RELTEXTTEXT = ['next','last','previous','this'];
     strtotime.RELTEXTUNIT = ['sec','second','min','minute','hour','day','fortnight','forthnight','month','year'];// 's'?) , 'weeks' , daytext;
 

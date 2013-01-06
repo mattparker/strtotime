@@ -74,6 +74,62 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1367280000, strtotime('2013/04/01 last day of'));
 		},
 
+		'strtotime(`first Tuesday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1364811922'));
+		},
+
+		'strtotime(`next Thursday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1364811922'));
+		},
+
+		'strtotime(`second Fri of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1364811922'));
+		},
+
+		'strtotime(`third Wednesday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1364811922'));
+		},
+
+		'strtotime(`last Sat of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1364811922'));
+		},
+
+		'strtotime(`fourth Sunday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1364811922'));
+		},
+
+		'strtotime(`fifth Monday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1364811922'));
+		},
+
+		'strtotime(`sixth Mon of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1364811922'));
+		},
+
+		'strtotime(`seventh Tue of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1364811922'));
+		},
+
+		'strtotime(`eighth Wed of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1364811922'));
+		},
+
+		'strtotime(`ninth Thu of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1364811922'));
+		},
+
+		'strtotime(`tenth Sat of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1364811922'));
+		},
+
+		'strtotime(`eleventh Friday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1364811922'));
+		},
+
+		'strtotime(`twelfth Saturday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1364811922'));
+		},
+
 		'Date `@1364811922` (originally `2013-04-01 10:25:22`) should give timestamp `1364811922`':  function () {
 			Y.Assert.areSame(1364811922, strtotime('@1364811922'));
 		},
@@ -140,6 +196,62 @@ YUI.add("strtotime-test", function (Y) {
 
 		'Formatted date `@1364811922` with change `last day of` should give `1367403922`':  function () {
 			Y.Assert.areSame(1367403922, strtotime('@1364811922 last day of'));
+		},
+
+		'strtotime(`first Tuesday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1364811922'));
+		},
+
+		'strtotime(`next Thursday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1364811922'));
+		},
+
+		'strtotime(`second Fri of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1364811922'));
+		},
+
+		'strtotime(`third Wednesday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1364811922'));
+		},
+
+		'strtotime(`last Sat of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1364811922'));
+		},
+
+		'strtotime(`fourth Sunday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1364811922'));
+		},
+
+		'strtotime(`fifth Monday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1364811922'));
+		},
+
+		'strtotime(`sixth Mon of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1364811922'));
+		},
+
+		'strtotime(`seventh Tue of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1364811922'));
+		},
+
+		'strtotime(`eighth Wed of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1364811922'));
+		},
+
+		'strtotime(`ninth Thu of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1364811922'));
+		},
+
+		'strtotime(`tenth Sat of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1364811922'));
+		},
+
+		'strtotime(`eleventh Friday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1364811922'));
+		},
+
+		'strtotime(`twelfth Saturday of 1364811922`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1364811922'));
 		},
 
 		'Date `2012/12/31` (originally `2012-12-31 23:59:59`) should give timestamp `1356912000`':  function () {
@@ -210,6 +322,62 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356912000, strtotime('2012/12/31 last day of'));
 		},
 
+		'strtotime(`first Tuesday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998399'));
+		},
+
+		'strtotime(`next Thursday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1356998399'));
+		},
+
+		'strtotime(`second Fri of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1356998399'));
+		},
+
+		'strtotime(`third Wednesday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998399'));
+		},
+
+		'strtotime(`last Sat of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1356998399'));
+		},
+
+		'strtotime(`fourth Sunday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998399'));
+		},
+
+		'strtotime(`fifth Monday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998399'));
+		},
+
+		'strtotime(`sixth Mon of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998399'));
+		},
+
+		'strtotime(`seventh Tue of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998399'));
+		},
+
+		'strtotime(`eighth Wed of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998399'));
+		},
+
+		'strtotime(`ninth Thu of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998399'));
+		},
+
+		'strtotime(`tenth Sat of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998399'));
+		},
+
+		'strtotime(`eleventh Friday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998399'));
+		},
+
+		'strtotime(`twelfth Saturday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998399'));
+		},
+
 		'Date `@1356998399` (originally `2012-12-31 23:59:59`) should give timestamp `1356998399`':  function () {
 			Y.Assert.areSame(1356998399, strtotime('@1356998399'));
 		},
@@ -276,6 +444,62 @@ YUI.add("strtotime-test", function (Y) {
 
 		'Formatted date `@1356998399` with change `last day of` should give `1359590399`':  function () {
 			Y.Assert.areSame(1359590399, strtotime('@1356998399 last day of'));
+		},
+
+		'strtotime(`first Tuesday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998399'));
+		},
+
+		'strtotime(`next Thursday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1356998399'));
+		},
+
+		'strtotime(`second Fri of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1356998399'));
+		},
+
+		'strtotime(`third Wednesday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998399'));
+		},
+
+		'strtotime(`last Sat of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1356998399'));
+		},
+
+		'strtotime(`fourth Sunday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998399'));
+		},
+
+		'strtotime(`fifth Monday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998399'));
+		},
+
+		'strtotime(`sixth Mon of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998399'));
+		},
+
+		'strtotime(`seventh Tue of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998399'));
+		},
+
+		'strtotime(`eighth Wed of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998399'));
+		},
+
+		'strtotime(`ninth Thu of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998399'));
+		},
+
+		'strtotime(`tenth Sat of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998399'));
+		},
+
+		'strtotime(`eleventh Friday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998399'));
+		},
+
+		'strtotime(`twelfth Saturday of 1356998399`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998399'));
 		},
 
 		'Date `2013/01/01` (originally `2013-01-01 00:00:00`) should give timestamp `1356998400`':  function () {
@@ -346,6 +570,62 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359590400, strtotime('2013/01/01 last day of'));
 		},
 
+		'strtotime(`first Tuesday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998400'));
+		},
+
+		'strtotime(`next Thursday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1356998400'));
+		},
+
+		'strtotime(`second Fri of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1356998400'));
+		},
+
+		'strtotime(`third Wednesday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998400'));
+		},
+
+		'strtotime(`last Sat of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1356998400'));
+		},
+
+		'strtotime(`fourth Sunday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998400'));
+		},
+
+		'strtotime(`fifth Monday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998400'));
+		},
+
+		'strtotime(`sixth Mon of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998400'));
+		},
+
+		'strtotime(`seventh Tue of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998400'));
+		},
+
+		'strtotime(`eighth Wed of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998400'));
+		},
+
+		'strtotime(`ninth Thu of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998400'));
+		},
+
+		'strtotime(`tenth Sat of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998400'));
+		},
+
+		'strtotime(`eleventh Friday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998400'));
+		},
+
+		'strtotime(`twelfth Saturday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998400'));
+		},
+
 		'Date `@1356998400` (originally `2013-01-01 00:00:00`) should give timestamp `1356998400`':  function () {
 			Y.Assert.areSame(1356998400, strtotime('@1356998400'));
 		},
@@ -412,6 +692,62 @@ YUI.add("strtotime-test", function (Y) {
 
 		'Formatted date `@1356998400` with change `last day of` should give `1359590400`':  function () {
 			Y.Assert.areSame(1359590400, strtotime('@1356998400 last day of'));
+		},
+
+		'strtotime(`first Tuesday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998400'));
+		},
+
+		'strtotime(`next Thursday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1356998400'));
+		},
+
+		'strtotime(`second Fri of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1356998400'));
+		},
+
+		'strtotime(`third Wednesday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998400'));
+		},
+
+		'strtotime(`last Sat of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1356998400'));
+		},
+
+		'strtotime(`fourth Sunday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998400'));
+		},
+
+		'strtotime(`fifth Monday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998400'));
+		},
+
+		'strtotime(`sixth Mon of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998400'));
+		},
+
+		'strtotime(`seventh Tue of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998400'));
+		},
+
+		'strtotime(`eighth Wed of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998400'));
+		},
+
+		'strtotime(`ninth Thu of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998400'));
+		},
+
+		'strtotime(`tenth Sat of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998400'));
+		},
+
+		'strtotime(`eleventh Friday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998400'));
+		},
+
+		'strtotime(`twelfth Saturday of 1356998400`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998400'));
 		},
 
 		'Date `2013/01/01` (originally `2013-01-01 00:00:01`) should give timestamp `1356998400`':  function () {
@@ -482,6 +818,62 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359590400, strtotime('2013/01/01 last day of'));
 		},
 
+		'strtotime(`first Tuesday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998401'));
+		},
+
+		'strtotime(`next Thursday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1356998401'));
+		},
+
+		'strtotime(`second Fri of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1356998401'));
+		},
+
+		'strtotime(`third Wednesday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998401'));
+		},
+
+		'strtotime(`last Sat of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1356998401'));
+		},
+
+		'strtotime(`fourth Sunday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998401'));
+		},
+
+		'strtotime(`fifth Monday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998401'));
+		},
+
+		'strtotime(`sixth Mon of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998401'));
+		},
+
+		'strtotime(`seventh Tue of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998401'));
+		},
+
+		'strtotime(`eighth Wed of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998401'));
+		},
+
+		'strtotime(`ninth Thu of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998401'));
+		},
+
+		'strtotime(`tenth Sat of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998401'));
+		},
+
+		'strtotime(`eleventh Friday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998401'));
+		},
+
+		'strtotime(`twelfth Saturday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998401'));
+		},
+
 		'Date `@1356998401` (originally `2013-01-01 00:00:01`) should give timestamp `1356998401`':  function () {
 			Y.Assert.areSame(1356998401, strtotime('@1356998401'));
 		},
@@ -548,6 +940,62 @@ YUI.add("strtotime-test", function (Y) {
 
 		'Formatted date `@1356998401` with change `last day of` should give `1359590401`':  function () {
 			Y.Assert.areSame(1359590401, strtotime('@1356998401 last day of'));
+		},
+
+		'strtotime(`first Tuesday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998401'));
+		},
+
+		'strtotime(`next Thursday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1356998401'));
+		},
+
+		'strtotime(`second Fri of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1356998401'));
+		},
+
+		'strtotime(`third Wednesday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998401'));
+		},
+
+		'strtotime(`last Sat of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1356998401'));
+		},
+
+		'strtotime(`fourth Sunday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998401'));
+		},
+
+		'strtotime(`fifth Monday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998401'));
+		},
+
+		'strtotime(`sixth Mon of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998401'));
+		},
+
+		'strtotime(`seventh Tue of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998401'));
+		},
+
+		'strtotime(`eighth Wed of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998401'));
+		},
+
+		'strtotime(`ninth Thu of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998401'));
+		},
+
+		'strtotime(`tenth Sat of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998401'));
+		},
+
+		'strtotime(`eleventh Friday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998401'));
+		},
+
+		'strtotime(`twelfth Saturday of 1356998401`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998401'));
 		},
 
 		'Date `2012/02/29` (originally `2012-02-29 08:02:38`) should give timestamp `1330473600`':  function () {
@@ -618,6 +1066,62 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330473600, strtotime('2012/02/29 last day of'));
 		},
 
+		'strtotime(`first Tuesday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1330502558'));
+		},
+
+		'strtotime(`next Thursday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1330502558'));
+		},
+
+		'strtotime(`second Fri of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1330502558'));
+		},
+
+		'strtotime(`third Wednesday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1330502558'));
+		},
+
+		'strtotime(`last Sat of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1330502558'));
+		},
+
+		'strtotime(`fourth Sunday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1330502558'));
+		},
+
+		'strtotime(`fifth Monday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1330502558'));
+		},
+
+		'strtotime(`sixth Mon of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1330502558'));
+		},
+
+		'strtotime(`seventh Tue of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1330502558'));
+		},
+
+		'strtotime(`eighth Wed of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1330502558'));
+		},
+
+		'strtotime(`ninth Thu of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1330502558'));
+		},
+
+		'strtotime(`tenth Sat of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1330502558'));
+		},
+
+		'strtotime(`eleventh Friday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1330502558'));
+		},
+
+		'strtotime(`twelfth Saturday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1330502558'));
+		},
+
 		'Date `@1330502558` (originally `2012-02-29 08:02:38`) should give timestamp `1330502558`':  function () {
 			Y.Assert.areSame(1330502558, strtotime('@1330502558'));
 		},
@@ -686,40 +1190,96 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1333094558, strtotime('@1330502558 last day of'));
 		},
 
-		'Extras: strtotime("back of 8am") should give `1357373700`':  function () {
-			Y.Assert.areSame(1357373700, strtotime('back of 8am'));
+		'strtotime(`first Tuesday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1330502558'));
 		},
 
-		'Extras: strtotime("back of 8") should give `1357373700`':  function () {
-			Y.Assert.areSame(1357373700, strtotime('back of 8'));
+		'strtotime(`next Thursday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1330502558'));
 		},
 
-		'Extras: strtotime("back of 8pm") should give `1357416900`':  function () {
-			Y.Assert.areSame(1357416900, strtotime('back of 8pm'));
+		'strtotime(`second Fri of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1330502558'));
 		},
 
-		'Extras: strtotime("back of 20") should give `1357416900`':  function () {
-			Y.Assert.areSame(1357416900, strtotime('back of 20'));
+		'strtotime(`third Wednesday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1330502558'));
 		},
 
-		'Extras: strtotime("front of 8am") should give `1357371900`':  function () {
-			Y.Assert.areSame(1357371900, strtotime('front of 8am'));
+		'strtotime(`last Sat of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1330502558'));
 		},
 
-		'Extras: strtotime("front of 8") should give `1357371900`':  function () {
-			Y.Assert.areSame(1357371900, strtotime('front of 8'));
+		'strtotime(`fourth Sunday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1330502558'));
 		},
 
-		'Extras: strtotime("front of 8pm") should give `1357415100`':  function () {
-			Y.Assert.areSame(1357415100, strtotime('front of 8pm'));
+		'strtotime(`fifth Monday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1330502558'));
 		},
 
-		'Extras: strtotime("front of 20") should give `1357415100`':  function () {
-			Y.Assert.areSame(1357415100, strtotime('front of 20'));
+		'strtotime(`sixth Mon of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1330502558'));
 		},
 
-		'Extras: strtotime("next Wednesday 2012/05/16") should give `1337731200`':  function () {
-			Y.Assert.areSame(1337731200, strtotime('next Wednesday 2012/05/16'));
+		'strtotime(`seventh Tue of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1330502558'));
+		},
+
+		'strtotime(`eighth Wed of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1330502558'));
+		},
+
+		'strtotime(`ninth Thu of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1330502558'));
+		},
+
+		'strtotime(`tenth Sat of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1330502558'));
+		},
+
+		'strtotime(`eleventh Friday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1330502558'));
+		},
+
+		'strtotime(`twelfth Saturday of 1330502558`) (2013-01-06 16:01:40) should give `false` (2013-01-06 16:01:40)':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1330502558'));
+		},
+
+		'Extras: strtotime("back of 8am") should give `1357460100`':  function () {
+			Y.Assert.areSame(1357460100, strtotime('back of 8am'));
+		},
+
+		'Extras: strtotime("back of 8") should give `1357460100`':  function () {
+			Y.Assert.areSame(1357460100, strtotime('back of 8'));
+		},
+
+		'Extras: strtotime("back of 8pm") should give `1357503300`':  function () {
+			Y.Assert.areSame(1357503300, strtotime('back of 8pm'));
+		},
+
+		'Extras: strtotime("back of 20") should give `1357503300`':  function () {
+			Y.Assert.areSame(1357503300, strtotime('back of 20'));
+		},
+
+		'Extras: strtotime("front of 8am") should give `1357458300`':  function () {
+			Y.Assert.areSame(1357458300, strtotime('front of 8am'));
+		},
+
+		'Extras: strtotime("front of 8") should give `1357458300`':  function () {
+			Y.Assert.areSame(1357458300, strtotime('front of 8'));
+		},
+
+		'Extras: strtotime("front of 8pm") should give `1357501500`':  function () {
+			Y.Assert.areSame(1357501500, strtotime('front of 8pm'));
+		},
+
+		'Extras: strtotime("front of 20") should give `1357501500`':  function () {
+			Y.Assert.areSame(1357501500, strtotime('front of 20'));
+		},
+
+		'Extras: strtotime("first Wednesday of 2012/05/16") should give `1335916800`':  function () {
+			Y.Assert.areSame(1335916800, strtotime('first Wednesday of 2012/05/16'));
 		}
 	}));
 

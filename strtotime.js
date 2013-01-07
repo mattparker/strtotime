@@ -29,8 +29,11 @@ YUI.add('strtotime', function (Y) {
 
                 fixTime = false,
                 fixDate = false,
-                hasTime = false,
-                hasDate = false,
+                hasTime = 0,
+                setTime = function () {
+                    hasTime = hasTime + 1;
+                },
+                hasDate = 0,
 
                 // A list of changes to make, in the order that they 
                 // are found in the statement
@@ -91,7 +94,8 @@ YUI.add('strtotime', function (Y) {
                     i: undefined,
                     s: undefined,
                     fixTime: false,
-                    fixDate: false
+                    fixDate: false,
+                    specialFn: undefined
                 },
 
                 absoluteFixedHash = {
@@ -107,17 +111,12 @@ YUI.add('strtotime', function (Y) {
                     for (i in oChange) {
                         if (oChange.hasOwnProperty(i)) {
 
-                            if (i === "fixTime" || i === "fixDate") {
+                            if (i === "fixTime" || i === "fixDate" || i === "specialFn") {
                                 aH[i] = oChange[i];
                             } else {
 
                                 c = parseFloat(oChange[i]);
 
-                                if (i === "h" || i === "i" || i === "s") {
-                                    hasTime = true;
-                                } else {
-                                    hasDate = true;
-                                }
 
                                 if (addOrSet === true && aH[i] !== undefined) {                                                   
                                     aH[i] += c;
@@ -453,11 +452,11 @@ YUI.add('strtotime', function (Y) {
                     }},
 
                     {re: new RegExp('noon'), fn: function (aRes, index) {
-                        updateAbs({h: 12, i: 0, s: 0, fixTime: true}, null, index);                        
+                        updateAbs({h: 12, i: 0, s: 0, fixTime: true, specialFn: function (ms, oChange) {setTime(); return ms;}}, null, index);
                     }},
 
                     {re: new RegExp('midnight|today'), fn: function (aRes, index) {
-                        updateAbs({h: 0, i: 0, s:0}, null, index);                    
+                        updateAbs({h: 0, i: 0, s:0}, null, index);
                     }},
 
                     {re: new RegExp('tomorrow'), fn: function (aRes, index) {
@@ -478,7 +477,7 @@ YUI.add('strtotime', function (Y) {
                             i: tmp.getUTCMinutes(),
                             s: tmp.getUTCSeconds()
                         }, true, index);
-
+                        setTime();
                     }},
 
 
@@ -500,10 +499,12 @@ YUI.add('strtotime', function (Y) {
                             h: aRes[1],
                             i: 0,
                             s: 0
-                        }, null, index);                        
+                        }, null, index);
                         updateRel({
                             i: -15
-                        }, null, index);                        
+                        }, null, index);
+
+                        setTime();
                     }},
                     {re: new RegExp(backof), fn: function (aRes, index) {
                         
@@ -516,7 +517,9 @@ YUI.add('strtotime', function (Y) {
                         }, null, index);                        
                         updateRel({
                             i: 15
-                        }, null, index);                        
+                        }, null, index);
+
+                        setTime();                        
                     }},
 
 
@@ -566,6 +569,7 @@ YUI.add('strtotime', function (Y) {
                             i: aRes[2],
                             s: aRes[3] + '.' + aRes[4]
                         }, null, index);
+                        setTime();
                     }},
 
                     {re : new RegExp([timelong12, timeshort12, timetiny12].join('|')), fn: function (aRes, index) {
@@ -595,6 +599,7 @@ YUI.add('strtotime', function (Y) {
                         }
 
                         updateAbs(newAbs, null, index);
+                        setTime();
                     }},
 
 
@@ -623,6 +628,7 @@ YUI.add('strtotime', function (Y) {
                         } 
 
                         updateAbs(newAbs, null, index);
+                        setTime();
                     }},
 
 
@@ -644,8 +650,39 @@ YUI.add('strtotime', function (Y) {
                     // after timeshort24.  However, if you do so it matches years
                     // that appear as part of longer dates and goes wrong.
                     {re: new RegExp(gnunocolon), fn: function (aRes, index) {
+
+                        updateAbs({
+                            specialFn: function (ms, oChange) {
+
+                                var t = aRes[1];
+                                // trying to set the time more than once should return an error
+                                // This seems to be checked in the C source
+                                // in the gnunocolon (and possibly elsewhere)
+                                // but not as a general check
+                                switch (hasTime) {
+                                    case 1:
+                                        // explicit time and time's already set
+                                        if (t === "t") {
+                                            return false;
+                                        }
+                                        return absChange.y(ms, parseFloat("" + aRes[2] + aRes[3]));
+                                        break
+
+                                    case 0:
+                                        setTime();
+                                        ms = absChange.h(ms, aRes[2]);
+                                        return absChange.i(ms, aRes[3]);
+                                        break;
+
+                                    default:
+                                        // more than once is an error
+                                        return false;
+                                        break;
+                                }
+                            }
+                        }, null, index);
                         // either a time or year:
-                        if (hasTime === false) {
+                      /*  if (hasTime === false) {
                             // time
                             updateAbs({
                                 h: aRes[2],
@@ -656,7 +693,7 @@ YUI.add('strtotime', function (Y) {
                             updateAbs({
                                 y: "" + aRes[2] + aRes[3]
                             }, null, index);
-                        }
+                        }*/
                     }}
 
                 ],
@@ -667,6 +704,7 @@ YUI.add('strtotime', function (Y) {
                 j = 0,
                 thisChange,
                 test,
+                ignoreInAbs,
                 index,
                 reResult;
 
@@ -706,14 +744,16 @@ YUI.add('strtotime', function (Y) {
 
 
 
-
+            ignoreInAbs = ['specialFn', 'lastDay', 'firstDay', 'fixTime', 'fixDate'];
             // Now apply absolute changes
             for (j = 0; j < orderedAbsChanges.length; j = j + 1) {
 
                 thisChange = orderedAbsChanges[j];
                 if (thisChange !== undefined) {
+
                     for (i in thisChange) {
-                        if (thisChange.hasOwnProperty(i) && i !== 'lastDay' && i !== 'firstDay' && i !== 'fixTime' && i !== 'fixDate' && thisChange[i] !== undefined) {
+                    
+                        if (thisChange.hasOwnProperty(i) && ignoreInAbs.indexOf(i) === -1 && thisChange[i] !== undefined) {
                             
                             ms = absChange[i](ms, thisChange[i]);
 
@@ -726,8 +766,15 @@ YUI.add('strtotime', function (Y) {
                     if (thisChange.fixTime === true) {
                         fixTime = true;
                     }
+                    if (thisChange.specialFn !== undefined) {
+                        ms = thisChange.specialFn(ms, thisChange);
+                    }
+                    if (ms === false) {
+                        return false;
+                    }
                 }
             }
+
 
 
             // Now apply relativeHash changes
@@ -736,7 +783,7 @@ YUI.add('strtotime', function (Y) {
                 thisChange = orderedRelChanges[j];
                 if (thisChange !== undefined) {
                     for (i in thisChange) {
-                        if (thisChange.hasOwnProperty(i) && i !== 'weekdayOf' && thisChange[i] !== 0) {
+                        if (thisChange.hasOwnProperty(i), 'weekdayOf' && thisChange[i] !== 0) {
                             ms = relChange[i](ms, thisChange[i]);
                         }
                     }

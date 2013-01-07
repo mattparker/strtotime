@@ -35,8 +35,27 @@ $timeFormats = array(
 	"3.29 am",
 	"3:53 PM",
 	"15:45:23",
-	"3:45:23 am"
+	"3:45:23 am",
 
+	// mssqltime
+	"8:45:22.44am",
+	"12:59:13.01P.M",
+	"4:08:39:12313am",
+
+	// timeshort24
+	"t18:45",
+	"13:47",
+	"4.41",
+	// timelong24
+	"t18:45:22",
+	"13:47.41",
+	"14.41.00",
+	// iso8601long
+	"08:15:09.1234",
+	"t00.01.00.9876",
+	// gnunocolon
+	"t0813",
+	"1979"
 
 	/*"Y-m-d H:i:s",
 	"m/d",
@@ -193,6 +212,9 @@ foreach ($dates as $d) {
 foreach ($extras as $e) {
 
 	$res2 = strtotime($e, 1360022400);
+	if ($res2 === false) {
+		$res2 = 'false';
+	}
 	$tests[] = "\n\t\t'Extras: strtotime(\"" . $e . "\", 1360022400) should give `" . $res2 . "`': "
 		. " function () {\n"
 		. "\t\t\tY.Assert.areSame(" . $res2 . ", strtotime('" . $e . "', 1360022400));\n"

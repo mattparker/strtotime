@@ -946,256 +946,640 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359936000, strtotime('2am yesterday', 1360022400));
 		},
 
+		'Extras: strtotime("yesterday 2am", 1360022400) should give `1359943200`':  function () {
+			Y.Assert.areSame(1359943200, strtotime('yesterday 2am', 1360022400));
+		},
+
 		'Extras: strtotime("2am now", 1360022400) should give `1360029600`':  function () {
 			Y.Assert.areSame(1360029600, strtotime('2am now', 1360022400));
+		},
+
+		'Extras: strtotime("now 2am", 1360022400) should give `1360029600`':  function () {
+			Y.Assert.areSame(1360029600, strtotime('now 2am', 1360022400));
 		},
 
 		'Extras: strtotime("2am noon", 1360022400) should give `1360065600`':  function () {
 			Y.Assert.areSame(1360065600, strtotime('2am noon', 1360022400));
 		},
 
+		'Extras: strtotime("noon 2am", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 2am', 1360022400));
+		},
+
 		'Extras: strtotime("2am midnight", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('2am midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 2am", 1360022400) should give `1360029600`':  function () {
+			Y.Assert.areSame(1360029600, strtotime('midnight 2am', 1360022400));
 		},
 
 		'Extras: strtotime("2am today", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('2am today', 1360022400));
 		},
 
+		'Extras: strtotime("today 2am", 1360022400) should give `1360029600`':  function () {
+			Y.Assert.areSame(1360029600, strtotime('today 2am', 1360022400));
+		},
+
 		'Extras: strtotime("2am tomorrow", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('2am tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 2am", 1360022400) should give `1360116000`':  function () {
+			Y.Assert.areSame(1360116000, strtotime('tomorrow 2am', 1360022400));
 		},
 
 		'Extras: strtotime("2am first day of", 1360022400) should give `1359684000`':  function () {
 			Y.Assert.areSame(1359684000, strtotime('2am first day of', 1360022400));
 		},
 
+		'Extras: strtotime("first day of 2am", 1360022400) should give `1359684000`':  function () {
+			Y.Assert.areSame(1359684000, strtotime('first day of 2am', 1360022400));
+		},
+
 		'Extras: strtotime("2am last day of", 1360022400) should give `1362016800`':  function () {
 			Y.Assert.areSame(1362016800, strtotime('2am last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 2am", 1360022400) should give `1362016800`':  function () {
+			Y.Assert.areSame(1362016800, strtotime('last day of 2am', 1360022400));
 		},
 
 		'Extras: strtotime("2AM yesterday", 1360022400) should give `1359936000`':  function () {
 			Y.Assert.areSame(1359936000, strtotime('2AM yesterday', 1360022400));
 		},
 
+		'Extras: strtotime("yesterday 2AM", 1360022400) should give `1359943200`':  function () {
+			Y.Assert.areSame(1359943200, strtotime('yesterday 2AM', 1360022400));
+		},
+
 		'Extras: strtotime("2AM now", 1360022400) should give `1360029600`':  function () {
 			Y.Assert.areSame(1360029600, strtotime('2AM now', 1360022400));
+		},
+
+		'Extras: strtotime("now 2AM", 1360022400) should give `1360029600`':  function () {
+			Y.Assert.areSame(1360029600, strtotime('now 2AM', 1360022400));
 		},
 
 		'Extras: strtotime("2AM noon", 1360022400) should give `1360065600`':  function () {
 			Y.Assert.areSame(1360065600, strtotime('2AM noon', 1360022400));
 		},
 
+		'Extras: strtotime("noon 2AM", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 2AM', 1360022400));
+		},
+
 		'Extras: strtotime("2AM midnight", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('2AM midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 2AM", 1360022400) should give `1360029600`':  function () {
+			Y.Assert.areSame(1360029600, strtotime('midnight 2AM', 1360022400));
 		},
 
 		'Extras: strtotime("2AM today", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('2AM today', 1360022400));
 		},
 
+		'Extras: strtotime("today 2AM", 1360022400) should give `1360029600`':  function () {
+			Y.Assert.areSame(1360029600, strtotime('today 2AM', 1360022400));
+		},
+
 		'Extras: strtotime("2AM tomorrow", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('2AM tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 2AM", 1360022400) should give `1360116000`':  function () {
+			Y.Assert.areSame(1360116000, strtotime('tomorrow 2AM', 1360022400));
 		},
 
 		'Extras: strtotime("2AM first day of", 1360022400) should give `1359684000`':  function () {
 			Y.Assert.areSame(1359684000, strtotime('2AM first day of', 1360022400));
 		},
 
+		'Extras: strtotime("first day of 2AM", 1360022400) should give `1359684000`':  function () {
+			Y.Assert.areSame(1359684000, strtotime('first day of 2AM', 1360022400));
+		},
+
 		'Extras: strtotime("2AM last day of", 1360022400) should give `1362016800`':  function () {
 			Y.Assert.areSame(1362016800, strtotime('2AM last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 2AM", 1360022400) should give `1362016800`':  function () {
+			Y.Assert.areSame(1362016800, strtotime('last day of 2AM', 1360022400));
 		},
 
 		'Extras: strtotime("14.18 yesterday", 1360022400) should give `1359936000`':  function () {
 			Y.Assert.areSame(1359936000, strtotime('14.18 yesterday', 1360022400));
 		},
 
+		'Extras: strtotime("yesterday 14.18", 1360022400) should give `1359987480`':  function () {
+			Y.Assert.areSame(1359987480, strtotime('yesterday 14.18', 1360022400));
+		},
+
 		'Extras: strtotime("14.18 now", 1360022400) should give `1360073880`':  function () {
 			Y.Assert.areSame(1360073880, strtotime('14.18 now', 1360022400));
+		},
+
+		'Extras: strtotime("now 14.18", 1360022400) should give `1360073880`':  function () {
+			Y.Assert.areSame(1360073880, strtotime('now 14.18', 1360022400));
 		},
 
 		'Extras: strtotime("14.18 noon", 1360022400) should give `1360065600`':  function () {
 			Y.Assert.areSame(1360065600, strtotime('14.18 noon', 1360022400));
 		},
 
+		'Extras: strtotime("noon 14.18", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 14.18', 1360022400));
+		},
+
 		'Extras: strtotime("14.18 midnight", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('14.18 midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 14.18", 1360022400) should give `1360073880`':  function () {
+			Y.Assert.areSame(1360073880, strtotime('midnight 14.18', 1360022400));
 		},
 
 		'Extras: strtotime("14.18 today", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('14.18 today', 1360022400));
 		},
 
+		'Extras: strtotime("today 14.18", 1360022400) should give `1360073880`':  function () {
+			Y.Assert.areSame(1360073880, strtotime('today 14.18', 1360022400));
+		},
+
 		'Extras: strtotime("14.18 tomorrow", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('14.18 tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 14.18", 1360022400) should give `1360160280`':  function () {
+			Y.Assert.areSame(1360160280, strtotime('tomorrow 14.18', 1360022400));
 		},
 
 		'Extras: strtotime("14.18 first day of", 1360022400) should give `1359728280`':  function () {
 			Y.Assert.areSame(1359728280, strtotime('14.18 first day of', 1360022400));
 		},
 
+		'Extras: strtotime("first day of 14.18", 1360022400) should give `1359728280`':  function () {
+			Y.Assert.areSame(1359728280, strtotime('first day of 14.18', 1360022400));
+		},
+
 		'Extras: strtotime("14.18 last day of", 1360022400) should give `1362061080`':  function () {
 			Y.Assert.areSame(1362061080, strtotime('14.18 last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 14.18", 1360022400) should give `1362061080`':  function () {
+			Y.Assert.areSame(1362061080, strtotime('last day of 14.18', 1360022400));
 		},
 
 		'Extras: strtotime("15:02 yesterday", 1360022400) should give `1359936000`':  function () {
 			Y.Assert.areSame(1359936000, strtotime('15:02 yesterday', 1360022400));
 		},
 
+		'Extras: strtotime("yesterday 15:02", 1360022400) should give `1359990120`':  function () {
+			Y.Assert.areSame(1359990120, strtotime('yesterday 15:02', 1360022400));
+		},
+
 		'Extras: strtotime("15:02 now", 1360022400) should give `1360076520`':  function () {
 			Y.Assert.areSame(1360076520, strtotime('15:02 now', 1360022400));
+		},
+
+		'Extras: strtotime("now 15:02", 1360022400) should give `1360076520`':  function () {
+			Y.Assert.areSame(1360076520, strtotime('now 15:02', 1360022400));
 		},
 
 		'Extras: strtotime("15:02 noon", 1360022400) should give `1360065600`':  function () {
 			Y.Assert.areSame(1360065600, strtotime('15:02 noon', 1360022400));
 		},
 
+		'Extras: strtotime("noon 15:02", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 15:02', 1360022400));
+		},
+
 		'Extras: strtotime("15:02 midnight", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('15:02 midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 15:02", 1360022400) should give `1360076520`':  function () {
+			Y.Assert.areSame(1360076520, strtotime('midnight 15:02', 1360022400));
 		},
 
 		'Extras: strtotime("15:02 today", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('15:02 today', 1360022400));
 		},
 
+		'Extras: strtotime("today 15:02", 1360022400) should give `1360076520`':  function () {
+			Y.Assert.areSame(1360076520, strtotime('today 15:02', 1360022400));
+		},
+
 		'Extras: strtotime("15:02 tomorrow", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('15:02 tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 15:02", 1360022400) should give `1360162920`':  function () {
+			Y.Assert.areSame(1360162920, strtotime('tomorrow 15:02', 1360022400));
 		},
 
 		'Extras: strtotime("15:02 first day of", 1360022400) should give `1359730920`':  function () {
 			Y.Assert.areSame(1359730920, strtotime('15:02 first day of', 1360022400));
 		},
 
+		'Extras: strtotime("first day of 15:02", 1360022400) should give `1359730920`':  function () {
+			Y.Assert.areSame(1359730920, strtotime('first day of 15:02', 1360022400));
+		},
+
 		'Extras: strtotime("15:02 last day of", 1360022400) should give `1362063720`':  function () {
 			Y.Assert.areSame(1362063720, strtotime('15:02 last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 15:02", 1360022400) should give `1362063720`':  function () {
+			Y.Assert.areSame(1362063720, strtotime('last day of 15:02', 1360022400));
 		},
 
 		'Extras: strtotime("3.29 am yesterday", 1360022400) should give `1359936000`':  function () {
 			Y.Assert.areSame(1359936000, strtotime('3.29 am yesterday', 1360022400));
 		},
 
+		'Extras: strtotime("yesterday 3.29 am", 1360022400) should give `1359948540`':  function () {
+			Y.Assert.areSame(1359948540, strtotime('yesterday 3.29 am', 1360022400));
+		},
+
 		'Extras: strtotime("3.29 am now", 1360022400) should give `1360034940`':  function () {
 			Y.Assert.areSame(1360034940, strtotime('3.29 am now', 1360022400));
+		},
+
+		'Extras: strtotime("now 3.29 am", 1360022400) should give `1360034940`':  function () {
+			Y.Assert.areSame(1360034940, strtotime('now 3.29 am', 1360022400));
 		},
 
 		'Extras: strtotime("3.29 am noon", 1360022400) should give `1360065600`':  function () {
 			Y.Assert.areSame(1360065600, strtotime('3.29 am noon', 1360022400));
 		},
 
+		'Extras: strtotime("noon 3.29 am", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 3.29 am', 1360022400));
+		},
+
 		'Extras: strtotime("3.29 am midnight", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('3.29 am midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 3.29 am", 1360022400) should give `1360034940`':  function () {
+			Y.Assert.areSame(1360034940, strtotime('midnight 3.29 am', 1360022400));
 		},
 
 		'Extras: strtotime("3.29 am today", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('3.29 am today', 1360022400));
 		},
 
+		'Extras: strtotime("today 3.29 am", 1360022400) should give `1360034940`':  function () {
+			Y.Assert.areSame(1360034940, strtotime('today 3.29 am', 1360022400));
+		},
+
 		'Extras: strtotime("3.29 am tomorrow", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('3.29 am tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 3.29 am", 1360022400) should give `1360121340`':  function () {
+			Y.Assert.areSame(1360121340, strtotime('tomorrow 3.29 am', 1360022400));
 		},
 
 		'Extras: strtotime("3.29 am first day of", 1360022400) should give `1359689340`':  function () {
 			Y.Assert.areSame(1359689340, strtotime('3.29 am first day of', 1360022400));
 		},
 
+		'Extras: strtotime("first day of 3.29 am", 1360022400) should give `1359689340`':  function () {
+			Y.Assert.areSame(1359689340, strtotime('first day of 3.29 am', 1360022400));
+		},
+
 		'Extras: strtotime("3.29 am last day of", 1360022400) should give `1362022140`':  function () {
 			Y.Assert.areSame(1362022140, strtotime('3.29 am last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 3.29 am", 1360022400) should give `1362022140`':  function () {
+			Y.Assert.areSame(1362022140, strtotime('last day of 3.29 am', 1360022400));
 		},
 
 		'Extras: strtotime("3:53 PM yesterday", 1360022400) should give `1359936000`':  function () {
 			Y.Assert.areSame(1359936000, strtotime('3:53 PM yesterday', 1360022400));
 		},
 
+		'Extras: strtotime("yesterday 3:53 PM", 1360022400) should give `1359993180`':  function () {
+			Y.Assert.areSame(1359993180, strtotime('yesterday 3:53 PM', 1360022400));
+		},
+
 		'Extras: strtotime("3:53 PM now", 1360022400) should give `1360079580`':  function () {
 			Y.Assert.areSame(1360079580, strtotime('3:53 PM now', 1360022400));
+		},
+
+		'Extras: strtotime("now 3:53 PM", 1360022400) should give `1360079580`':  function () {
+			Y.Assert.areSame(1360079580, strtotime('now 3:53 PM', 1360022400));
 		},
 
 		'Extras: strtotime("3:53 PM noon", 1360022400) should give `1360065600`':  function () {
 			Y.Assert.areSame(1360065600, strtotime('3:53 PM noon', 1360022400));
 		},
 
+		'Extras: strtotime("noon 3:53 PM", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 3:53 PM', 1360022400));
+		},
+
 		'Extras: strtotime("3:53 PM midnight", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('3:53 PM midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 3:53 PM", 1360022400) should give `1360079580`':  function () {
+			Y.Assert.areSame(1360079580, strtotime('midnight 3:53 PM', 1360022400));
 		},
 
 		'Extras: strtotime("3:53 PM today", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('3:53 PM today', 1360022400));
 		},
 
+		'Extras: strtotime("today 3:53 PM", 1360022400) should give `1360079580`':  function () {
+			Y.Assert.areSame(1360079580, strtotime('today 3:53 PM', 1360022400));
+		},
+
 		'Extras: strtotime("3:53 PM tomorrow", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('3:53 PM tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 3:53 PM", 1360022400) should give `1360165980`':  function () {
+			Y.Assert.areSame(1360165980, strtotime('tomorrow 3:53 PM', 1360022400));
 		},
 
 		'Extras: strtotime("3:53 PM first day of", 1360022400) should give `1359733980`':  function () {
 			Y.Assert.areSame(1359733980, strtotime('3:53 PM first day of', 1360022400));
 		},
 
+		'Extras: strtotime("first day of 3:53 PM", 1360022400) should give `1359733980`':  function () {
+			Y.Assert.areSame(1359733980, strtotime('first day of 3:53 PM', 1360022400));
+		},
+
 		'Extras: strtotime("3:53 PM last day of", 1360022400) should give `1362066780`':  function () {
 			Y.Assert.areSame(1362066780, strtotime('3:53 PM last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 3:53 PM", 1360022400) should give `1362066780`':  function () {
+			Y.Assert.areSame(1362066780, strtotime('last day of 3:53 PM', 1360022400));
 		},
 
 		'Extras: strtotime("15:45:23 yesterday", 1360022400) should give `1359936000`':  function () {
 			Y.Assert.areSame(1359936000, strtotime('15:45:23 yesterday', 1360022400));
 		},
 
+		'Extras: strtotime("yesterday 15:45:23", 1360022400) should give `1359992723`':  function () {
+			Y.Assert.areSame(1359992723, strtotime('yesterday 15:45:23', 1360022400));
+		},
+
 		'Extras: strtotime("15:45:23 now", 1360022400) should give `1360079123`':  function () {
 			Y.Assert.areSame(1360079123, strtotime('15:45:23 now', 1360022400));
+		},
+
+		'Extras: strtotime("now 15:45:23", 1360022400) should give `1360079123`':  function () {
+			Y.Assert.areSame(1360079123, strtotime('now 15:45:23', 1360022400));
 		},
 
 		'Extras: strtotime("15:45:23 noon", 1360022400) should give `1360065600`':  function () {
 			Y.Assert.areSame(1360065600, strtotime('15:45:23 noon', 1360022400));
 		},
 
+		'Extras: strtotime("noon 15:45:23", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 15:45:23', 1360022400));
+		},
+
 		'Extras: strtotime("15:45:23 midnight", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('15:45:23 midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 15:45:23", 1360022400) should give `1360079123`':  function () {
+			Y.Assert.areSame(1360079123, strtotime('midnight 15:45:23', 1360022400));
 		},
 
 		'Extras: strtotime("15:45:23 today", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('15:45:23 today', 1360022400));
 		},
 
+		'Extras: strtotime("today 15:45:23", 1360022400) should give `1360079123`':  function () {
+			Y.Assert.areSame(1360079123, strtotime('today 15:45:23', 1360022400));
+		},
+
 		'Extras: strtotime("15:45:23 tomorrow", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('15:45:23 tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 15:45:23", 1360022400) should give `1360165523`':  function () {
+			Y.Assert.areSame(1360165523, strtotime('tomorrow 15:45:23', 1360022400));
 		},
 
 		'Extras: strtotime("15:45:23 first day of", 1360022400) should give `1359733523`':  function () {
 			Y.Assert.areSame(1359733523, strtotime('15:45:23 first day of', 1360022400));
 		},
 
+		'Extras: strtotime("first day of 15:45:23", 1360022400) should give `1359733523`':  function () {
+			Y.Assert.areSame(1359733523, strtotime('first day of 15:45:23', 1360022400));
+		},
+
 		'Extras: strtotime("15:45:23 last day of", 1360022400) should give `1362066323`':  function () {
 			Y.Assert.areSame(1362066323, strtotime('15:45:23 last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 15:45:23", 1360022400) should give `1362066323`':  function () {
+			Y.Assert.areSame(1362066323, strtotime('last day of 15:45:23', 1360022400));
 		},
 
 		'Extras: strtotime("3:45:23 am yesterday", 1360022400) should give `1359936000`':  function () {
 			Y.Assert.areSame(1359936000, strtotime('3:45:23 am yesterday', 1360022400));
 		},
 
+		'Extras: strtotime("yesterday 3:45:23 am", 1360022400) should give `1359949523`':  function () {
+			Y.Assert.areSame(1359949523, strtotime('yesterday 3:45:23 am', 1360022400));
+		},
+
 		'Extras: strtotime("3:45:23 am now", 1360022400) should give `1360035923`':  function () {
 			Y.Assert.areSame(1360035923, strtotime('3:45:23 am now', 1360022400));
+		},
+
+		'Extras: strtotime("now 3:45:23 am", 1360022400) should give `1360035923`':  function () {
+			Y.Assert.areSame(1360035923, strtotime('now 3:45:23 am', 1360022400));
 		},
 
 		'Extras: strtotime("3:45:23 am noon", 1360022400) should give `1360065600`':  function () {
 			Y.Assert.areSame(1360065600, strtotime('3:45:23 am noon', 1360022400));
 		},
 
+		'Extras: strtotime("noon 3:45:23 am", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 3:45:23 am', 1360022400));
+		},
+
 		'Extras: strtotime("3:45:23 am midnight", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('3:45:23 am midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 3:45:23 am", 1360022400) should give `1360035923`':  function () {
+			Y.Assert.areSame(1360035923, strtotime('midnight 3:45:23 am', 1360022400));
 		},
 
 		'Extras: strtotime("3:45:23 am today", 1360022400) should give `1360022400`':  function () {
 			Y.Assert.areSame(1360022400, strtotime('3:45:23 am today', 1360022400));
 		},
 
+		'Extras: strtotime("today 3:45:23 am", 1360022400) should give `1360035923`':  function () {
+			Y.Assert.areSame(1360035923, strtotime('today 3:45:23 am', 1360022400));
+		},
+
 		'Extras: strtotime("3:45:23 am tomorrow", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('3:45:23 am tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 3:45:23 am", 1360022400) should give `1360122323`':  function () {
+			Y.Assert.areSame(1360122323, strtotime('tomorrow 3:45:23 am', 1360022400));
 		},
 
 		'Extras: strtotime("3:45:23 am first day of", 1360022400) should give `1359690323`':  function () {
 			Y.Assert.areSame(1359690323, strtotime('3:45:23 am first day of', 1360022400));
 		},
 
+		'Extras: strtotime("first day of 3:45:23 am", 1360022400) should give `1359690323`':  function () {
+			Y.Assert.areSame(1359690323, strtotime('first day of 3:45:23 am', 1360022400));
+		},
+
 		'Extras: strtotime("3:45:23 am last day of", 1360022400) should give `1362023123`':  function () {
 			Y.Assert.areSame(1362023123, strtotime('3:45:23 am last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 3:45:23 am", 1360022400) should give `1362023123`':  function () {
+			Y.Assert.areSame(1362023123, strtotime('last day of 3:45:23 am', 1360022400));
+		},
+
+		'Extras: strtotime("8:45:22.44am yesterday", 1360022400) should give `1359936000`':  function () {
+			Y.Assert.areSame(1359936000, strtotime('8:45:22.44am yesterday', 1360022400));
+		},
+
+		'Extras: strtotime("yesterday 8:45:22.44am", 1360022400) should give `1359967522`':  function () {
+			Y.Assert.areSame(1359967522, strtotime('yesterday 8:45:22.44am', 1360022400));
+		},
+
+		'Extras: strtotime("8:45:22.44am now", 1360022400) should give `1360053922`':  function () {
+			Y.Assert.areSame(1360053922, strtotime('8:45:22.44am now', 1360022400));
+		},
+
+		'Extras: strtotime("now 8:45:22.44am", 1360022400) should give `1360053922`':  function () {
+			Y.Assert.areSame(1360053922, strtotime('now 8:45:22.44am', 1360022400));
+		},
+
+		'Extras: strtotime("8:45:22.44am noon", 1360022400) should give `1360065600`':  function () {
+			Y.Assert.areSame(1360065600, strtotime('8:45:22.44am noon', 1360022400));
+		},
+
+		'Extras: strtotime("noon 8:45:22.44am", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 8:45:22.44am', 1360022400));
+		},
+
+		'Extras: strtotime("8:45:22.44am midnight", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('8:45:22.44am midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 8:45:22.44am", 1360022400) should give `1360053922`':  function () {
+			Y.Assert.areSame(1360053922, strtotime('midnight 8:45:22.44am', 1360022400));
+		},
+
+		'Extras: strtotime("8:45:22.44am today", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('8:45:22.44am today', 1360022400));
+		},
+
+		'Extras: strtotime("today 8:45:22.44am", 1360022400) should give `1360053922`':  function () {
+			Y.Assert.areSame(1360053922, strtotime('today 8:45:22.44am', 1360022400));
+		},
+
+		'Extras: strtotime("8:45:22.44am tomorrow", 1360022400) should give `1360108800`':  function () {
+			Y.Assert.areSame(1360108800, strtotime('8:45:22.44am tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 8:45:22.44am", 1360022400) should give `1360140322`':  function () {
+			Y.Assert.areSame(1360140322, strtotime('tomorrow 8:45:22.44am', 1360022400));
+		},
+
+		'Extras: strtotime("8:45:22.44am first day of", 1360022400) should give `1359708322`':  function () {
+			Y.Assert.areSame(1359708322, strtotime('8:45:22.44am first day of', 1360022400));
+		},
+
+		'Extras: strtotime("first day of 8:45:22.44am", 1360022400) should give `1359708322`':  function () {
+			Y.Assert.areSame(1359708322, strtotime('first day of 8:45:22.44am', 1360022400));
+		},
+
+		'Extras: strtotime("8:45:22.44am last day of", 1360022400) should give `1362041122`':  function () {
+			Y.Assert.areSame(1362041122, strtotime('8:45:22.44am last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 8:45:22.44am", 1360022400) should give `1362041122`':  function () {
+			Y.Assert.areSame(1362041122, strtotime('last day of 8:45:22.44am', 1360022400));
+		},
+
+		'Extras: strtotime("12:59:13.01P.M yesterday", 1360022400) should give `1359936000`':  function () {
+			Y.Assert.areSame(1359936000, strtotime('12:59:13.01P.M yesterday', 1360022400));
+		},
+
+		'Extras: strtotime("yesterday 12:59:13.01P.M", 1360022400) should give `1359982753`':  function () {
+			Y.Assert.areSame(1359982753, strtotime('yesterday 12:59:13.01P.M', 1360022400));
+		},
+
+		'Extras: strtotime("12:59:13.01P.M now", 1360022400) should give `1360069153`':  function () {
+			Y.Assert.areSame(1360069153, strtotime('12:59:13.01P.M now', 1360022400));
+		},
+
+		'Extras: strtotime("now 12:59:13.01P.M", 1360022400) should give `1360069153`':  function () {
+			Y.Assert.areSame(1360069153, strtotime('now 12:59:13.01P.M', 1360022400));
+		},
+
+		'Extras: strtotime("12:59:13.01P.M noon", 1360022400) should give `1360065600`':  function () {
+			Y.Assert.areSame(1360065600, strtotime('12:59:13.01P.M noon', 1360022400));
+		},
+
+		'Extras: strtotime("noon 12:59:13.01P.M", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('noon 12:59:13.01P.M', 1360022400));
+		},
+
+		'Extras: strtotime("12:59:13.01P.M midnight", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('12:59:13.01P.M midnight', 1360022400));
+		},
+
+		'Extras: strtotime("midnight 12:59:13.01P.M", 1360022400) should give `1360069153`':  function () {
+			Y.Assert.areSame(1360069153, strtotime('midnight 12:59:13.01P.M', 1360022400));
+		},
+
+		'Extras: strtotime("12:59:13.01P.M today", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('12:59:13.01P.M today', 1360022400));
+		},
+
+		'Extras: strtotime("today 12:59:13.01P.M", 1360022400) should give `1360069153`':  function () {
+			Y.Assert.areSame(1360069153, strtotime('today 12:59:13.01P.M', 1360022400));
+		},
+
+		'Extras: strtotime("12:59:13.01P.M tomorrow", 1360022400) should give `1360108800`':  function () {
+			Y.Assert.areSame(1360108800, strtotime('12:59:13.01P.M tomorrow', 1360022400));
+		},
+
+		'Extras: strtotime("tomorrow 12:59:13.01P.M", 1360022400) should give `1360155553`':  function () {
+			Y.Assert.areSame(1360155553, strtotime('tomorrow 12:59:13.01P.M', 1360022400));
+		},
+
+		'Extras: strtotime("12:59:13.01P.M first day of", 1360022400) should give `1359723553`':  function () {
+			Y.Assert.areSame(1359723553, strtotime('12:59:13.01P.M first day of', 1360022400));
+		},
+
+		'Extras: strtotime("first day of 12:59:13.01P.M", 1360022400) should give `1359723553`':  function () {
+			Y.Assert.areSame(1359723553, strtotime('first day of 12:59:13.01P.M', 1360022400));
+		},
+
+		'Extras: strtotime("12:59:13.01P.M last day of", 1360022400) should give `1362056353`':  function () {
+			Y.Assert.areSame(1362056353, strtotime('12:59:13.01P.M last day of', 1360022400));
+		},
+
+		'Extras: strtotime("last day of 12:59:13.01P.M", 1360022400) should give `1362056353`':  function () {
+			Y.Assert.areSame(1362056353, strtotime('last day of 12:59:13.01P.M', 1360022400));
 		}
 	}));
 

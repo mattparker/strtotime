@@ -24,11 +24,19 @@ YUI.add('strtotime', function (Y) {
                 parsedDate,
                 copyTime,
 
-                // whether we've managed to parse a time/date from the time string given
+
+
+
+                fixTime = false,
+                fixDate = false,
                 hasTime = false,
                 hasDate = false,
-                requiresTime = false,
-                requiresDate = false,
+
+                // A list of changes to make, in the order that they 
+                // are found in the statement
+                orderedRelChanges = [],
+                orderedAbsChanges = [],
+
 
                 // stores changes to dates/times
                 relativeHash = {
@@ -37,7 +45,10 @@ YUI.add('strtotime', function (Y) {
                     d: 0,
                     h: 0,
                     i: 0,
-                    s: 0,
+                    s: 0
+                },
+
+                relativeFixedHash = {
                     weekdayOf: undefined
                 },
 
@@ -45,28 +56,30 @@ YUI.add('strtotime', function (Y) {
                  * @param {Object}   Properties to change
                  * @param {Boolean}  Whether to add to existing (true) or set (default)
                  */
-                updateRel = function (oChange, addOrSet) {
+                updateRel = function (oChange, addOrSet, index) {
                     var i,
-                        c;
+                        c, 
+                        rH = Y.clone(relativeHash);
 
                     for (i in oChange) {
 
                         if (oChange.hasOwnProperty(i)) {
 
                             if (i === "weekdayOf") {
-                                
-                                relativeHash[i] = oChange[i];
+
+                                relativeFixedHash.weekdayOf = oChange[i];
 
                             } else {
                                 c = parseInt(oChange[i], 10);
                                 if (addOrSet === true) {
-                                    relativeHash[i] += c;
+                                    rH[i] += c;
                                 } else {
-                                    relativeHash[i] = c;
+                                    rH[i] = c;
                                 }
                             }
                         }
                     }
+                    orderedRelChanges[index] = rH;
                 },
 
                 // stores absolute dates/times set
@@ -77,35 +90,62 @@ YUI.add('strtotime', function (Y) {
                     h: undefined,
                     i: undefined,
                     s: undefined,
+                    fixTime: false,
+                    fixDate: false
+                },
+
+                absoluteFixedHash = {
                     lastDay: undefined,
                     firstDay: undefined
                 },
 
-                updateAbs = function (oChange, addOrSet) {
+                updateAbs = function (oChange, addOrSet, index) {
                     var i,
-                        c;
+                        c,
+                        aH = Y.clone(absoluteHash);
+
                     for (i in oChange) {
                         if (oChange.hasOwnProperty(i)) {
 
-                            c = parseInt(oChange[i], 10);
-
-                            if (addOrSet === true && absoluteHash[i] !== undefined) {                                                   
-                                absoluteHash[i] += c;
+                            if (i === "fixTime" || i === "fixDate") {
+                                aH[i] = oChange[i];
                             } else {
-                                absoluteHash[i] = c;
+
+                                c = parseInt(oChange[i], 10);
+
+                                if (i === "h" || i === "i" || i === "s") {
+                                    hasTime = true;
+                                } else {
+                                    hasDate = true;
+                                }
+
+                                if (addOrSet === true && aH[i] !== undefined) {                                                   
+                                    aH[i] += c;
+                                    // need to remember this for next time.
+                                    absoluteHash[i] = true;
+                                } else {
+                                    aH[i] = c;
+                                }
                             }
                         }
                     }
+                    orderedAbsChanges[index] = aH;
                 },
 
                 // utility fn for changing/setting dates
                 _change = function (ts, d, method) {
                     var tmp = new Date(ts);
+                    if (tmp["set" + method] === undefined) {
+                        return ts;
+                    }                    
                     tmp["set" + method](tmp["get" + method]() + d);
                     return tmp.getTime();
                 },
                 _set = function (ts, val, method) {
                     var tmp = new Date(ts);
+                    if (tmp["set" + method] === undefined) {
+                        return ts;
+                    }
                     tmp["set" + method](val);
                     return tmp.getTime();
                 },
@@ -126,6 +166,7 @@ YUI.add('strtotime', function (Y) {
 
                     var c1;
                     hour = parseInt(hour, 10);
+                    ampm = ampm.replace(".", "");
 
                     if (ampm === undefined) {
                         return hour;
@@ -235,6 +276,9 @@ YUI.add('strtotime', function (Y) {
                         return _set(ts, val, 'UTCDate');
                     },
                     h: function (ts, val) {
+                        if (fixTime === true) {
+                            return false;
+                        }
                         return _set(ts, val, 'UTCHours');
                     },
                     i: function (ts, val) {
@@ -283,7 +327,7 @@ YUI.add('strtotime', function (Y) {
                 // case versions in INTL.P and INTL.p
                 meridian = INTL.P || INTL.p ?
                         '(' + (INTL.P ? INTL.P.join('|') + '|' : '') + (INTL.p ? INTL.p.join('|') : '') + ')' :
-                        '([AaPp]\.?[Mm]\.?)' + space,
+                        '([AaPp]\.?[Mm]\.?)',// + space,
                 tz = '\(? [A-Za-z]{1,6}\)?|[A-Za-z]+([_\/\-][A-Za-z]+)+',
                 tzcorrection = 'GMT?[+-]' + hour24 + ':?' + minute + '?',
 
@@ -317,14 +361,14 @@ YUI.add('strtotime', function (Y) {
                 timeshort12 = hour12 + '[:.]' + minutelz + '(' + space + ')?' + meridian,
                 timelong12 = hour12 + '[:.]' + minute + '[:.]' + secondlz + '(' + space + ')?' + meridian,
 
-                timeshort24 = 't?' + hour24 + '[:\.]' + minute,
-                timelong24 = timeshort24 +'[:\.]' + second,
+                timeshort24 = '(t)?' + hour24 + '[:.]' + minute,
+                timelong24 = timeshort24 + '[:.]' + second,
                 iso8601long = timelong24 + frac,
 
-                iso8601normtz = timeshort24 + '[:\.]' + secondlz + '(' + space + ')?' + '(' + tzcorrection + '|' + tz + ')',
+                iso8601normtz = timeshort24 + '[:.]' + secondlz + '(' + space + ')?' + '(' + tzcorrection + '|' + tz + ')',
 
-                gnunocolon = 't?' + hour24lz + minutelz,
-                iso8601nocolon = 't?' + hour24lz + minutelz + secondlz,
+                gnunocolon = '(t)?' + hour24lz + minutelz,
+                iso8601nocolon = '(t)?' + hour24lz + minutelz + secondlz,
 
                 // Dates
                 americanshort = month + '\/' + day,
@@ -353,7 +397,7 @@ YUI.add('strtotime', function (Y) {
                 pgydotd = year4 + '\.?' + dayofyear,
                 pgtextshort = monthabbr + '-' + daylz + '-' + year,
                 pgtextreverse = year + '-' + monthabbr + '-' + daylz,
-                mssqltime = hour12 + ':' + minutelz + ':' + secondlz + '[:\.][0-9]+' + meridian,
+                mssqltime = hour12 + ':' + minutelz + ':' + secondlz + '[:\.]([0-9]+)' + meridian,
                 isoweekday = year4 + '-?W' + weekofyear + '\-?[0-7]',
                 isoweek = year4 + '-?W' + weekofyear,
                 exif = year4 + ':' + monthlz + ':' + daylz + ' ' + hour24lz + ':' + minutelz + ':' + secondlz,
@@ -400,24 +444,25 @@ YUI.add('strtotime', function (Y) {
 
                     // Fixed strings:
                     {re: new RegExp('yesterday'), fn: function (aRes) {
-                        updateRel({d: -1}); 
-                        updateAbs({h: 0, i: 0, s: 0}, true);
+                        updateRel({d: -1}, null, aRes.index); 
+                        updateAbs({h: 0, i: 0, s: 0}, true, aRes.index);
                     }},
 
                     {re: new RegExp('now'), fn: function (aRes) {
                     }},
 
                     {re: new RegExp('noon'), fn: function (aRes) {
-                        updateAbs({h: 12, i: 0, s: 0});
+                        updateAbs({h: 12, i: 0, s: 0, fixTime: true}, null, aRes.index);
+                        
                     }},
 
                     {re: new RegExp('midnight|today'), fn: function (aRes) {
-                        updateAbs({h: 0, i: 0, s:0});
+                        updateAbs({h: 0, i: 0, s:0}, null, aRes.index);
                     }},
 
                     {re: new RegExp('tomorrow'), fn: function (aRes) {
-                        updateRel({d: 1});
-                        updateAbs({h: 0, i: 0, s: 0});
+                        updateRel({d: 1}, null, aRes.index);
+                        updateAbs({h: 0, i: 0, s: 0}, null, aRes.index);
                     }},
 
 
@@ -432,9 +477,8 @@ YUI.add('strtotime', function (Y) {
                             h: tmp.getUTCHours(),
                             i: tmp.getUTCMinutes(),
                             s: tmp.getUTCSeconds()
-                        }, true);
-                        hasDate = true;
-                        hasTime = false;
+                        }, true, aRes.index);
+
 
                     }},
 
@@ -442,16 +486,10 @@ YUI.add('strtotime', function (Y) {
 
                     // Simple relative things
                     {re: new RegExp(firstdayof), fn: function (aRes) {
-                        updateAbs({
-                            firstDay: 1
-                        });
-                        requiresDate = true;
+                        absoluteFixedHash.firstDay = 1;
                     }},
                     {re: new RegExp(lastdayof), fn: function (aRes) {
-                        updateAbs({
-                            lastDay: 1
-                        });
-                        requiresDate = true;
+                        absoluteFixedHash.lastDay = 1;
                     }},
 
                     {re: new RegExp(frontof), fn: function (aRes) {
@@ -463,10 +501,11 @@ YUI.add('strtotime', function (Y) {
                             h: aRes[1],
                             i: 0,
                             s: 0
-                        });
+                        }, null, aRes.index);
                         updateRel({
                             i: -15
-                        });
+                        }, null, aRes.index);
+                        
                     }},
                     {re: new RegExp(backof), fn: function (aRes) {
                         
@@ -476,10 +515,11 @@ YUI.add('strtotime', function (Y) {
                             h: aRes[1],
                             i: 0,
                             s: 0
-                        });
+                        }, null, aRes.index);
                         updateRel({
                             i: 15
-                        });
+                        }, null, aRes.index);
+                        
                     }},
 
 
@@ -501,7 +541,7 @@ YUI.add('strtotime', function (Y) {
                                     dayIndex: dowIndex,
                                     weekIndex: ind
                                 }
-                            });
+                            }, null, aRes.index);
 
                         } else {
                             // something like 'last Wednesday in June'
@@ -510,13 +550,13 @@ YUI.add('strtotime', function (Y) {
                                     dayIndex: dowIndex,
                                     weekIndex: aRes[1]
                                 }
-                            });
+                            }, null, aRes.index);
                         }
                         updateAbs({
                             h: 0,
                             i: 0,
                             s: 0
-                        });
+                        }, null, aRes.index);
                     }},
 
 
@@ -527,7 +567,9 @@ YUI.add('strtotime', function (Y) {
                         var hr,
                             mn,
                             sc,
-                            mr;
+                            mr,
+                            newAbs = {};
+
                         // get the times:
                         hr = aRes[1] || aRes[4] || aRes[8];
                         mn = aRes[5] || aRes[9];
@@ -538,18 +580,63 @@ YUI.add('strtotime', function (Y) {
                             hr = _handleMeridian(hr, mr);
                         }
 
-                        updateAbs({
-                            h: hr
-                        });
+                        newAbs.h = hr;
                         if (mn !== undefined) {
-                            updateAbs({
-                                i: mn
-                            });
+                            newAbs.i = mn;
                         }
                         if (sc !== undefined) {
+                            newAbs.s = sc;
+                        }
+
+                        updateAbs(newAbs, null, aRes.index);
+
+                    }},
+
+                    {re: new RegExp(mssqltime), fn: function (aRes) {
+
+                        updateAbs({
+                            h: _handleMeridian(aRes[1], aRes[5]),
+                            i: aRes[2],
+                            s: aRes[3] + '.' + aRes[4]
+                        });
+                    }},
+
+                    {re: new RegExp([timeshort24, timelong24, iso8601long].join('|')), fn: function (aRes) {
+                        var hr,
+                            mn,
+                            sc,
+                            newAbs = {};
+
+                        // get the times:
+                        hr = aRes[1] || aRes[4] || aRes[8];
+                        mn = aRes[5] || aRes[9];
+                        sc = aRes[10];
+                        mr = aRes[3] || aRes[7] || aRes[12];
+
+                        newAbs.h = hr;
+                        if (mn !== undefined) {
+                            newAbs.i = mn;
+                        }
+                        if (sc !== undefined) {
+                            newAbs.s = sc;
+                        }
+
+                        updateAbs(newAbs, null, aRes.index);
+                    }},
+
+                    {re: new RegExp(gnunocolon), fn: function (aRes) {
+                        // either a time or year:
+                        if (hasTime === false) {
+                            // time
                             updateAbs({
-                                s: sc
-                            })
+                                h: aRes[2],
+                                m: aRes[3]
+                            });
+                        } else {
+                            // year
+                            updateAbs({
+                                y: aRes[1]
+                            });
                         }
                     }},
 
@@ -563,9 +650,8 @@ YUI.add('strtotime', function (Y) {
                             h: 0,
                             i: 0,
                             s: 0
-                        }, true);
-                        hasTime = false;
-                        hasDate = true;
+                        }, true, aRes.index);
+
                     }}
 
                 ],
@@ -573,6 +659,8 @@ YUI.add('strtotime', function (Y) {
 
                 // in the loop
                 i = 0,
+                j = 0,
+                thisChange,
                 test,
                 reResult;
 
@@ -600,6 +688,8 @@ YUI.add('strtotime', function (Y) {
             }
 
 
+            // Error conditions
+
             // Unexpected characters left after all our matching?
             // That's an error.
             if (Y.Lang.trim(copyTime) !== '') {
@@ -608,41 +698,50 @@ YUI.add('strtotime', function (Y) {
 
 
 
-            // There are some things that are required.  For example,
-            // if you use 'front of' you also need to supply a time
-            /*
-            if (hasDate === true || hasTime === true) {
-                if (requiresTime === true && hasTime === false) {
-                    return false;
-                }
-                if (requiresDate === true && hasDate === false) {
-                    return false;
-                }
-            }
-            */
+
 
             // Now apply absolute changes
-            for (i in absoluteHash) {
-                if (absoluteHash.hasOwnProperty(i) && i !== 'lastDay' && i !== 'firstDay' && absoluteHash[i] !== undefined) {
-                    ms = absChange[i](ms, absoluteHash[i]);
+            for (j = 0; j < orderedAbsChanges.length; j = j + 1) {
+
+                thisChange = orderedAbsChanges[j];
+                if (thisChange !== undefined) {
+                    for (i in thisChange) {
+                        if (thisChange.hasOwnProperty(i) && i !== 'lastDay' && i !== 'firstDay' && i !== 'fixTime' && i !== 'fixDate' && thisChange[i] !== undefined) {
+                            
+                            ms = absChange[i](ms, thisChange[i]);
+
+                            if (ms === false) {
+                                return false;
+                            }
+                        }
+                    }
+                    if (thisChange.fixTime === true) {
+                        fixTime = true;
+                    }
                 }
             }
 
 
             // Now apply relativeHash changes
-            for (i in relativeHash) {
-                if (relativeHash.hasOwnProperty(i) && i !== 'weekdayOf' && relativeHash[i] !== 0) {
-                    ms = relChange[i](ms, relativeHash[i]);
+            for (j = 0; j < orderedRelChanges.length; j = j + 1) {
+
+                thisChange = orderedRelChanges[j];
+                if (thisChange !== undefined) {
+                    for (i in thisChange) {
+                        if (thisChange.hasOwnProperty(i) && i !== 'weekdayOf' && thisChange[i] !== 0) {
+                            ms = relChange[i](ms, thisChange[i]);
+                        }
+                    }
                 }
             }
 
 
             // More complex changes that need the above to complete first
-            if (absoluteHash.lastDay === 1) {
+            if (absoluteFixedHash.lastDay === 1) {
                 // find date of last day of this month
                 ms = absChange.d(ms, _findLastDayOf(ms));
 
-            } else if (absoluteHash.firstDay === 1) {
+            } else if (absoluteFixedHash.firstDay === 1) {
                 // set to the first day
                 ms = absChange.d(ms, 1);
 
@@ -650,8 +749,8 @@ YUI.add('strtotime', function (Y) {
 
 
             // Work out the 'first Wednesday' type modifiers
-            if (relativeHash.weekdayOf !== undefined) {
-                ms = _findWeekdayOf(ms, relativeHash.weekdayOf);
+            if (relativeFixedHash.weekdayOf !== undefined) {
+                ms = _findWeekdayOf(ms, relativeFixedHash.weekdayOf);
             }
 
 

@@ -20,7 +20,24 @@ $dateFormats = array(
 	// iso8601dateslash
 	"Y/m/d",
 	// timestamp
-	"\@U",
+	// don as extras
+
+
+);
+// these ones need a timestamp as second argument 
+// so that tests don't need to be run on the day
+// they were created.
+$timeFormats = array(
+	"2am",
+	"2AM",
+	"14.18",
+	"15:02",
+	"3.29 am",
+	"3:53 PM",
+	"15:45:23",
+	"3:45:23 am"
+
+
 	/*"Y-m-d H:i:s",
 	"m/d",
 	"Y/m/d"
@@ -57,7 +74,8 @@ $appendChanges = array(
 	"twelfth Saturday of"
 );
 
-
+// Construct the 'extra' tests
+// 
 $extras = array(
 	"back of 8am",
 	"back of 8",
@@ -72,6 +90,18 @@ $extras = array(
 	"first Wednesday of 2012/05/16",
 
 );
+// add the timstamps here
+foreach ($dates as $d) {
+	$extras[] = date("@U", strtotime($d));
+}
+
+// time-based ones that need a fixed timestamp to make sense
+foreach ($timeFormats as $t) {
+	foreach ($changes as $c) {
+		$extras[] = $t . " " . $c;
+		$extras[] = $c . " " . $t;
+	}
+}
 
 // All the tests
 $tests = array();
@@ -88,13 +118,17 @@ foreach ($dates as $d) {
 	foreach ($dateFormats as $f) {
 
 		$fd = date($f, $orig_ts);
-		$res0 = strtotime($fd);
+		/*$res0 = strtotime($fd);
+
+		if ($res0 === false) {
+			$res0 = 'false';
+		}
 
 		$tests[] = "\n\t\t'Date `" . $fd . "` (originally `" . $d . "`) should give timestamp `" . $res0 . "`': "
 			. " function () {\n"
 			. "\t\t\tY.Assert.areSame(" . $res0 . ", strtotime('" . $fd . "'));\n"
 			. "\t\t}";
-
+		*/
 
 
 		foreach ($changes as $c) {
@@ -133,9 +167,20 @@ foreach ($dates as $d) {
 			if ($res3 === false) {
 				$res3 = 'false';
 			}
-			$tests[] = "\n\t\t'strtotime(`" . $c . " " . $orig_ts . "`) (" . date("Y-m-d H:i:s") . ") should give `" . $res3 . "` (" . date("Y-m-d H:i:s") . ")': "
+			$tests[] = "\n\t\t'strtotime(`" . $c . " " . $orig_ts . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
+				. ") should give `" . $res3 . "`" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $orig_ts . "'));\n"
+				. "\t\t}";
+			
+			$res3 = strtotime($c . " " . $fd);
+			if ($res3 === false) {
+				$res3 = 'false';
+			}
+			$tests[] = "\n\t\t'strtotime(`" . $c . " " . $fd . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
+				. ") should give `" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
+				. " function () {\n"
+				. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $fd . "'));\n"
 				. "\t\t}";
 
 		}
@@ -147,10 +192,10 @@ foreach ($dates as $d) {
 
 foreach ($extras as $e) {
 
-	$res2 = strtotime($e);
-	$tests[] = "\n\t\t'Extras: strtotime(\"" . $e . "\") should give `" . $res2 . "`': "
+	$res2 = strtotime($e, 1360022400);
+	$tests[] = "\n\t\t'Extras: strtotime(\"" . $e . "\", 1360022400) should give `" . $res2 . "`': "
 		. " function () {\n"
-		. "\t\t\tY.Assert.areSame(" . $res2 . ", strtotime('" . $e . "'));\n"
+		. "\t\t\tY.Assert.areSame(" . $res2 . ", strtotime('" . $e . "', 1360022400));\n"
 		. "\t\t}";		
 }
 

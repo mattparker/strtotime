@@ -166,7 +166,8 @@ YUI.add('strtotime', function (Y) {
 
                     //thisWeek = Math.floor(new Date(ts).getUTCDate() / 7);
 
-
+                    tmp.setUTCDate(1);
+                    
                     // now add on the right number of weeks
                     switch (tofind.weekIndex) {
                         case 'next':
@@ -177,9 +178,9 @@ YUI.add('strtotime', function (Y) {
                             break;
                         case 'first':
                             addWeeks = 0;
-                            tmp.setUTCDate(1);
                             break;
                         default:
+                            tmp.setUTCDate(1);
                             addWeeks = parseInt(tofind.weekIndex, 10);
                             break;
                     }
@@ -274,9 +275,9 @@ YUI.add('strtotime', function (Y) {
                 hour24lz = '(2[0-4]|[01][09])',
                 hour12 = '(1[0-2]|0?[1-9])',
                 minute = '([0-5]?[0-9])',
-                minutelz = '([05][0-9])',
+                minutelz = '([0-5][0-9])',
                 second = '([0-5]?[0-9]|60)',
-                secondlz = '([05][0-9]|60)',
+                secondlz = '([0-5][0-9]|60)',
                 // The Internationalised meridian match isn't quite the same, as we can't assume 
                 // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
                 // case versions in INTL.P and INTL.p
@@ -313,8 +314,8 @@ YUI.add('strtotime', function (Y) {
 
                 // Time
                 timetiny12 = hour12 + '(' + space + ')?' + meridian,
-                timeshort12 = hour12 + '[:\.]' + minutelz + '(' + space + ')?' + meridian,
-                timelong12 = hour12 + '[:\.]' + minute + '[:\.]' + secondlz + '(' + space + ')?' + meridian,
+                timeshort12 = hour12 + '[:.]' + minutelz + '(' + space + ')?' + meridian,
+                timelong12 = hour12 + '[:.]' + minute + '[:.]' + secondlz + '(' + space + ')?' + meridian,
 
                 timeshort24 = 't?' + hour24 + '[:\.]' + minute,
                 timelong24 = timeshort24 +'[:\.]' + second,
@@ -518,6 +519,39 @@ YUI.add('strtotime', function (Y) {
                         });
                     }},
 
+
+
+                    // some times
+                    {re : new RegExp(timetiny12 + '|' + timeshort12 + '|' + timelong12), fn: function (aRes) {
+
+                        var hr,
+                            mn,
+                            sc,
+                            mr;
+                        // get the times:
+                        hr = aRes[1] || aRes[4] || aRes[8];
+                        mn = aRes[5] || aRes[9];
+                        sc = aRes[10];
+                        mr = aRes[3] || aRes[7] || aRes[12];
+
+                        if (mr !== undefined) {
+                            hr = _handleMeridian(hr, mr);
+                        }
+
+                        updateAbs({
+                            h: hr
+                        });
+                        if (mn !== undefined) {
+                            updateAbs({
+                                i: mn
+                            });
+                        }
+                        if (sc !== undefined) {
+                            updateAbs({
+                                s: sc
+                            })
+                        }
+                    }},
 
 
                     // dates

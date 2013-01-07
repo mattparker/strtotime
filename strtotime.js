@@ -9,12 +9,381 @@ YUI.add('strtotime', function (Y) {
      * @method strtotime
      * @param {String} time          a date/time string, including relative formats
      * @param {Int}* baseTimestamp   timestamp to use as case for date calculation
+
+     * Copyright Matt Parker, Lamplight Database Systems Limited 2013
+     * @licence BSD
      */
 
 
     // Use Internationalised stuff if we can
     var INTL = {}, //Y.Intl ? Y.Intl.get("datatype-date-format") : {},
+        REGEXP = {},
+        TESTS = [],
+
+
+
+
+
+        ///////////////////////////////////////////////////////////////////////
+        // Utility methods:
+
+        /**
+         @method _change
+
+         Changes a timestamp by an amount
+
+         @param {Int} ts Timestamp
+         @param {Int} d Delta - how much to change
+         @param {String} method Method on Date to use
+         @return {Int} Timestamp
+         */
+        _change = function (ts, d, method) {
+            var tmp = new Date(ts);
+            if (tmp["set" + method] === undefined) {
+                return ts;
+            }                    
+            tmp["set" + method](tmp["get" + method]() + d);
+            return tmp.getTime();
+        },
+
+        /**
+         @method _set
+
+         Sets a timstamp
+         
+         @param {Int} ts Timestamp
+         @param {Int} val Value to set to
+         @param {String} methodMethod on Date to use
+         @return {Int} Timestamp
+         */
+        _set = function (ts, val, method) {
+            var tmp = new Date(ts);
+            if (tmp["set" + method] === undefined) {
+                return ts;
+            }
+            tmp["set" + method](val);
+            return tmp.getTime();
+        },
+
+
+        /**
+         @method _findLastDayOf
+
+         Finds the last day of (e.g. 30) of a month
+
+         @param {Int} ts Timestamp
+         @return {Int} Days in the month
+         */
+        _findLastDayOf = function (ts) {
+            var tmp = new Date(ts),
+                mon = tmp.getUTCMonth();
+
+            // go to the first of the next month and subtract a day
+            tmp.setUTCDate(1); 
+            tmp.setUTCMonth((mon + 1) % 12);
+            ts = tmp.getTime() - 86400000;
+            tmp = new Date(ts);
+            return tmp.getUTCDate();
+        },
+
+        /**
+         @method _handleMeridian
+
+         Deals with am/pm, adding 12 hours if need be.
+
+         @param {Int|String} hour Hours parsed from a date
+         @param {String} ampm The "am" or "pm" (or variations) parsed from the string
+         @return {Int} Corrected hours in 24-hour clock
+         */
+        _handleMeridian = function (hour, ampm) {
+
+            var c1;
+            hour = parseInt(hour, 10);
+
+            if (ampm === undefined) {
+                return hour;
+            }
+            ampm = ampm.replace(".", "");
+
+            c1 = ampm.substring(0, 1).toLowerCase();
+            
+            if (hour < 12 && c1 === "p") {
+                return hour + 12;
+            }
+            return hour;
+
+        },
+        /**
+         * Finds the 'third Wednesday' relative to timestamp
+         * @param Int       Timestamp
+         * @param {Object}  What to find
+         *    @param {Int} dayIndex   Day of week (Sunday = 0) to find
+         *    @param {Int} weekIndex  Which week to find (first = 1)
+         */
+        _findWeekdayOf = function (ts, tofind) {
+            var tmp = new Date(ts),
+                tmt,
+                thisWeek,
+                addWeeks;
+
+            // 'last' needs handling differently:
+            if (tofind.weekIndex === 'last') {
+                // this is the hard one:
+                // find the last day of the month and do it again 
+                // backwarods
+                tmp.setUTCDate(_findLastDayOf(ts));
+                while (tmp.getUTCDay() !== tofind.dayIndex) {
+                    tmp = new Date(tmp.getTime() - 86400000);
+                }
+                return tmp.getTime();
+            }
+
+            //thisWeek = Math.floor(new Date(ts).getUTCDate() / 7);
+
+            tmp.setUTCDate(1);
+            
+            // now add on the right number of weeks
+            switch (tofind.weekIndex) {
+                case 'next':
+                    addWeeks = 0;//thisWeek;
+                    break;
+                case 'previous':
+                    addWeeks = -1;//thisWeek - 1;
+                    break;
+                case 'first':
+                    addWeeks = 0;
+                    break;
+                default:
+                    addWeeks = parseInt(tofind.weekIndex, 10);
+                    break;
+            }
+
+            // iterate through until we're on the correct day
+            while (tmp.getUTCDay() !== tofind.dayIndex) {
+                tmp = new Date(tmp.getTime() + 86400000);
+            }
+
+            tmt = tmp.getTime();
+            tmt = tmt + (604800000 * addWeeks);
+            return tmt;
+        },
+
+
+
+        // Functions that do the relative changes
+        relChange = {
+            y: function (ts, d) {
+                return _change(ts, d, 'UTCFullYear');
+            },
+            m: function (ts, d) {
+                // change the years:
+                var years = Math.floor(d / 12);
+                if (years !== 0) {
+                    ts = _change(ts, years, 'UTCFullYear');
+                }
+                return _change(ts, d, 'UTCMonth');
+            },
+            d: function (ts, d) {
+                return ts + (d * 86400000); // milliseconds in a day
+            },
+            h: function (ts, d) {
+                return ts + (d * 3600000); // milliseconds in an hour
+            },
+            i: function (ts, d) {
+                return ts + (d * 60000); // milliseconds in a minute
+            },
+            s: function (ts, d) {
+                return ts + (d * 1000);
+            }
+        },
+
+        absChange = {
+            y: function (ts, val) {
+                return _set(ts, val, 'UTCFullYear');
+            },
+            m: function (ts, val) {
+                return _set(ts, val, 'UTCMonth');
+            },
+            d: function (ts, val) {
+                return _set(ts, val, 'UTCDate');
+            },
+            h: function (ts, val) {/*
+                if (fixTime === true) {
+                    return false;
+                }*/
+                return _set(ts, val, 'UTCHours');
+            },
+            i: function (ts, val) {
+                return _set(ts, val, 'UTCMinutes');
+            },
+            s: function (ts, val) {
+                return _set(ts, val, 'UTCSeconds');
+            }
+        },
+
+        /**
+         @method resetTime
+
+         Resets the h, i, s of a timestamp to 0, 0, 0
+         @param {Int} ts Timestamp
+         @return {Int} Timestamp
+         */
+        _resetTime = function (ts) {
+            ts = _set(ts, 0, 'UTCHours');
+            ts = _set(ts, 0, 'UTCMinutes');
+            return _set(ts, 0, 'UTCSeconds');
+        },
+
+
+
+        /**
+         Used internally by the function to store changes as they are parsed
+         from the text
+         */
+        Modificator = function () {
+            
+            // whether time/dates are fixed now
+            this.fixTime = false;
+            this.fixDate = false;
+
+            // number of times time has been set
+            this.hasTime = 0;
+            this.setTime = function () {
+                this.hasTime = this.hasTime + 1;
+            };
+            // number of times date has been set
+            this.hasDate = 0;
+
+            // A list of changes to make, in the order that they 
+            // are found in the statement
+            this.orderedRelChanges = [];
+            this.orderedAbsChanges = [];
+
+
+            // stores changes to dates/times
+            this.relativeHash = {
+                y: 0,
+                m: 0,
+                d: 0,
+                h: 0,
+                i: 0,
+                s: 0
+            };
+
+            this.relativeFixedHash = {
+                weekdayOf: undefined
+            };
+
+            /**
+             * @param {Object}   Properties to change
+             * @param {Boolean}  Whether to add to existing (true) or set (default)
+             */
+            this.updateRel = function (oChange, addOrSet, index) {
+                var i,
+                    c, 
+                    rH = Y.clone(this.relativeHash);
+
+                for (i in oChange) {
+
+                    if (oChange.hasOwnProperty(i)) {
+
+                        if (i === "weekdayOf") {
+
+                            this.relativeFixedHash.weekdayOf = oChange[i];
+
+                        } else {
+                            c = parseInt(oChange[i], 10);
+                            if (addOrSet === true) {
+                                rH[i] += c;
+                            } else {
+                                rH[i] = c;
+                            }
+                        }
+                    }
+                }
+                this.orderedRelChanges[index] = rH;
+            };
+
+            // stores absolute dates/times set
+            this.absoluteHash = {
+                y: undefined,
+                m: undefined,
+                d: undefined,
+                h: undefined,
+                i: undefined,
+                s: undefined,
+                fixTime: false,
+                fixDate: false,
+                specialFn: undefined
+            };
+
+            this.absoluteFixedHash = {
+                lastDay: undefined,
+                firstDay: undefined
+            };
+
+            this.updateAbs = function (oChange, addOrSet, index) {
+                var i,
+                    c,
+                    aH = Y.clone(this.absoluteHash);
+
+                for (i in oChange) {
+                    if (oChange.hasOwnProperty(i)) {
+
+                        if (i === "fixTime" || i === "fixDate" || i === "specialFn") {
+                            aH[i] = oChange[i];
+                        } else {
+
+                            c = parseFloat(oChange[i]);
+
+
+                            if (addOrSet === true && aH[i] !== undefined) {                                                   
+                                aH[i] += c;
+                                // need to remember this for next time.
+                                this.absoluteHash[i] = true;
+                            } else {
+                                aH[i] = c;
+                            }
+                        }
+                    }
+                }
+                this.orderedAbsChanges[index] = aH;
+            };
+
+
+
+        },
         
+
+
+
+        /**
+         @method strtotime
+         
+         Parses English (or other languages) date-related sentences into 
+         a timestamp.  A wide range of formats are supported, as is 
+         relative formats.
+
+         Note that to preserve compatability with php (from which this is ported)
+         timestamps are in seconds, not milliseconds.
+
+         See http://php.net/manual/en/function.strtotime.php for the php write-up
+    
+         Examples:
+           Y.DataType.Date.strtotime("2012-05-02")  // returns
+           Y.DataType.Date.strtotime("2/5/2012 5.15pm") // returns
+           Y.DataType.Date.strtotime("next Thursday", 1360022400)  // returns
+           Y.DataType.Date.strtotime("+3 months and 2 days", 1360022400) // returns
+
+
+         @static
+         @public
+
+         @param {String}  Date and modifier(s)
+         @param {Int}     Timestamp (in seconds)
+         @return {Int}    Parsed timestamp or false if there was an error
+
+        */
 
         strtotime = function (time, baseTimestamp) {
 
@@ -24,293 +393,172 @@ YUI.add('strtotime', function (Y) {
                 parsedDate,
                 copyTime,
 
+                mods = new Modificator(),
 
 
-
-                fixTime = false,
-                fixDate = false,
-                hasTime = 0,
-                setTime = function () {
-                    hasTime = hasTime + 1;
-                },
-                hasDate = 0,
-
-                // A list of changes to make, in the order that they 
-                // are found in the statement
-                orderedRelChanges = [],
-                orderedAbsChanges = [],
-
-
-                // stores changes to dates/times
-                relativeHash = {
-                    y: 0,
-                    m: 0,
-                    d: 0,
-                    h: 0,
-                    i: 0,
-                    s: 0
-                },
-
-                relativeFixedHash = {
-                    weekdayOf: undefined
-                },
-
-                /**
-                 * @param {Object}   Properties to change
-                 * @param {Boolean}  Whether to add to existing (true) or set (default)
-                 */
-                updateRel = function (oChange, addOrSet, index) {
-                    var i,
-                        c, 
-                        rH = Y.clone(relativeHash);
-
-                    for (i in oChange) {
-
-                        if (oChange.hasOwnProperty(i)) {
-
-                            if (i === "weekdayOf") {
-
-                                relativeFixedHash.weekdayOf = oChange[i];
-
-                            } else {
-                                c = parseInt(oChange[i], 10);
-                                if (addOrSet === true) {
-                                    rH[i] += c;
-                                } else {
-                                    rH[i] = c;
-                                }
-                            }
-                        }
-                    }
-                    orderedRelChanges[index] = rH;
-                },
-
-                // stores absolute dates/times set
-                absoluteHash = {
-                    y: undefined,
-                    m: undefined,
-                    d: undefined,
-                    h: undefined,
-                    i: undefined,
-                    s: undefined,
-                    fixTime: false,
-                    fixDate: false,
-                    specialFn: undefined
-                },
-
-                absoluteFixedHash = {
-                    lastDay: undefined,
-                    firstDay: undefined
-                },
-
-                updateAbs = function (oChange, addOrSet, index) {
-                    var i,
-                        c,
-                        aH = Y.clone(absoluteHash);
-
-                    for (i in oChange) {
-                        if (oChange.hasOwnProperty(i)) {
-
-                            if (i === "fixTime" || i === "fixDate" || i === "specialFn") {
-                                aH[i] = oChange[i];
-                            } else {
-
-                                c = parseFloat(oChange[i]);
-
-
-                                if (addOrSet === true && aH[i] !== undefined) {                                                   
-                                    aH[i] += c;
-                                    // need to remember this for next time.
-                                    absoluteHash[i] = true;
-                                } else {
-                                    aH[i] = c;
-                                }
-                            }
-                        }
-                    }
-                    orderedAbsChanges[index] = aH;
-                },
-
-                // utility fn for changing/setting dates
-                _change = function (ts, d, method) {
-                    var tmp = new Date(ts);
-                    if (tmp["set" + method] === undefined) {
-                        return ts;
-                    }                    
-                    tmp["set" + method](tmp["get" + method]() + d);
-                    return tmp.getTime();
-                },
-                _set = function (ts, val, method) {
-                    var tmp = new Date(ts);
-                    if (tmp["set" + method] === undefined) {
-                        return ts;
-                    }
-                    tmp["set" + method](val);
-                    return tmp.getTime();
-                },
-
-                _findLastDayOf = function (ts) {
-                    var tmp = new Date(ts),
-                        mon = tmp.getUTCMonth();
-
-                    // go to the first of the next month and subtract a day
-                    tmp.setUTCDate(1); 
-                    tmp.setUTCMonth((mon + 1) % 12);
-                    ts = tmp.getTime() - 86400000;
-                    tmp = new Date(ts);
-                    return tmp.getUTCDate();
-                },
-
-                _handleMeridian = function (hour, ampm) {
-
-                    var c1;
-                    hour = parseInt(hour, 10);
-
-                    if (ampm === undefined) {
-                        return hour;
-                    }
-                    ampm = ampm.replace(".", "");
-
-                    c1 = ampm.substring(0, 1).toLowerCase();
-                    
-                    if (hour < 12 && c1 === "p") {
-                        return hour + 12;
-                    }
-                    return hour;
-
-                },
-
-                /**
-                 * Finds the 'third Wednesday' relative to timestamp
-                 * @param Int       Timestamp
-                 * @param {Object}  What to find
-                 *    @param {Int} dayIndex   Day of week (Sunday = 0) to find
-                 *    @param {Int} weekIndex  Which week to find (first = 1)
-                 */
-                _findWeekdayOf = function (ts, tofind) {
-                    var tmp = new Date(ts),
-                        tmt,
-                        thisWeek,
-                        addWeeks;
-
-                    // 'last' needs handling differently:
-                    if (tofind.weekIndex === 'last') {
-                        // this is the hard one:
-                        // find the last day of the month and do it again 
-                        // backwarods
-                        tmp.setUTCDate(_findLastDayOf(ts));
-                        while (tmp.getUTCDay() !== tofind.dayIndex) {
-                            tmp = new Date(tmp.getTime() - 86400000);
-                        }
-                        return tmp.getTime();
-                    }
-
-                    //thisWeek = Math.floor(new Date(ts).getUTCDate() / 7);
-
-                    tmp.setUTCDate(1);
-                    
-                    // now add on the right number of weeks
-                    switch (tofind.weekIndex) {
-                        case 'next':
-                            addWeeks = 0;//thisWeek;
-                            break;
-                        case 'previous':
-                            addWeeks = -1;//thisWeek - 1;
-                            break;
-                        case 'first':
-                            addWeeks = 0;
-                            break;
-                        default:
-                            tmp.setUTCDate(1);
-                            addWeeks = parseInt(tofind.weekIndex, 10);
-                            break;
-                    }
-
-                    // iterate through until we're on the correct day
-                    while (tmp.getUTCDay() !== tofind.dayIndex) {
-                        tmp = new Date(tmp.getTime() + 86400000);
-                    }
-
-                    tmt = tmp.getTime();
-                    tmt = tmt + (604800000 * addWeeks);
-                    return tmt;
-                },
-
-
-
-                // Functions that do the relative changes
-                relChange = {
-                    y: function (ts, d) {
-                        return _change(ts, d, 'UTCFullYear');
-                    },
-                    m: function (ts, d) {
-                        // change the years:
-                        var years = Math.floor(d / 12);
-                        if (years !== 0) {
-                            ts = _change(ts, years, 'UTCFullYear');
-                        }
-                        return _change(ts, d, 'UTCMonth');
-                    },
-                    d: function (ts, d) {
-                        return ts + (d * 86400000); // milliseconds in a day
-                    },
-                    h: function (ts, d) {
-                        return ts + (d * 3600000); // milliseconds in an hour
-                    },
-                    i: function (ts, d) {
-                        return ts + (d * 60000); // milliseconds in a minute
-                    },
-                    s: function (ts, d) {
-                        return ts + (d * 1000);
-                    }
-                },
-
-                absChange = {
-                    y: function (ts, val) {
-                        return _set(ts, val, 'UTCFullYear');
-                    },
-                    m: function (ts, val) {
-                        return _set(ts, val, 'UTCMonth');
-                    },
-                    d: function (ts, val) {
-                        return _set(ts, val, 'UTCDate');
-                    },
-                    h: function (ts, val) {
-                        if (fixTime === true) {
-                            return false;
-                        }
-                        return _set(ts, val, 'UTCHours');
-                    },
-                    i: function (ts, val) {
-                        return _set(ts, val, 'UTCMinutes');
-                    },
-                    s: function (ts, val) {
-                        return _set(ts, val, 'UTCSeconds');
-                    }
-                },
 
 
                 resetTime = false,
-                _resetTime = function (ts) {
-                    ts = _set(ts, 0, 'UTCHours');
-                    ts = _set(ts, 0, 'UTCMinutes');
-                    return _set(ts, 0, 'UTCSeconds');
-                },
 
 
 
 
-                ///////////////////////////////////////////////////////////////////////
-                // Regexps are basically copied from 
-                // http://svn.php.net/viewvc/php/php-src/trunk/ext/date/lib/parse_date.re?revision=320481&view=markup
-                // line 875 onwards
-                //
-                // There's some changes to use Y.Intl, and other minor changes to 
-                // use existing definitions to save some typing.  There's also extra brackets
-                // so we can get the values found and parse them.
-                //
-                // These are expressed as strings here, as they are composed as we go down,
-                // so they're only made into RegExps later.
+
+
+
+
+                // in the loop
+                i = 0,
+                j = 0,
+                thisChange,
+                test,
+                ignoreInAbs,
+                index,
+                reResult;
+
+
+            // Build the regexp and tests if needed
+            if (TESTS.length === 0) {
+                REGEXP = strtotime.finishRegExp(strtotime.constructRegExp());
+                TESTS = strtotime.finishTests(REGEXP, strtotime.constructTests(REGEXP))
+            }
+
+
+            time = Y.Lang.trim(time);
+            
+            copyTime = time;
+
+
+            // Go through, looking for the relevant regexps 
+            // and acting accordingly
+            for (i = 0; i < TESTS.length; i = i + 1) {
+
+                test = TESTS[i];
+
+                reResult = test.re.exec(copyTime);
+
+                if (reResult) {
+                    index = test.re.exec(time).index;
+                    test.fn.call(undefined, reResult, index, mods);
+                    // remove the matched string from our copy.
+                    copyTime = copyTime.replace(reResult[0], "");
+                }
+
+            }
+
+
+            // Error conditions
+
+            // Unexpected characters left after all our matching?
+            // That's an error.
+            if (Y.Lang.trim(copyTime) !== '') {
+                return false;
+            }
+
+
+
+
+            ignoreInAbs = ['specialFn', 'lastDay', 'firstDay', 'fixTime', 'fixDate'];
+            // Now apply absolute changes
+            for (j = 0; j < mods.orderedAbsChanges.length; j = j + 1) {
+
+                thisChange = mods.orderedAbsChanges[j];
+                if (thisChange !== undefined) {
+
+                    for (i in thisChange) {
+                    
+                        if (thisChange.hasOwnProperty(i) && ignoreInAbs.indexOf(i) === -1 && thisChange[i] !== undefined) {
+                            
+                            // can't change fixed times
+                            if (i === 'h' && mods.fixTime === true) {
+                                return false;
+                            }
+                            ms = absChange[i](ms, thisChange[i]);
+
+                            if (ms === false) {
+                                return false;
+                            }
+
+                        }
+                    }
+                    if (thisChange.fixTime === true) {
+                        mods.fixTime = true;
+                    }
+                    if (thisChange.specialFn !== undefined) {
+                        ms = thisChange.specialFn(ms, thisChange);
+                    }
+                    if (ms === false) {
+                        return false;
+                    }
+                }
+            }
+
+
+
+            // Now apply relativeHash changes
+            for (j = 0; j < mods.orderedRelChanges.length; j = j + 1) {
+
+                thisChange = mods.orderedRelChanges[j];
+                if (thisChange !== undefined) {
+                    for (i in thisChange) {
+                        if (thisChange.hasOwnProperty(i), 'weekdayOf' && thisChange[i] !== 0) {
+                            ms = relChange[i](ms, thisChange[i]);
+                        }
+                    }
+                }
+            }
+
+
+            // More complex changes that need the above to complete first
+            if (mods.absoluteFixedHash.lastDay === 1) {
+                // find date of last day of this month
+                ms = absChange.d(ms, _findLastDayOf(ms));
+
+            } else if (mods.absoluteFixedHash.firstDay === 1) {
+                // set to the first day
+                ms = absChange.d(ms, 1);
+
+            }
+
+
+            // Work out the 'first Wednesday' type modifiers
+            if (mods.relativeFixedHash.weekdayOf !== undefined) {
+                ms = _findWeekdayOf(ms, mods.relativeFixedHash.weekdayOf);
+            }
+
+
+
+            return Math.floor(ms / 1000);
+
+        };
+
+
+
+
+        /**
+         @method constructRegExp
+         Builds up a set of strings that will be used in regex constructor in 
+         the tests.  This happens once, the first time the strtotime function
+         is used.
+         @protected
+         @static
+         @return {Object}
+         */
+        strtotime.constructRegExp = function () {
+
+            ///////////////////////////////////////////////////////////////////////
+            // Regexps are basically copied from 
+            // http://svn.php.net/viewvc/php/php-src/trunk/ext/date/lib/parse_date.re?revision=320481&view=markup
+            // line 875 onwards
+            //
+            // There's some changes to use Y.Intl, and other minor changes to 
+            // use existing definitions to save some typing.  There's also extra brackets
+            // so we can get the values found and parse them.
+            //
+            // These are expressed as strings here, as they are composed as we go down,
+            // so they're only made into RegExps later.
+
+            var ret = {},
 
                 space = '[ \t]+',
                 frac = '\.([0-9]+)',
@@ -325,9 +573,7 @@ YUI.add('strtotime', function (Y) {
                 // The Internationalised meridian match isn't quite the same, as we can't assume 
                 // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
                 // case versions in INTL.P and INTL.p
-                meridian = INTL.P || INTL.p ?
-                        '(' + (INTL.P ? INTL.P.join('|') + '|' : '') + (INTL.p ? INTL.p.join('|') : '') + ')' :
-                        '([AaPp]\.?[Mm]\.?)',// + space,
+                meridian = strtotime.AMPM, // + space,
                 tz = '\(? [A-Za-z]{1,6}\)?|[A-Za-z]+([_\/\-][A-Za-z]+)+',
                 tzcorrection = 'GMT?[+-]' + hour24 + ':?' + minute + '?',
 
@@ -431,407 +677,571 @@ YUI.add('strtotime', function (Y) {
                 relativetextweek = reltexttext + space + 'week',
 
 
-                weekdayof = '(' + reltextnumber + '|' + reltexttext + ')' + space + '(' + dayfull + '|' + dayabbr + ')' + space + 'of',
+                weekdayof = '(' + reltextnumber + '|' + reltexttext + ')' + space + '(' + dayfull + '|' + dayabbr + ')' + space + 'of';
+
+            return {
+                "space": space,
+                "frac": frac,
+                "ago": ago,
+                "hour24": hour24,
+                "hour24lz": hour24lz,
+                "hour12": hour12,
+                "minute": minute,
+                "minutelz": minutelz,
+                "second": second,
+                "secondlz": secondlz,
+                // The Internationalised meridian match isn't quite the same, as we can't assume 
+                // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
+                // case versions in INTL.P and INTL.p
+                "meridian": meridian,
+                "tz": tz,
+                "tzcorrection": tzcorrection,
+
+                "daysuf": daysuf,
+
+                "month": month,
+                "day": day,
+                "year": year,
+                "year2": year2,
+                "year4": year4,
+                "year4withsign": year4withsign,
+
+                "dayofyear": dayofyear,
+                "weekofyear": weekofyear,
+                "monthlz": monthlz,
+                "daylz": daylz,
+
+                // Use Internationalisation to get lang pack
+                "dayfull": dayfull,
+                "dayabbr": dayabbr,
+                "dayspecial": dayspecial,  // apparently no INTL version of this
+                "daytext": daytext,
+
+                "monthfull": monthfull,
+                "monthabbr": monthabbr,
+                "monthroman": monthroman,
+                "monthtext": monthtext,
+
+                // Time
+                "timetiny12": timetiny12,
+                "timeshort12": timeshort12,
+                "timelong12": timelong12,
+
+                "timeshort24": timeshort24,
+                "timelong24": timelong24,
+                "iso8601long": iso8601long,
+
+                "iso8601normtz": iso8601normtz,
+
+                "gnunocolon": gnunocolon,
+                "iso8601nocolon": iso8601nocolon,
+
+                // Dates
+                "americanshort": americanshort,
+                "american": american,
+                "iso8601dateslash": iso8601dateslash,
+                "dateslash": dateslash,
+                "iso8601date4": iso8601date4,
+                "iso8601date2": iso8601date2,
+                "gnudateshorter": gnudateshorter,
+                "gnudateshort": gnudateshort,
+                "pointeddate4": pointeddate4,
+                "pointeddate2": pointeddate2,
+                "datefull": datefull,
+                "datenoday": datenoday,
+                "datenodayrev": datenodayrev,
+                "datetextual": datetextual,
+                "datenoyear": datenoyear, // why is this one finish with * and above is +
+                "datenoyearrev": datenoyearrev,
+                "datenocolon": datenocolon,
+
+                // Special formats
+                "soap": soap,
+                "xmlrpc": xmlrpc,
+                "xmlrpcnocolon": xmlrpcnocolon,
+                "wddx": wddx,
+                "pgydotd": pgydotd,
+                "pgtextshort": pgtextshort,
+                "pgtextreverse": pgtextreverse,
+                "mssqltime": mssqltime,
+                "isoweekday": isoweekday,
+                "isoweek": isoweek,
+                "exif": exif,
+                "firstdayof": firstdayof,
+                "lastdayof": lastdayof,
+                "backof": backof,
+                "frontof": frontof,
+
+                // common log format
+                "clf": clf,
+
+                // timestamp:
+                "timestamp": timestamp,
+
+                // ? to fix some ambiguities (this is from the C source)
+                "dateshortwithtimeshort12" : dateshortwithtimeshort12,
+                "dateshortwithtimelong12"  : dateshortwithtimelong12,
+                "dateshortwithtimeshort" : dateshortwithtimeshort,
+                "dateshortwithtimelong"  : dateshortwithtimelong,
+                "dateshortwithtimelongtz": dateshortwithtimelongtz,
 
 
+                // relative regexps
+                "reltextnumber": reltextnumber,
+                "reltexttext": reltexttext,
+                "reltextunit": reltextunit, // no 'weeks' currently - need to check why it's separate
 
+                "relnumber": relnumber,
+                "relative": relative, //the week
+                "relativetext": relativetext,
+                "relativetextweek": relativetextweek,
 
 
+                "weekdayof": weekdayof
 
-                // The tests to carry out, and what happens
-                tests = [
-
-
-                    // Fixed strings:
-                    {re: new RegExp('yesterday'), fn: function (aRes, index) {
-                        updateRel({d: -1}, null, index);
-                        updateAbs({h: 0, i: 0, s: 0}, true, index);
-                    }},
-
-                    {re: new RegExp('now'), fn: function (aRes, index) {
-                    }},
-
-                    {re: new RegExp('noon'), fn: function (aRes, index) {
-                        updateAbs({h: 12, i: 0, s: 0, fixTime: true, specialFn: function (ms, oChange) {setTime(); return ms;}}, null, index);
-                    }},
-
-                    {re: new RegExp('midnight|today'), fn: function (aRes, index) {
-                        updateAbs({h: 0, i: 0, s:0}, null, index);
-                    }},
-
-                    {re: new RegExp('tomorrow'), fn: function (aRes, index) {
-                        updateRel({d: 1}, null, index);                        
-                        updateAbs({h: 0, i: 0, s: 0}, null, index);                    
-                    }},
-
-
-
-                    // Unix timestamp
-                    {re: new RegExp(timestamp), fn: function (aRes, index) {
-                        var tmp = new Date(parseInt(aRes[2], 10) * 1000);
-                        updateAbs({
-                            y: tmp.getUTCFullYear(),
-                            m: tmp.getUTCMonth(),
-                            d: tmp.getUTCDate(),
-                            h: tmp.getUTCHours(),
-                            i: tmp.getUTCMinutes(),
-                            s: tmp.getUTCSeconds()
-                        }, true, index);
-                        setTime();
-                    }},
-
-
-
-                    // Simple relative things
-                    {re: new RegExp(firstdayof), fn: function (aRes, index) {
-                        absoluteFixedHash.firstDay = 1;
-                    }},
-                    {re: new RegExp(lastdayof), fn: function (aRes, index) {
-                        absoluteFixedHash.lastDay = 1;
-                    }},
-
-                    {re: new RegExp(frontof), fn: function (aRes, index) {
-                        // handle the meridian
-
-                        aRes[1] = _handleMeridian(aRes[1], aRes[3]);
-
-                        updateAbs({
-                            h: aRes[1],
-                            i: 0,
-                            s: 0
-                        }, null, index);
-                        updateRel({
-                            i: -15
-                        }, null, index);
-
-                        setTime();
-                    }},
-                    {re: new RegExp(backof), fn: function (aRes, index) {
-                        
-                        aRes[1] = _handleMeridian(aRes[1], aRes[3]);
-
-                        updateAbs({
-                            h: aRes[1],
-                            i: 0,
-                            s: 0
-                        }, null, index);                        
-                        updateRel({
-                            i: 15
-                        }, null, index);
-
-                        setTime();                        
-                    }},
-
-
-                    // complex relative things - weekday of
-                    {re: new RegExp(weekdayof), fn: function (aRes, index) {
-                        
-                        var modifier = aRes[1], // first, second or next, last etc
-                            ind = strtotime.RELTEXTNUMBER.indexOf(modifier),
-                            dow = aRes[4],
-                            dowIndex = strtotime.DAYFULL.indexOf(dow) !== -1 ?
-                                strtotime.DAYFULL.indexOf(dow) :
-                                strtotime.DAYABBR.indexOf(dow);
-
-
-                        if (ind !== -1) {
-                            // something like 'third Wednesday in June'
-                            updateRel({
-                                weekdayOf: {
-                                    dayIndex: dowIndex,
-                                    weekIndex: ind
-                                }
-                            }, null, index);
-                        } else {
-                            // something like 'last Wednesday in June'
-                            updateRel({
-                                weekdayOf: {
-                                    dayIndex: dowIndex,
-                                    weekIndex: aRes[1]
-                                }
-                            }, null, index);                        
-                        }
-                        updateAbs({
-                            h: 0,
-                            i: 0,
-                            s: 0
-                        }, null, index);                    
-                    }},
-
-
-
-                    // some times
-
-                    {re: new RegExp(mssqltime), fn: function (aRes, index) {
-
-                        updateAbs({
-                            h: _handleMeridian(aRes[1], aRes[5]),
-                            i: aRes[2],
-                            s: aRes[3] + '.' + aRes[4]
-                        }, null, index);
-                        setTime();
-                    }},
-
-                    {re : new RegExp([timelong12, timeshort12, timetiny12].join('|')), fn: function (aRes, index) {
-
-                        var hr,
-                            mn,
-                            sc,
-                            mr,
-                            newAbs = {};
-
-                        // get the times:
-                        hr = aRes[1] || aRes[6] || aRes[10];
-                        mn = aRes[2] || aRes[7];
-                        sc = aRes[3];
-                        mr = aRes[5] || aRes[9] || aRes[12];
-
-                        if (mr !== undefined) {
-                            hr = _handleMeridian(hr, mr);
-                        }
-
-                        newAbs.h = hr;
-                        if (mn !== undefined) {
-                            newAbs.i = mn;
-                        }
-                        if (sc !== undefined) {
-                            newAbs.s = sc;
-                        }
-
-                        updateAbs(newAbs, null, index);
-                        setTime();
-                    }},
-
-
-                    {re: new RegExp([iso8601long, timelong24, timeshort24].join('|')), fn: function (aRes, index) {
-                        var hr,
-                            mn,
-                            sc,
-                            fr,
-                            newAbs = {};
-
-                        // get the times:
-                        hr = aRes[2] || aRes[7] || aRes[11];
-                        mn = aRes[3] || aRes[8] || aRes[12];
-                        sc = aRes[4] || aRes[9];
-                        fr = aRes[5];
-
-                        newAbs.h = hr;
-                        if (mn !== undefined) {
-                            newAbs.i = mn;
-                        }
-                        if (sc !== undefined) {
-                            newAbs.s = sc;
-                            if (fr !== undefined) {
-                                newAbs.s += '.' + parseInt(fr);
-                            }
-                        } 
-
-                        updateAbs(newAbs, null, index);
-                        setTime();
-                    }},
-
-
-
-                    // dates
-                    {re: new RegExp(iso8601dateslash), fn: function (aRes, index) {
-                        updateAbs({
-                            y: aRes[1],
-                            m: parseInt(aRes[2], 10) - 1,
-                            d: aRes[3],
-                            h: 0,
-                            i: 0,
-                            s: 0
-                        }, true, index);
-                    }},
-
-
-                    // This seems like an error.  In the php C source this is listed 
-                    // after timeshort24.  However, if you do so it matches years
-                    // that appear as part of longer dates and goes wrong.
-                    {re: new RegExp(gnunocolon), fn: function (aRes, index) {
-
-                        updateAbs({
-                            specialFn: function (ms, oChange) {
-
-                                var t = aRes[1];
-                                // trying to set the time more than once should return an error
-                                // This seems to be checked in the C source
-                                // in the gnunocolon (and possibly elsewhere)
-                                // but not as a general check
-                                switch (hasTime) {
-                                    case 1:
-                                        // explicit time and time's already set
-                                        if (t === "t") {
-                                            return false;
-                                        }
-                                        return absChange.y(ms, parseFloat("" + aRes[2] + aRes[3]));
-                                        break
-
-                                    case 0:
-                                        setTime();
-                                        ms = absChange.h(ms, aRes[2]);
-                                        return absChange.i(ms, aRes[3]);
-                                        break;
-
-                                    default:
-                                        // more than once is an error
-                                        return false;
-                                        break;
-                                }
-                            }
-                        }, null, index);
-                        // either a time or year:
-                      /*  if (hasTime === false) {
-                            // time
-                            updateAbs({
-                                h: aRes[2],
-                                m: aRes[3]
-                            }, null, index);
-                        } else {
-                            // year
-                            updateAbs({
-                                y: "" + aRes[2] + aRes[3]
-                            }, null, index);
-                        }*/
-                    }}
-
-                ],
-
-
-                // in the loop
-                i = 0,
-                j = 0,
-                thisChange,
-                test,
-                ignoreInAbs,
-                index,
-                reResult;
-
-
-
-            time = Y.Lang.trim(time);
-            
-            copyTime = time;
-
-
-            // Go through, looking for the relevant regexps 
-            // and acting accordingly
-            for (i = 0; i < tests.length; i = i + 1) {
-
-                test = tests[i];
-
-                reResult = test.re.exec(copyTime);
-
-                if (reResult) {
-                    index = test.re.exec(time).index;
-                    test.fn.call(undefined, reResult, index);
-                    // remove the matched string from our copy.
-                    copyTime = copyTime.replace(reResult[0], "");
-                }
-
-            }
-
-
-            // Error conditions
-
-            // Unexpected characters left after all our matching?
-            // That's an error.
-            if (Y.Lang.trim(copyTime) !== '') {
-                return false;
-            }
-
-
-
-
-            ignoreInAbs = ['specialFn', 'lastDay', 'firstDay', 'fixTime', 'fixDate'];
-            // Now apply absolute changes
-            for (j = 0; j < orderedAbsChanges.length; j = j + 1) {
-
-                thisChange = orderedAbsChanges[j];
-                if (thisChange !== undefined) {
-
-                    for (i in thisChange) {
-                    
-                        if (thisChange.hasOwnProperty(i) && ignoreInAbs.indexOf(i) === -1 && thisChange[i] !== undefined) {
-                            
-                            ms = absChange[i](ms, thisChange[i]);
-
-                            if (ms === false) {
-                                return false;
-                            }
-
-                        }
-                    }
-                    if (thisChange.fixTime === true) {
-                        fixTime = true;
-                    }
-                    if (thisChange.specialFn !== undefined) {
-                        ms = thisChange.specialFn(ms, thisChange);
-                    }
-                    if (ms === false) {
-                        return false;
-                    }
-                }
-            }
-
-
-
-            // Now apply relativeHash changes
-            for (j = 0; j < orderedRelChanges.length; j = j + 1) {
-
-                thisChange = orderedRelChanges[j];
-                if (thisChange !== undefined) {
-                    for (i in thisChange) {
-                        if (thisChange.hasOwnProperty(i), 'weekdayOf' && thisChange[i] !== 0) {
-                            ms = relChange[i](ms, thisChange[i]);
-                        }
-                    }
-                }
-            }
-
-
-            // More complex changes that need the above to complete first
-            if (absoluteFixedHash.lastDay === 1) {
-                // find date of last day of this month
-                ms = absChange.d(ms, _findLastDayOf(ms));
-
-            } else if (absoluteFixedHash.firstDay === 1) {
-                // set to the first day
-                ms = absChange.d(ms, 1);
-
-            }
-
-
-            // Work out the 'first Wednesday' type modifiers
-            if (relativeFixedHash.weekdayOf !== undefined) {
-                ms = _findWeekdayOf(ms, relativeFixedHash.weekdayOf);
-            }
-
-
-
-            return Math.floor(ms / 1000);
+            };
 
         };
 
 
 
-    // This may be changed for Internationalised versions:
+        /**
+         @method finishRegExp
+         @static
+         User-overridable function that is called after the default regex strings
+         have been constructed, to allow user modification if needed.
+
+         @public
+         @param {Object}  The strings constructed by strtotime.constructRegExp
+         @return {Object}
+         */
+        strtotime.finishRegExp = function (oRegEx) {
+            return oRegEx;
+        }
+
+
+        /**
+         @method constructTests
+         Builds an array of tests to carry out, and what to do if they pass
+         - ie if there's a match to the regexp.  Each item in the array
+         is an object with keys `re`, `fn` and `key`
+         @protected
+         @static
+         @param {Object}  Regex strings built by constructRegExp
+         @return {Array}
+         */
+        strtotime.constructTests = function (oRegEx) {
+
+            // The tests to carry out, and what happens
+            return [
+
+                // Fixed strings:
+                {key: 'yesterday', re: new RegExp('yesterday'), fn: function (aRes, index, mods) {
+                    Y.log('strtotime: Matched yesterday');
+                    mods.updateRel({d: -1}, null, index);
+                    mods.updateAbs({h: 0, i: 0, s: 0}, true, index);
+                }},
+
+                {key: 'now', re: new RegExp('now'), fn: function (aRes, index, mods) {
+                    Y.log('strtotime: Matched now');
+                }},
+
+                {key: 'noon', re: new RegExp('noon'), fn: function (aRes, index, mods) {
+                    Y.log('strtotime: Matched noon');
+                    mods.updateAbs({
+                        h: 12, 
+                        i: 0, 
+                        s: 0, 
+                        fixTime: true, 
+                        specialFn: function (ms, oChange) {
+                            mods.setTime(); 
+                            return ms;
+                        }
+                    }, null, index);
+                }},
+
+                {key: 'midnight|today', re: new RegExp('midnight|today'), fn: function (aRes, index, mods) {
+                    Y.log('strtotime: Matched midnight|today');
+                    mods.updateAbs({h: 0, i: 0, s:0}, null, index);
+                }},
+
+                {key: 'tomorrow', re: new RegExp('tomorrow'), fn: function (aRes, index, mods) {
+                    Y.log('strtotime: Matched tomorrow');
+                    mods.updateRel({d: 1}, null, index);                        
+                    mods.updateAbs({h: 0, i: 0, s: 0}, null, index);                    
+                }},
+
+
+
+                // Unix timestamp
+                {key: 'timestamp', re: new RegExp(oRegEx.timestamp), fn: function (aRes, index, mods) {
+                    var tmp = new Date(parseInt(aRes[2], 10) * 1000);
+                    Y.log('strtotime: Matched timestamp');
+                    mods.updateAbs({
+                        y: tmp.getUTCFullYear(),
+                        m: tmp.getUTCMonth(),
+                        d: tmp.getUTCDate(),
+                        h: tmp.getUTCHours(),
+                        i: tmp.getUTCMinutes(),
+                        s: tmp.getUTCSeconds()
+                    }, true, index);
+                    mods.setTime();
+                }},
+
+
+
+                // Simple relative things
+                {key: 'firstdayof', re: new RegExp(oRegEx.firstdayof), fn: function (aRes, index, mods) {
+                    Y.log('strtotime: Matched firstdayof');
+                    mods.absoluteFixedHash.firstDay = 1;
+                }},
+                {key: 'lastdayof', re: new RegExp(oRegEx.lastdayof), fn: function (aRes, index, mods) {
+                    Y.log('strtotime: Matched lastdayof');
+                    mods.absoluteFixedHash.lastDay = 1;
+                }},
+
+                {key: 'frontof', re: new RegExp(oRegEx.frontof), fn: function (aRes, index, mods) {
+                    
+                    Y.log('strtotime: Matched frontof');
+                    
+                    // handle the meridian
+                    aRes[1] = _handleMeridian(aRes[1], aRes[3]);
+
+                    mods.updateAbs({
+                        h: aRes[1],
+                        i: 0,
+                        s: 0
+                    }, null, index);
+                    mods.updateRel({
+                        i: -15
+                    }, null, index);
+
+                    mods.setTime();
+                }},
+                {key: 'backof', re: new RegExp(oRegEx.backof), fn: function (aRes, index, mods) {
+                    
+                    Y.log('strtotime: Matched backof');
+                    aRes[1] = _handleMeridian(aRes[1], aRes[3]);
+
+                    mods.updateAbs({
+                        h: aRes[1],
+                        i: 0,
+                        s: 0
+                    }, null, index);                        
+                    mods.updateRel({
+                        i: 15
+                    }, null, index);
+
+                    mods.setTime();                        
+                }},
+
+
+                // complex relative things - weekday of
+                {key: 'weekdayof', re: new RegExp(oRegEx.weekdayof), fn: function (aRes, index, mods) {
+                    
+                    var modifier = aRes[1], // first, second or next, last etc
+                        ind = strtotime.RELTEXTNUMBER.indexOf(modifier),
+                        dow = aRes[4],
+                        dowIndex = strtotime.DAYFULL.indexOf(dow) !== -1 ?
+                            strtotime.DAYFULL.indexOf(dow) :
+                            strtotime.DAYABBR.indexOf(dow);
+
+                    Y.log('strtotime: Matched weekdayof');
+
+                    if (ind !== -1) {
+                        // something like 'third Wednesday in June'
+                        mods.updateRel({
+                            weekdayOf: {
+                                dayIndex: dowIndex,
+                                weekIndex: ind
+                            }
+                        }, null, index);
+                    } else {
+                        // something like 'last Wednesday in June'
+                        mods.updateRel({
+                            weekdayOf: {
+                                dayIndex: dowIndex,
+                                weekIndex: aRes[1]
+                            }
+                        }, null, index);                        
+                    }
+                    mods.updateAbs({
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, null, index);                    
+                }},
+
+
+
+                // some times
+
+                {key: 'mssqltime', re: new RegExp(oRegEx.mssqltime), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: Matched mssqltime');
+                    mods.updateAbs({
+                        h: _handleMeridian(aRes[1], aRes[5]),
+                        i: aRes[2],
+                        s: aRes[3] + '.' + aRes[4]
+                    }, null, index);
+                    mods.setTime();
+                }},
+
+                {key: 'times12', re: new RegExp([oRegEx.timelong12, oRegEx.timeshort12, oRegEx.timetiny12].join('|')), fn: function (aRes, index, mods) {
+
+                    var hr,
+                        mn,
+                        sc,
+                        mr,
+                        newAbs = {};
+                    Y.log('strtotime: Matched timelong12|timeshort12|timetiny12');
+                    // get the times:
+                    hr = aRes[1] || aRes[6] || aRes[10];
+                    mn = aRes[2] || aRes[7];
+                    sc = aRes[3];
+                    mr = aRes[5] || aRes[9] || aRes[12];
+
+                    if (mr !== undefined) {
+                        hr = _handleMeridian(hr, mr);
+                    }
+
+                    newAbs.h = hr;
+                    if (mn !== undefined) {
+                        newAbs.i = mn;
+                    }
+                    if (sc !== undefined) {
+                        newAbs.s = sc;
+                    }
+
+                    mods.updateAbs(newAbs, null, index);
+                    mods.setTime();
+                }},
+
+
+                {key: 'times24', re: new RegExp([oRegEx.iso8601long, oRegEx.timelong24, oRegEx.timeshort24].join('|')), fn: function (aRes, index, mods) {
+                    var hr,
+                        mn,
+                        sc,
+                        fr,
+                        newAbs = {};
+
+                    Y.log('strtotime: Matched iso8601long|timelong24|timeshort24');
+
+                    // get the times:
+                    hr = aRes[2] || aRes[7] || aRes[11];
+                    mn = aRes[3] || aRes[8] || aRes[12];
+                    sc = aRes[4] || aRes[9];
+                    fr = aRes[5];
+
+                    newAbs.h = hr;
+                    if (mn !== undefined) {
+                        newAbs.i = mn;
+                    }
+                    if (sc !== undefined) {
+                        newAbs.s = sc;
+                        if (fr !== undefined) {
+                            newAbs.s += '.' + parseInt(fr);
+                        }
+                    } 
+
+                    mods.updateAbs(newAbs, null, index);
+                    mods.setTime();
+                }},
+
+
+
+
+                // dates
+                {key: 'iso8601dateslash', re: new RegExp(oRegEx.iso8601dateslash), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: Matched iso8601dateslash');
+
+                    mods.updateAbs({
+                        y: aRes[1],
+                        m: parseInt(aRes[2], 10) - 1,
+                        d: aRes[3],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+                }},
+
+
+                // This seems like an error.  In the php C source this is listed 
+                // after timeshort24.  However, if you do so it matches years
+                // that appear as part of longer dates and goes wrong.
+                {key: 'gnunocolon', re: new RegExp(oRegEx.gnunocolon), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: Matched gnunocolon');
+
+                    mods.updateAbs({
+                        specialFn: function (ms, oChange) {
+
+                            var t = aRes[1];
+                            // trying to set the time more than once should return an error
+                            // This seems to be checked in the C source
+                            // in the gnunocolon (and possibly elsewhere)
+                            // but not as a general check
+                            switch (mods.hasTime) {
+                                case 1:
+                                    // explicit time and time's already set
+                                    if (t === "t") {
+                                        return false;
+                                    }
+                                    return absChange.y(ms, parseFloat("" + aRes[2] + aRes[3]));
+                                    break
+
+                                case 0:
+                                    mods.setTime();
+                                    ms = absChange.h(ms, aRes[2]);
+                                    return absChange.i(ms, aRes[3]);
+                                    break;
+
+                                default:
+                                    // more than once is an error
+                                    return false;
+                                    break;
+                            }
+                        }
+                    }, null, index);
+
+                }}
+
+            ];
+
+        };
+
+        /**
+         @method finishTests
+         @static
+         User-overridable function that is called after the default
+         test builder (constructTests) to allow user modification if 
+         needed.
+
+         @public
+         @param {Object}  Regex strings built earlier
+         @param {Array}   Array of tests built by default process
+         @return {Array}
+         */
+        strtotime.finishTests = function (oRegEx, aTests) {
+            return aTests;
+        }
+
+
+
+
+
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    // Language items used: if Intl is available it will use them
+    // where it can.  Not all items are included in the default language
+    // packs (e.g. 'next') for dates: implementers can also overwrite these
+    // too if they want to.
+    //
+    
+
+    /**
+     @property DAYSPECIAL
+     @static
+     Array of terms meaning 'weekday'
+     @var {Array}
+     */
     strtotime.DAYSPECIAL = ['weekday', 'weekdays'];
+    /**
+     Terms meaning 'first day of'
+     @property FIRSTDAYOF
+     @static
+     @var {String}
+     */
     strtotime.FIRSTDAYOF = 'first day of';
+    /**
+     Term meaning 'last day of'
+     @property LASYDAYOF
+     @static
+     @var {String}
+     */
     strtotime.LASTDAYOF = 'last day of';
+     /**
+     Term meaning 'back of' (i.e. quarter past)
+     @property BACKOF
+     @static
+     @var {String}
+     */
     strtotime.BACKOF = 'back of ';
+    /**
+     Term meaning 'front of' (i.e. quarter to)
+     @property FRONTOF
+     @static
+     @var {String}
+     */    
     strtotime.FRONTOF = 'front of ';
 
-            
+    /**
+     Array of full day names of the week.
+     Must be in order: must start with Sunday (as day 0).
+
+     Will use Intl module day names if available
+     @property DAYFULL
+     @static
+     @var {Array}
+     */
     strtotime.DAYFULL = INTL.A ? INTL.A : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    /**
+     Array of shortened day names of the week.
+     Must be in order: must start with Sun (as day 0).
+
+     Will use Intl module day names if available
+     @property DAYABBR
+     @static
+     @var {Array}
+     */
     strtotime.DAYABBR = INTL.a ? INTL.a : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    // Note the 1-based array
+    /**
+     Array of shortened day names of the week.
+     Must be in order: must start with Sun (as day 0).
+
+     Will use Intl module day names if available
+     @property DAYABBR
+     @static
+     @var {Array}
+     */
+    strtotime.AMPM = INTL.p || INTL.P ? 
+        '(' + (INTL.P ? INTL.P.join('|') : '') + (INTL.P && INTL.p ? '|' : '') + (INTL.p ? INTL.p.join('|') : '') + ')' :
+        '([AaPp].?[Mm].?)';
+     /**
+     Array of ordinals (first, second, third etc)
+     Must be in order: must start with 'first' in position 0
+
+     @property RELTEXTNUMBER
+     @static
+     @var {Array}
+     */
     strtotime.RELTEXTNUMBER = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
+     /**
+     Array of text terms for 'next', 'last', 'previous', 'this'
+     Must be in order: must start with 'next' in position 0
+
+     @property RELTEXTTEXT
+     @static
+     @var {Array}
+     */    
     strtotime.RELTEXTTEXT = ['next','last','previous','this'];
+     /**
+     Array of time terms
+     
+
+     @property RELTEXTUNIT
+     @static
+     @var {Array}
+     */
     strtotime.RELTEXTUNIT = ['sec','second','min','minute','hour','day','fortnight','forthnight','month','year'];// 's'?) , 'weeks' , daytext;
 
 
+
+    // Put in the DataType.Date namespace
     Y.DataType.Date.strtotime = strtotime;
 
 }, '0.1', {

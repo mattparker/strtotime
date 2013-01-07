@@ -13,7 +13,7 @@ YUI.add('strtotime', function (Y) {
 
 
     // Use Internationalised stuff if we can
-    var INTL = Y.Intl ? Y.Intl.get("datatype-date-format") : {},
+    var INTL = {}, //Y.Intl ? Y.Intl.get("datatype-date-format") : {},
         
 
         strtotime = function (time, baseTimestamp) {
@@ -111,7 +111,7 @@ YUI.add('strtotime', function (Y) {
                                 aH[i] = oChange[i];
                             } else {
 
-                                c = parseInt(oChange[i], 10);
+                                c = parseFloat(oChange[i]);
 
                                 if (i === "h" || i === "i" || i === "s") {
                                     hasTime = true;
@@ -166,11 +166,12 @@ YUI.add('strtotime', function (Y) {
 
                     var c1;
                     hour = parseInt(hour, 10);
-                    ampm = ampm.replace(".", "");
 
                     if (ampm === undefined) {
                         return hour;
                     }
+                    ampm = ampm.replace(".", "");
+
                     c1 = ampm.substring(0, 1).toLowerCase();
                     
                     if (hour < 12 && c1 === "p") {
@@ -313,10 +314,10 @@ YUI.add('strtotime', function (Y) {
                 // so they're only made into RegExps later.
 
                 space = '[ \t]+',
-                frac = '\.[0-9]+',
+                frac = '\.([0-9]+)',
                 ago = 'ago',
                 hour24 = '(2[0-4]|[01]?[0-9])',
-                hour24lz = '(2[0-4]|[01][09])',
+                hour24lz = '(2[0-4]|[01][0-9])',
                 hour12 = '(1[0-2]|0?[1-9])',
                 minute = '([0-5]?[0-9])',
                 minutelz = '([0-5][0-9])',
@@ -346,8 +347,8 @@ YUI.add('strtotime', function (Y) {
                 daylz = '(0[0-9]|[1-2][0-9]|3[01])',
 
                 // Use Internationalisation to get lang pack
-                dayfull = INTL.A ? INTL.A.join('|') : 'sunday|monday|tuesday|wednesday|thursday|friday|saturday',
-                dayabbr = INTL.a ? INTL.a.join('|') : 'sun|mon|tue|wed|thu|fri|sat|sun',
+                dayfull = strtotime.DAYFULL.join('|'),// : 'sunday|monday|tuesday|wednesday|thursday|friday|saturday',
+                dayabbr = strtotime.DAYABBR.join('|'),// : 'sun|mon|tue|wed|thu|fri|sat|sun',
                 dayspecial = strtotime.DAYSPECIAL.join('|') || 'weekday|weekdays',  // apparently no INTL version of this
                 daytext = '(' + dayfull + '|' + dayabbr + '|' + dayspecial + ')',
 
@@ -443,32 +444,31 @@ YUI.add('strtotime', function (Y) {
 
 
                     // Fixed strings:
-                    {re: new RegExp('yesterday'), fn: function (aRes) {
-                        updateRel({d: -1}, null, aRes.index); 
-                        updateAbs({h: 0, i: 0, s: 0}, true, aRes.index);
+                    {re: new RegExp('yesterday'), fn: function (aRes, index) {
+                        updateRel({d: -1}, null, index);
+                        updateAbs({h: 0, i: 0, s: 0}, true, index);
                     }},
 
-                    {re: new RegExp('now'), fn: function (aRes) {
+                    {re: new RegExp('now'), fn: function (aRes, index) {
                     }},
 
-                    {re: new RegExp('noon'), fn: function (aRes) {
-                        updateAbs({h: 12, i: 0, s: 0, fixTime: true}, null, aRes.index);
-                        
+                    {re: new RegExp('noon'), fn: function (aRes, index) {
+                        updateAbs({h: 12, i: 0, s: 0, fixTime: true}, null, index);                        
                     }},
 
-                    {re: new RegExp('midnight|today'), fn: function (aRes) {
-                        updateAbs({h: 0, i: 0, s:0}, null, aRes.index);
+                    {re: new RegExp('midnight|today'), fn: function (aRes, index) {
+                        updateAbs({h: 0, i: 0, s:0}, null, index);                    
                     }},
 
-                    {re: new RegExp('tomorrow'), fn: function (aRes) {
-                        updateRel({d: 1}, null, aRes.index);
-                        updateAbs({h: 0, i: 0, s: 0}, null, aRes.index);
+                    {re: new RegExp('tomorrow'), fn: function (aRes, index) {
+                        updateRel({d: 1}, null, index);                        
+                        updateAbs({h: 0, i: 0, s: 0}, null, index);                    
                     }},
 
 
 
                     // Unix timestamp
-                    {re: new RegExp(timestamp), fn: function (aRes) {
+                    {re: new RegExp(timestamp), fn: function (aRes, index) {
                         var tmp = new Date(parseInt(aRes[2], 10) * 1000);
                         updateAbs({
                             y: tmp.getUTCFullYear(),
@@ -477,22 +477,21 @@ YUI.add('strtotime', function (Y) {
                             h: tmp.getUTCHours(),
                             i: tmp.getUTCMinutes(),
                             s: tmp.getUTCSeconds()
-                        }, true, aRes.index);
-
+                        }, true, index);
 
                     }},
 
 
 
                     // Simple relative things
-                    {re: new RegExp(firstdayof), fn: function (aRes) {
+                    {re: new RegExp(firstdayof), fn: function (aRes, index) {
                         absoluteFixedHash.firstDay = 1;
                     }},
-                    {re: new RegExp(lastdayof), fn: function (aRes) {
+                    {re: new RegExp(lastdayof), fn: function (aRes, index) {
                         absoluteFixedHash.lastDay = 1;
                     }},
 
-                    {re: new RegExp(frontof), fn: function (aRes) {
+                    {re: new RegExp(frontof), fn: function (aRes, index) {
                         // handle the meridian
 
                         aRes[1] = _handleMeridian(aRes[1], aRes[3]);
@@ -501,13 +500,12 @@ YUI.add('strtotime', function (Y) {
                             h: aRes[1],
                             i: 0,
                             s: 0
-                        }, null, aRes.index);
+                        }, null, index);                        
                         updateRel({
                             i: -15
-                        }, null, aRes.index);
-                        
+                        }, null, index);                        
                     }},
-                    {re: new RegExp(backof), fn: function (aRes) {
+                    {re: new RegExp(backof), fn: function (aRes, index) {
                         
                         aRes[1] = _handleMeridian(aRes[1], aRes[3]);
 
@@ -515,16 +513,15 @@ YUI.add('strtotime', function (Y) {
                             h: aRes[1],
                             i: 0,
                             s: 0
-                        }, null, aRes.index);
+                        }, null, index);                        
                         updateRel({
                             i: 15
-                        }, null, aRes.index);
-                        
+                        }, null, index);                        
                     }},
 
 
                     // complex relative things - weekday of
-                    {re: new RegExp(weekdayof), fn: function (aRes) {
+                    {re: new RegExp(weekdayof), fn: function (aRes, index) {
                         
                         var modifier = aRes[1], // first, second or next, last etc
                             ind = strtotime.RELTEXTNUMBER.indexOf(modifier),
@@ -541,8 +538,7 @@ YUI.add('strtotime', function (Y) {
                                     dayIndex: dowIndex,
                                     weekIndex: ind
                                 }
-                            }, null, aRes.index);
-
+                            }, null, index);
                         } else {
                             // something like 'last Wednesday in June'
                             updateRel({
@@ -550,19 +546,29 @@ YUI.add('strtotime', function (Y) {
                                     dayIndex: dowIndex,
                                     weekIndex: aRes[1]
                                 }
-                            }, null, aRes.index);
+                            }, null, index);                        
                         }
                         updateAbs({
                             h: 0,
                             i: 0,
                             s: 0
-                        }, null, aRes.index);
+                        }, null, index);                    
                     }},
 
 
 
                     // some times
-                    {re : new RegExp(timetiny12 + '|' + timeshort12 + '|' + timelong12), fn: function (aRes) {
+
+                    {re: new RegExp(mssqltime), fn: function (aRes, index) {
+
+                        updateAbs({
+                            h: _handleMeridian(aRes[1], aRes[5]),
+                            i: aRes[2],
+                            s: aRes[3] + '.' + aRes[4]
+                        }, null, index);
+                    }},
+
+                    {re : new RegExp([timelong12, timeshort12, timetiny12].join('|')), fn: function (aRes, index) {
 
                         var hr,
                             mn,
@@ -571,10 +577,10 @@ YUI.add('strtotime', function (Y) {
                             newAbs = {};
 
                         // get the times:
-                        hr = aRes[1] || aRes[4] || aRes[8];
-                        mn = aRes[5] || aRes[9];
-                        sc = aRes[10];
-                        mr = aRes[3] || aRes[7] || aRes[12];
+                        hr = aRes[1] || aRes[6] || aRes[10];
+                        mn = aRes[2] || aRes[7];
+                        sc = aRes[3];
+                        mr = aRes[5] || aRes[9] || aRes[12];
 
                         if (mr !== undefined) {
                             hr = _handleMeridian(hr, mr);
@@ -588,30 +594,22 @@ YUI.add('strtotime', function (Y) {
                             newAbs.s = sc;
                         }
 
-                        updateAbs(newAbs, null, aRes.index);
-
+                        updateAbs(newAbs, null, index);
                     }},
 
-                    {re: new RegExp(mssqltime), fn: function (aRes) {
 
-                        updateAbs({
-                            h: _handleMeridian(aRes[1], aRes[5]),
-                            i: aRes[2],
-                            s: aRes[3] + '.' + aRes[4]
-                        });
-                    }},
-
-                    {re: new RegExp([timeshort24, timelong24, iso8601long].join('|')), fn: function (aRes) {
+                    {re: new RegExp([iso8601long, timelong24, timeshort24].join('|')), fn: function (aRes, index) {
                         var hr,
                             mn,
                             sc,
+                            fr,
                             newAbs = {};
 
                         // get the times:
-                        hr = aRes[1] || aRes[4] || aRes[8];
-                        mn = aRes[5] || aRes[9];
-                        sc = aRes[10];
-                        mr = aRes[3] || aRes[7] || aRes[12];
+                        hr = aRes[2] || aRes[7] || aRes[11];
+                        mn = aRes[3] || aRes[8] || aRes[12];
+                        sc = aRes[4] || aRes[9];
+                        fr = aRes[5];
 
                         newAbs.h = hr;
                         if (mn !== undefined) {
@@ -619,30 +617,18 @@ YUI.add('strtotime', function (Y) {
                         }
                         if (sc !== undefined) {
                             newAbs.s = sc;
-                        }
+                            if (fr !== undefined) {
+                                newAbs.s += '.' + parseInt(fr);
+                            }
+                        } 
 
-                        updateAbs(newAbs, null, aRes.index);
+                        updateAbs(newAbs, null, index);
                     }},
 
-                    {re: new RegExp(gnunocolon), fn: function (aRes) {
-                        // either a time or year:
-                        if (hasTime === false) {
-                            // time
-                            updateAbs({
-                                h: aRes[2],
-                                m: aRes[3]
-                            });
-                        } else {
-                            // year
-                            updateAbs({
-                                y: aRes[1]
-                            });
-                        }
-                    }},
 
 
                     // dates
-                    {re: new RegExp(iso8601dateslash), fn: function (aRes) {
+                    {re: new RegExp(iso8601dateslash), fn: function (aRes, index) {
                         updateAbs({
                             y: aRes[1],
                             m: parseInt(aRes[2], 10) - 1,
@@ -650,8 +636,27 @@ YUI.add('strtotime', function (Y) {
                             h: 0,
                             i: 0,
                             s: 0
-                        }, true, aRes.index);
+                        }, true, index);
+                    }},
 
+
+                    // This seems like an error.  In the php C source this is listed 
+                    // after timeshort24.  However, if you do so it matches years
+                    // that appear as part of longer dates and goes wrong.
+                    {re: new RegExp(gnunocolon), fn: function (aRes, index) {
+                        // either a time or year:
+                        if (hasTime === false) {
+                            // time
+                            updateAbs({
+                                h: aRes[2],
+                                m: aRes[3]
+                            }, null, index);
+                        } else {
+                            // year
+                            updateAbs({
+                                y: "" + aRes[2] + aRes[3]
+                            }, null, index);
+                        }
                     }}
 
                 ],
@@ -662,6 +667,7 @@ YUI.add('strtotime', function (Y) {
                 j = 0,
                 thisChange,
                 test,
+                index,
                 reResult;
 
 
@@ -677,10 +683,11 @@ YUI.add('strtotime', function (Y) {
 
                 test = tests[i];
 
-                reResult = test.re.exec(time);
+                reResult = test.re.exec(copyTime);
 
                 if (reResult) {
-                    test.fn.call(undefined, reResult);
+                    index = test.re.exec(time).index;
+                    test.fn.call(undefined, reResult, index);
                     // remove the matched string from our copy.
                     copyTime = copyTime.replace(reResult[0], "");
                 }
@@ -713,6 +720,7 @@ YUI.add('strtotime', function (Y) {
                             if (ms === false) {
                                 return false;
                             }
+
                         }
                     }
                     if (thisChange.fixTime === true) {
@@ -769,8 +777,8 @@ YUI.add('strtotime', function (Y) {
     strtotime.FRONTOF = 'front of ';
 
             
-    strtotime.DAYFULL = INTL.A ? INTL.A : ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    strtotime.DAYABBR = INTL.a ? INTL.a : ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    strtotime.DAYFULL = INTL.A ? INTL.A : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    strtotime.DAYABBR = INTL.a ? INTL.a : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     // Note the 1-based array
     strtotime.RELTEXTNUMBER = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
     strtotime.RELTEXTTEXT = ['next','last','previous','this'];

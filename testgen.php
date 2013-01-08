@@ -42,7 +42,13 @@ $dateFormats = array(
 	// pointed date
 	"j.m.Y",
 	"d-n-Y",
-	"j.m.y"
+	"j.m.y",
+	// datenoday
+	"F Y",
+	"M Y",
+	// datenodayrev
+	"Y F",
+	"Y M",
 
 
 

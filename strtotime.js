@@ -1475,7 +1475,49 @@ YUI.add('strtotime', function (Y) {
 
                 }},
 
+                {key: 'datenoday', re: new RegExp(oRegEx.datenoday), fn: function (aRes, index, mods) {
 
+                    Y.log('strtotime: matched datenoday');
+
+                    var y = _handleShortYear(aRes[6]),
+                        m = _handleMonthText(aRes[1]);
+
+                    if (y === false) {
+                        return false;
+                    }
+
+                    mods.updateAbs({
+                        y: y,
+                        m: m,
+                        d: 1,
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},
+
+                {key: 'datenodayrev', re: new RegExp(oRegEx.datenodayrev), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched datenodayrev');
+
+                    var y = _handleShortYear(aRes[1]),
+                        m = _handleMonthText(aRes[3]);
+
+                    if (y === false) {
+                        return false;
+                    }
+
+                    mods.updateAbs({
+                        y: y,
+                        m: m,
+                        d: 1,
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},
 
                 // This seems like an error.  In the php C source this is listed 
                 // after timeshort24.  However, if you do so it matches years

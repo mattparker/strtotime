@@ -168,9 +168,50 @@ YUI.add('strtotime', function (Y) {
             return tmt;
         },
 
+        /**
+         * Handles two-digit years, turning them into 4 digits
+         * If yr < 70 it'll add on 2000
+         * Otherwise it'll add on 1900
+         *
+         * @method _handleShortYear
+         * @param {Int} yr Year to process
+         * @return {int} Four-digit year
+         */
+        _handleShortYear = function (yr) {
+            
+            var strYr;
+
+            yr = parseInt(yr, 10);
+            strYr = yr + "";
+            
+            if (strYr.length >= 4) {
+                return yr;
+            }
+            if (yr < 100) {
+                if (yr < 70) {
+                    return yr + 2000;
+                } else {
+                    return yr + 1900;
+                }
+            }
+            return yr;
+        },
 
 
-        // Functions that do the relative changes
+
+        /**
+         * Makes relative changes to different components of the date
+         * 
+         * @property relChange.y {Function}
+         * @property relChange.m {Function}
+         * @property relChange.d {Function}
+         * @property relChange.h {Function}
+         * @property relChange.i {Function}
+         * @property relChange.s {Function}
+         *      @param {Int} ts Timestamp to start with
+         *      @param {Int} d Amount to change
+         *      @return {Int} New timestamp
+         */
         relChange = {
             y: function (ts, d) {
                 return _change(ts, d, 'UTCFullYear');
@@ -197,6 +238,19 @@ YUI.add('strtotime', function (Y) {
             }
         },
 
+        /**
+         * Sets different components of the date
+         * 
+         * @property absChange.y {Function}
+         * @property absChange.m {Function}
+         * @property absChange.d {Function}
+         * @property absChange.h {Function}
+         * @property absChange.i {Function}
+         * @property absChange.s {Function}
+         *      @param {Int} ts Timestamp to start with
+         *      @param {Int} val New value
+         *      @return {Int} New timestamp
+         */
         absChange = {
             y: function (ts, val) {
                 return _set(ts, val, 'UTCFullYear');
@@ -269,11 +323,19 @@ YUI.add('strtotime', function (Y) {
              * by a particular statement
              *
              * @property fixDate
-             * @type {Boolean}
-             * @default False
+             * @type {Object}
+             * @default {
+                        y: false,
+                        m: false,
+                        d: false
+                    }
              * @public
              */
-            this.fixDate = false;
+            this.fixDate = {
+                y: false,
+                m: false,
+                d: false
+            };
 
             /**
              * Count of number of times time has been set.
@@ -416,7 +478,7 @@ YUI.add('strtotime', function (Y) {
                     }
                 }
                 this.orderedRelChanges[index] = rH;
-                return rh:
+                return rH;
             };
 
 
@@ -588,13 +650,13 @@ YUI.add('strtotime', function (Y) {
 
                 test = TESTS[i];
 
-                reResult = test.re.exec(copyTime);
+                reResult = test.re.exec(" " + copyTime);
 
                 if (reResult) {
-                    index = test.re.exec(time).index;
+                    index = test.re.exec(" " + time).index;
                     test.fn.call(undefined, reResult, index, mods);
                     // remove the matched string from our copy.
-                    copyTime = copyTime.replace(reResult[0], "");
+                    copyTime = copyTime.replace(Y.Lang.trim(reResult[0]), "");
                 }
 
             }
@@ -627,8 +689,18 @@ YUI.add('strtotime', function (Y) {
                                 return false;
                             }
 
+                            // not an error but we skip over days if they've been fixed
+                            if (i === 'd' && mods.fixDate.d === true) {
+                                continue;
+                            }
+
                             // Make the actual change
                             ms = absChange[i](ms, thisChange[i]);
+
+                            // OK, that change did fix the day, so we remember that
+                            if (thisChange.fixDate.d === true) {
+                                mods.fixDate.d = true;
+                            }
 
                             // An error occurred
                             if (ms === false) {
@@ -722,7 +794,7 @@ YUI.add('strtotime', function (Y) {
 
             var ret = {},
 
-                space = '[ \t]+',
+                space = '[ \t]+', 
                 frac = '\.([0-9]+)',
                 ago = 'ago',
                 hour24 = '(2[0-4]|[01]?[0-9])',
@@ -742,7 +814,7 @@ YUI.add('strtotime', function (Y) {
                 daysuf = '(st|nd|rd|th)',
 
                 month = '(0?[0-9]|1[0-2])',
-                day = '(([0-2]?[0-9])|(3[01]))' + daysuf + '?',
+                day = '((3[0-1])|([0-2]?[0-9]))' + daysuf + '?',
                 year = '([0-9]{1,4})',
                 year2 = '([0-9]{2})',
                 year4 = '([0-9]{4})',
@@ -779,11 +851,11 @@ YUI.add('strtotime', function (Y) {
                 iso8601nocolon = '(t)?' + hour24lz + minutelz + secondlz,
 
                 // Dates
-                americanshort = month + '\/' + day,
+                americanshort = space + month + '\/' + day,
                 american = americanshort + '\/' + year,
-                iso8601dateslash = year4 + '\/' + monthlz + '\/' + daylz + '\/?',
-                dateslash = year4 + '\/' + month + '\/' + day,
-                iso8601date4 = year4withsign + '-' + monthlz + '-' + daylz,
+                iso8601dateslash = space + year4 + '\/' + monthlz + '\/' + daylz + '\/?',
+                dateslash = space + year4 + '\/' + month + '\/' + day,
+                iso8601date4 = space + year4withsign + '-' + monthlz + '-' + daylz,
                 iso8601date2 = year2 + '-' + monthlz + '-' + daylz,
                 gnudateshorter = year4 + '-' + month,
                 gnudateshort = year + '-' + month + '-' + day,
@@ -1151,7 +1223,11 @@ YUI.add('strtotime', function (Y) {
                     mods.updateAbs({
                         h: 0,
                         i: 0,
-                        s: 0
+                        s: 0,
+                        d: 1,
+                        fixDate: {
+                            d: true
+                        }
                     }, null, index);                    
                 }},
 
@@ -1232,27 +1308,110 @@ YUI.add('strtotime', function (Y) {
                 }},
 
 
+                {key: 'iso8601nocolon', re: new RegExp(oRegEx.iso8601nocolon), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: Matched iso8601nocolon');
+
+                    mods.updateAbs({
+                        h: aRes[2],
+                        i: aRes[3],
+                        s: aRes[4]
+                    }, null, index);
+                }},
+
 
 
                 // dates
-                {key: 'iso8601dateslash', re: new RegExp(oRegEx.iso8601dateslash), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: Matched iso8601dateslash');
+
+                {key: 'american', re: new RegExp(oRegEx.american + '|' + oRegEx.americanshort), fn: function (aRes, index, mods) {
+                    
+                    Y.log('strtotime: Matched american');
+
+                    var upd = {
+                        m: parseInt(aRes[1] || aRes[7], 10) - 1,
+                        d: aRes[2] || aRes[8],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    };
+                    if (aRes[6] !== undefined) {
+                        upd.y = _handleShortYear(aRes[6]);
+                    }
+                    mods.updateAbs(upd, true, index);
+                }},
+
+                {key: 'iso8601dates', re: new RegExp([oRegEx.iso8601date4, oRegEx.iso8601dateslash, oRegEx.dateslash].join('|')),
+                    fn: function (aRes, index, mods) {
+
+                        Y.log('strtotime: Matched iso8601dates');
+
+                        mods.updateAbs({
+                            y: aRes[4] || aRes[7] || aRes[10],
+                            m: parseInt(aRes[5] || aRes[8] || aRes[11], 10) - 1,
+                            d: aRes[6] || aRes[9] || aRes[12],
+                            h: 0,
+                            i: 0,
+                            s: 0
+                        }, true, index);
+
+                    }
+                },
+
+                {key: 'iso8601date2', re: new RegExp(oRegEx.iso8601date2), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched iso8601date2');
+
+                    var y = _handleShortYear(aRes[1]);
 
                     mods.updateAbs({
-                        y: aRes[1],
+                        y: y,
                         m: parseInt(aRes[2], 10) - 1,
                         d: aRes[3],
                         h: 0,
                         i: 0,
                         s: 0
                     }, true, index);
+
+                }},
+
+                {key: 'gnudateshorter', re: new RegExp(oRegEx.gnudateshorter), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched gnudateshorter');
+
+                    var y = _handleShortYear(aRes[1]);
+
+                    mods.updateAbs({
+                        y: y,
+                        m: parseInt(aRes[2], 10) - 1,
+                        d: 1,
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},
+
+                {key: 'gnudateshort', re: new RegExp(oRegEx.gnudateshort), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched gnudateshort');
+
+                    var y = _handleShortYear(aRes[1]);
+
+                    mods.updateAbs({
+                        y: y,
+                        m: parseInt(aRes[2], 10) - 1,
+                        d: aRes[3],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
                 }},
 
 
-                {key: 'iso8601nocolon', re: new RegExp(oRegEx.iso8601nocolon), fn: function (aRes, index, mods) {
+              
 
-                }},
 
 
                 // This seems like an error.  In the php C source this is listed 

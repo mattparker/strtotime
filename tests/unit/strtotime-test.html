@@ -8,6 +8,8 @@
 
 <div id="log"></div>
 
+<button id="rerun">Run tests</button>
+
 <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui.js"></script>
 
 <script>
@@ -26,9 +28,15 @@ YUI({
             ]
         }
     }
-}).use("strtotime-test", "test-console", function (Y) {
-    new Y.Test.Console().render("#log");
-    Y.Test.Runner.run();
+}).use("strtotime-test", "test-console", "node", function (Y) {
+
+	var console = new Y.Test.Console().render("#log");;
+
+	var runTest = function () {
+    	console.clearConsole();
+    	Y.Test.Runner.run();
+    };
+    Y.one("#rerun").on("click", runTest);
 });
 </script>
 

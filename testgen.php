@@ -22,6 +22,17 @@ $dateFormats = array(
 	// timestamp
 	// don as extras
 
+	// american short
+	"m/d",
+	// american
+	"m/d/Y",
+	// dateslash
+	"Y/n/d",
+	// iso8601date4
+	"Y/m/j",
+	// iso8601date2
+	"y-m-d",
+
 
 );
 // these ones need a timestamp as second argument 
@@ -55,7 +66,10 @@ $timeFormats = array(
 	"t00.01.00.9876",
 	// gnunocolon
 	"t0813",
-	"1979"
+	"1979",
+	// iso8601nocolon
+	"t081345",
+	"191222"	
 
 	/*"Y-m-d H:i:s",
 	"m/d",
@@ -123,7 +137,9 @@ foreach ($timeFormats as $t) {
 }
 
 // All the tests
-$tests = array();
+$plainFormatTests = array();
+$modifierTests = array();
+$extraTests = array();
 
 
 
@@ -137,17 +153,17 @@ foreach ($dates as $d) {
 	foreach ($dateFormats as $f) {
 
 		$fd = date($f, $orig_ts);
-		/*$res0 = strtotime($fd);
+		$res0 = strtotime($fd);
 
 		if ($res0 === false) {
 			$res0 = 'false';
 		}
 
-		$tests[] = "\n\t\t'Date `" . $fd . "` (originally `" . $d . "`) should give timestamp `" . $res0 . "`': "
+		$plainFormatTests[$fd] = "\n\t\t'Date `" . $fd . "` (originally `" . $d . "`) should give timestamp `" . $res0 . "`': "
 			. " function () {\n"
 			. "\t\t\tY.Assert.areSame(" . $res0 . ", strtotime('" . $fd . "'));\n"
 			. "\t\t}";
-		*/
+		
 
 
 		foreach ($changes as $c) {
@@ -158,7 +174,7 @@ foreach ($dates as $d) {
 				$res = 'false';
 			}
 
-			$tests[] = "\n\t\t'Timestamp `" . $orig_ts . "`  with change `" . $c . "` should give `" . $res 
+			$modifierTests[$orig_ts . $c] = "\n\t\t'Timestamp `" . $orig_ts . "`  with change `" . $c . "` should give `" . $res 
 					. ($res !== 'false' ? "` (ie " . date("Y-m-d H:i:s", $res) . ")" : "") . "': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res . ", strtotime('" . $c . "', " . $orig_ts . "));\n"
@@ -173,7 +189,7 @@ foreach ($dates as $d) {
 				$res2 = 'false';
 			}
 
-			$tests[] = "\n\t\t'Formatted date `" . $fd . "` with change `" . $c . "` should give `" . $res2 . "`': "
+			$modifierTests[$fd . $c] = "\n\t\t'Formatted date `" . $fd . "` with change `" . $c . "` should give `" . $res2 . "`': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res2 . ", strtotime('" . $fd . " " . $c . "'));\n"
 				. "\t\t}";
@@ -186,7 +202,7 @@ foreach ($dates as $d) {
 			if ($res3 === false) {
 				$res3 = 'false';
 			}
-			$tests[] = "\n\t\t'strtotime(`" . $c . " " . $orig_ts . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
+			$modifierTests[$orig_ts . $c] = "\n\t\t'strtotime(`" . $c . " " . $orig_ts . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
 				. ") should give `" . $res3 . "`" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $orig_ts . "'));\n"
@@ -196,11 +212,14 @@ foreach ($dates as $d) {
 			if ($res3 === false) {
 				$res3 = 'false';
 			}
-			$tests[] = "\n\t\t'strtotime(`" . $c . " " . $fd . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
-				. ") should give `" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
-				. " function () {\n"
-				. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $fd . "'));\n"
-				. "\t\t}";
+
+			if ($fd !== $orig_ts) {
+				$modifierTests[$fd . $c] = "\n\t\t'strtotime(`" . $c . " " . $fd . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
+					. ") should give `" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
+					. " function () {\n"
+					. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $fd . "'));\n"
+					. "\t\t}";
+			}
 
 		}
 
@@ -215,7 +234,7 @@ foreach ($extras as $e) {
 	if ($res2 === false) {
 		$res2 = 'false';
 	}
-	$tests[] = "\n\t\t'Extras: strtotime(\"" . $e . "\", 1360022400) should give `" . $res2 . "`': "
+	$extraTests[] = "\n\t\t'Extras: strtotime(\"" . $e . "\", 1360022400) should give `" . $res2 . "`': "
 		. " function () {\n"
 		. "\t\t\tY.Assert.areSame(" . $res2 . ", strtotime('" . $e . "', 1360022400));\n"
 		. "\t\t}";		
@@ -225,14 +244,32 @@ foreach ($extras as $e) {
 // Build the Test module:
 $h = 'YUI.add("strtotime-test", function (Y) {
 
+	"use strict";
+
 	var Assert       = Y.Assert,
 		strtotime    = Y.DataType.Date.strtotime,
 	    suite = new Y.Test.Suite("Strtotime");
 
 	suite.add(new Y.Test.Case({
-	    name: "General",'
+	    name: "Y.DataType.Date.strtotime php generated tests: plain formatting",' . "\n\n"
 
-	    . implode(",\n", $tests)
+	    . implode(",\n", $plainFormatTests)
+
+	    . '
+	}));
+
+	suite.add(new Y.Test.Case({
+	    name: "Y.DataType.Date.strtotime php generated tests: modify dates",' . "\n\n"
+
+	    . implode(",\n", $modifierTests)
+
+	    . '
+	}));
+
+	suite.add(new Y.Test.Case({
+	    name: "Y.DataType.Date.strtotime php generated tests: extra tests",' . "\n\n"
+
+	    . implode(",\n", $extraTests)
 
 	    . '
 	}));
@@ -257,6 +294,8 @@ $html = '<!DOCTYPE html>
 
 <div id="log"></div>
 
+<button id="rerun">Run tests</button>
+
 <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui.js"></script>
 
 <script>
@@ -275,9 +314,15 @@ YUI({
             ]
         }
     }
-}).use("strtotime-test", "test-console", function (Y) {
-    new Y.Test.Console().render("#log");
-    Y.Test.Runner.run();
+}).use("strtotime-test", "test-console", "node", function (Y) {
+
+	var console = new Y.Test.Console().render("#log");;
+
+	var runTest = function () {
+    	console.clearConsole();
+    	Y.Test.Runner.run();
+    };
+    Y.one("#rerun").on("click", runTest);
 });
 </script>
 
@@ -290,3 +335,7 @@ YUI({
 // Write the files:
 file_put_contents('n:\wamp\yui3contrib\strtotime\assets\strtotime-test.js', $h);
 file_put_contents('n:\wamp\yui3contrib\strtotime\tests\unit\strtotime-test.html', $html);
+
+
+echo "\r\nFile created.  " . count($plainFormatTests) . " plain format tests added; " . count($modifierTests) . " modifier tests added; "
+	. count($extraTests) . " extra tests added.";

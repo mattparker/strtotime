@@ -224,6 +224,34 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
+         * Calculates the day number in the year from the weeknumber
+         * 
+         * http://fossies.org/dox/php-5.3.20-src/date_2lib_2dow_8c_source.html#l00130
+         *
+         * @method _findDayNrFromWeekNr
+         * @param {Int} year 
+         * @param {Int} weekNumber
+         * @param {Int} dayNumber
+         * @return {Int} Day of the year
+         */
+        _findDayNrFromWeekNr = function (year, weekNumber, dayNumber) {
+            /* Figure out the dayofweek for y-1-1 */
+            var date1 = new Date(year, 0, 1),
+                dow = date1.getUTCDay(),
+                day;
+
+            if (dow === 0) {
+                dow = 7
+            }
+            /* then use that to figure out the offset for day 1 of week 1 */
+            day = 0 - (dow > 4 ? dow - 7 : dow);
+
+            /* Add weeks and days */
+            return day + ((weekNumber - 1) * 7) + dayNumber + 1;
+        },
+
+
+        /**
          * Makes relative changes to different components of the date
          * 
          * @property relChange.y {Function}
@@ -958,7 +986,7 @@ YUI.add('strtotime', function (Y) {
                 pgtextshort = monthabbr + '-' + daylz + '-' + year,
                 pgtextreverse = year + '-' + monthabbr + '-' + daylz,
                 mssqltime = hour12 + ':' + minutelz + ':' + secondlz + '[:\.]([0-9]+)' + meridian,
-                isoweekday = year4 + '-?W' + weekofyear + '\-?[0-7]',
+                isoweekday = year4 + '-?W' + weekofyear + '\-?([0-7])',
                 isoweek = year4 + '-?W' + weekofyear,
                 exif = year4 + ':' + monthlz + ':' + daylz + ' ' + hour24lz + ':' + minutelz + ':' + secondlz,
                 firstdayof = strtotime.FIRSTDAYOF + '?',
@@ -1688,12 +1716,13 @@ YUI.add('strtotime', function (Y) {
 
                     Y.log('strtotime: matched isoweekday');
 
-                    var wk = parseInt(aRes[2], 10),
+                    var y = parseInt(aRes[1], 10),
+                        wk = parseInt(aRes[2], 10),
                         dy = parseInt(aRes[3], 10),
-                        days = (wk * 7) + dy;
+                        days = days = _findDayNrFromWeekNr(y, wk, dy);
 
                     mods.updateAbs({
-                        y: aRes[1],
+                        y: y,
                         m: 0,
                         d: days,
                         h: 0,

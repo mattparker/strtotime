@@ -71,6 +71,8 @@ $dateFormats = array(
 	"Y:m:d H:i:s",
 	// pgydotd
 	"Y.z",
+	// isoweekday
+	"Y\WW-w"
 
 
 
@@ -338,6 +340,7 @@ $html = '<!DOCTYPE html>
 <div id="log"></div>
 
 <button id="rerun">Run tests</button>
+<button id="wait">Pause tests</button>
 
 <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui.js"></script>
 
@@ -359,13 +362,15 @@ YUI({
     }
 }).use("strtotime-test", "test-console", "node", function (Y) {
 
-	var console = new Y.Test.Console().render("#log");;
+	var console = new Y.Test.Console().render("#log");
+		runner = Y.Test.Runner;
 
 	var runTest = function () {
     	console.clearConsole();
-    	Y.Test.Runner.run();
+    	runner.run();
     };
     Y.one("#rerun").on("click", runTest);
+    Y.one("#wait").on("click", function () { runner.wait();});
 });
 </script>
 

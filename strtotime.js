@@ -211,7 +211,7 @@ YUI.add('strtotime', function (Y) {
             var m, 
                 search = ['MONTHFULL', 'MONTHABBR', 'MONTHROMAN'],
                 i = 0;
-                
+
             for (i = 0; i < 3; i = i + 1) {
                 m = strtotime[search[i]].indexOf(res);
                 if (m !== -1) {
@@ -674,10 +674,12 @@ YUI.add('strtotime', function (Y) {
 
                 test = TESTS[i];
 
-                reResult = test.re.exec(" " + copyTime);
+                // spaces are added because we put them on the regexs
+                // and this is easier than detecting start/end of strings
+                reResult = test.re.exec(" " + copyTime + " ");
 
                 if (reResult) {
-                    index = test.re.exec(" " + time).index;
+                    index = test.re.exec(" " + time + " ").index;
                     test.fn.call(undefined, reResult, index, mods);
                     // remove the matched string from our copy.
                     copyTime = copyTime.replace(Y.Lang.trim(reResult[0]), "");
@@ -819,7 +821,7 @@ YUI.add('strtotime', function (Y) {
             var ret = {},
 
                 space = '[ \t]+', 
-                frac = '\.([0-9]+)',
+                frac = '[.]([0-9]+)',
                 ago = 'ago',
                 hour24 = '(2[0-4]|[01]?[0-9])',
                 hour24lz = '(2[0-4]|[01][0-9])',
@@ -875,16 +877,16 @@ YUI.add('strtotime', function (Y) {
                 iso8601nocolon = '(t)?' + hour24lz + minutelz + secondlz,
 
                 // Dates
-                americanshort = space + month + '\/' + day,
+                americanshort = month + '\/' + day,
                 american = americanshort + '\/' + year,
-                iso8601dateslash = space + year4 + '\/' + monthlz + '\/' + daylz + '\/?',
-                dateslash = space + year4 + '\/' + month + '\/' + day,
-                iso8601date4 = space + year4withsign + '-' + monthlz + '-' + daylz,
-                iso8601date2 = space + year2 + '-' + monthlz + '-' + daylz,
-                gnudateshorter = space + year4 + '-' + month,
-                gnudateshort = space + year + '-' + month + '-' + day,
-                pointeddate4 = day + '[\.t\-]' + month + '[\.\-]' + year4,
-                pointeddate2 = day + '[\.t\-]' + month + '[\.]' + year2,
+                iso8601dateslash = year4 + '\/' + monthlz + '\/' + daylz + '\/?',
+                dateslash = year4 + '\/' + month + '\/' + day,
+                iso8601date4 = year4withsign + '-' + monthlz + '-' + daylz,
+                iso8601date2 = year2 + '-' + monthlz + '-' + daylz,
+                gnudateshorter = year4 + '-' + month,
+                gnudateshort = year + '-' + month + '-' + day,
+                pointeddate4 = day + '[.\t-]' + month + '[.-]' + year4,
+                pointeddate2 = day + '[.\t-]' + month + '[.]' + year2,
                 datefull = day + '([ \t\.\-])*' + monthtext + '([ \t\.\-])*' + year,
                 datenoday = monthtext + '([ \t\.\-])*' + year4,
                 datenodayrev = year4 + '([ \t\.\-])*' + monthtext,
@@ -981,37 +983,37 @@ YUI.add('strtotime', function (Y) {
                 "monthtext": monthtext,
 
                 // Time
-                "timetiny12": timetiny12,
-                "timeshort12": timeshort12,
-                "timelong12": timelong12,
+                "timetiny12": space + timetiny12 + space,
+                "timeshort12": space + timeshort12 + space,
+                "timelong12": space + timelong12 + space,
 
-                "timeshort24": timeshort24,
-                "timelong24": timelong24,
-                "iso8601long": iso8601long,
+                "timeshort24": space + timeshort24 + space,
+                "timelong24": space + timelong24 + space,
+                "iso8601long": space + iso8601long + space,
 
-                "iso8601normtz": iso8601normtz,
+                "iso8601normtz": space + iso8601normtz + space,
 
-                "gnunocolon": gnunocolon,
-                "iso8601nocolon": iso8601nocolon,
+                "gnunocolon": space + gnunocolon + space,
+                "iso8601nocolon": space + iso8601nocolon + space,
 
                 // Dates
-                "americanshort": americanshort,
-                "american": american,
-                "iso8601dateslash": iso8601dateslash,
-                "dateslash": dateslash,
-                "iso8601date4": iso8601date4,
-                "iso8601date2": iso8601date2,
-                "gnudateshorter": gnudateshorter,
-                "gnudateshort": gnudateshort,
-                "pointeddate4": pointeddate4,
-                "pointeddate2": pointeddate2,
-                "datefull": datefull,
-                "datenoday": datenoday,
-                "datenodayrev": datenodayrev,
-                "datetextual": datetextual,
-                "datenoyear": datenoyear, // why is this one finish with * and above is +
-                "datenoyearrev": datenoyearrev,
-                "datenocolon": datenocolon,
+                "americanshort": space + americanshort + space,
+                "american": space + american + space,
+                "iso8601dateslash": space + iso8601dateslash + space,
+                "dateslash": space + dateslash + space,
+                "iso8601date4": space + iso8601date4 + space,
+                "iso8601date2": space + iso8601date2 + space,
+                "gnudateshorter": space + gnudateshorter + space,
+                "gnudateshort": space + gnudateshort + space,
+                "pointeddate4": space + pointeddate4 + space,
+                "pointeddate2": space + pointeddate2 + space,
+                "datefull": space + datefull + space,
+                "datenoday": space + datenoday + space,
+                "datenodayrev": space + datenodayrev + space,
+                "datetextual": space + datetextual + space,
+                "datenoyear": space + datenoyear + space, // why is this one finish with * and above is +
+                "datenoyearrev": space + datenoyearrev + space,
+                "datenocolon": space + datenocolon + space,
 
                 // Special formats
                 "soap": soap,
@@ -1450,7 +1452,28 @@ YUI.add('strtotime', function (Y) {
                         s: 0
                     }, true, index);
 
-                }},         
+                }},
+     
+                {key: 'pointeddate', re: new RegExp(oRegEx.pointeddate4 + '|' + oRegEx.pointeddate2), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched pointeddate');
+
+                    var y = _handleShortYear(aRes[6] || aRes[12]);
+
+                    if (y === false) {
+                        return false;
+                    }
+
+                    mods.updateAbs({
+                        y: y,
+                        m: parseInt(aRes[5] || aRes[11], 10) - 1,
+                        d: aRes[2] || aRes[3] || aRes[7] || aRes[9],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},
 
 
 

@@ -39,6 +39,10 @@ $dateFormats = array(
 	// date full (no date format for roman numerals!)
 	"d F Y",
 	"dS M. Y",
+	// pointed date
+	"j.m.Y",
+	"d-n-Y",
+	"j.m.y"
 
 
 

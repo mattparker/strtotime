@@ -813,12 +813,12 @@ YUI.add('strtotime', function (Y) {
 
                 daysuf = '(st|nd|rd|th)',
 
-                month = '(0?[0-9]|1[0-2])',
+                month = '(1[0-2]|0?[0-9])',
                 day = '((3[0-1])|([0-2]?[0-9]))' + daysuf + '?',
                 year = '([0-9]{1,4})',
                 year2 = '([0-9]{2})',
                 year4 = '([0-9]{4})',
-                year4withsign = '([+-]? [0-9]{4})',
+                year4withsign = '([+-]?[0-9]{4})',
 
                 dayofyear = '(00[1-9]|0[1-9][0-9]|[1-2][0-9][0-9]|3[0-5][0-9]|36[0-6])',
                 weekofyear = '(0[1-9]|[1-4][0-9]|5[0-3])',
@@ -856,9 +856,9 @@ YUI.add('strtotime', function (Y) {
                 iso8601dateslash = space + year4 + '\/' + monthlz + '\/' + daylz + '\/?',
                 dateslash = space + year4 + '\/' + month + '\/' + day,
                 iso8601date4 = space + year4withsign + '-' + monthlz + '-' + daylz,
-                iso8601date2 = year2 + '-' + monthlz + '-' + daylz,
-                gnudateshorter = year4 + '-' + month,
-                gnudateshort = year + '-' + month + '-' + day,
+                iso8601date2 = space + year2 + '-' + monthlz + '-' + daylz,
+                gnudateshorter = space + year4 + '-' + month,
+                gnudateshort = space + year + '-' + month + '-' + day,
                 pointeddate4 = day + '[\.t\-]' + month + '[\.\-]' + year4,
                 pointeddate2 = day + '[\.t\-]' + month + '[\.]' + year2,
                 datefull = day + '([ \t\.\-])*' + monthtext + '([ \t\.\-])*' + year,
@@ -1347,9 +1347,9 @@ YUI.add('strtotime', function (Y) {
                         Y.log('strtotime: Matched iso8601dates');
 
                         mods.updateAbs({
-                            y: aRes[4] || aRes[7] || aRes[10],
-                            m: parseInt(aRes[5] || aRes[8] || aRes[11], 10) - 1,
-                            d: aRes[6] || aRes[9] || aRes[12],
+                            y: aRes[1] || aRes[4] || aRes[7],
+                            m: parseInt(aRes[2] || aRes[5] || aRes[8], 10) - 1,
+                            d: aRes[3] || aRes[6] || aRes[9],
                             h: 0,
                             i: 0,
                             s: 0

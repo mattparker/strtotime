@@ -32,6 +32,10 @@ $dateFormats = array(
 	"Y/m/j",
 	// iso8601date2
 	"y-m-d",
+	// gnudateshorter
+	"Y-m",
+	// gnudateshort
+	"Y-m-d"
 
 
 );

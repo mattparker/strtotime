@@ -69,6 +69,8 @@ $dateFormats = array(
 	"Y-m-d\TH:i:s",
 	//exif
 	"Y:m:d H:i:s",
+	// pgydotd
+	"Y.z",
 
 
 

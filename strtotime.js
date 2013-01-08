@@ -1356,7 +1356,10 @@ YUI.add('strtotime', function (Y) {
                     mods.incTime();
                 }},
 
-
+                // This is in the wrong place, according to the C source.  It should be further
+                // down, with the other dates.  However, if if comes after 'times24' 
+                // then time24 will match the time part of the exif format
+                // and it'll break.
                 {key: 'xmlrpcAndFriends', 
                     re: new RegExp([oRegEx.xmlrpc, oRegEx.xmlrpcnocolon, oRegEx.soap, oRegEx.wddx, oRegEx.exif].join("|")), 
                     fn: function (aRes, index, mods) {
@@ -1379,12 +1382,7 @@ YUI.add('strtotime', function (Y) {
                     }
                 },
 
-                // This is where 'times24' is in the C source, but I've moved it further down
-                // so that it doesn't catch the date bit of an exif format when it shouldn't.
 
-
-                // In the original this appears further up (see comment) but exif doesn't get picked up if we 
-                // have this first, as it pulls out the time
                 {key: 'times24', re: new RegExp([oRegEx.iso8601long, oRegEx.timelong24, oRegEx.timeshort24].join('|')), fn: function (aRes, index, mods) {
                     var hr,
                         mn,
@@ -1665,7 +1663,47 @@ YUI.add('strtotime', function (Y) {
 
                 }},
 
-// was here
+                // xmlrpcAndFields was here in the original source, but now it's further up 
+                // (see note above for reason)
+
+
+                {key: 'pgydotd', re: new RegExp(oRegEx.pgydotd), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched pgydotd');
+
+                    mods.updateAbs({
+                        y: aRes[1],
+                        m: 0,
+                        d: parseInt(aRes[2], 10),
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                    
+                }},
+
+
+                {key: 'isoweekday', re: new RegExp(oRegEx.isoweekday), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched isoweekday');
+
+                    var wk = parseInt(aRes[2], 10),
+                        dy = parseInt(aRes[3], 10),
+                        days = (wk * 7) + dy;
+
+                    mods.updateAbs({
+                        y: aRes[1],
+                        m: 0,
+                        d: days,
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},
+
+
 
 
 

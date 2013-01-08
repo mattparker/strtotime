@@ -601,6 +601,16 @@ YUI.add('strtotime', function (Y) {
             };
 
 
+            /**
+             * A list of keys that have matched OK
+             *
+             * @property matchedKeys
+             * @type Array
+             * @public
+             */
+            this.matchedKeys = [];
+
+
 
         },
         
@@ -681,6 +691,9 @@ YUI.add('strtotime', function (Y) {
                 if (reResult) {
                     index = test.re.exec(" " + time + " ").index;
                     test.fn.call(undefined, reResult, index, mods);
+
+                    mods.matchedKeys.push(test.key);
+
                     // remove the matched string from our copy.
                     copyTime = copyTime.replace(Y.Lang.trim(reResult[0]), "");
                 }
@@ -735,6 +748,8 @@ YUI.add('strtotime', function (Y) {
 
                         }
                     }
+
+
                     // If this change has the effect of fixing time (ie it shouldn't be changed again)
                     // we need to remember this:
                     if (thisChange.fixTime === true) {
@@ -1518,6 +1533,55 @@ YUI.add('strtotime', function (Y) {
                     }, true, index);
 
                 }},
+
+
+                {key: 'datetextual', re: new RegExp(oRegEx.datetextual + '|' + oRegEx.datenoyear), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched datetextual');
+
+                    var y = _handleShortYear(aRes[10]),
+                        upd = {
+                            m: _handleMonthText(aRes[1] || aRes[11]),
+                            d: aRes[6] || aRes[16],
+                            h: 0,
+                            i: 0,
+                            s: 0
+                        };
+
+                    if (y === false) {
+                        return false;
+                    } else if (!isNaN(y)) {
+                        upd.y = y;
+                    } else {
+                        // it seems that if there's no year and we have 'static' modifiers (e.g. noon)
+                        // then "Jan 1st noon" should return false,
+                        // but "noon Jan 1st" shouldn't.
+                        // Not sure if this is intended by php or a bug.
+                        // At the moment this javascript version returns the same value
+                        // (1st January {currentyear}, 12:00:00)
+                        // 
+                        // This does cause some tests to fail.
+                    }
+
+                    mods.updateAbs(upd, true, index);
+
+                }},
+
+
+                {key: 'datenoyearrev', re: new RegExp(oRegEx.datenoyearrev), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched datenoyearrev');
+
+                    mods.updateAbs({
+                        m: _handleMonthText(aRes[6]),
+                        d: aRes[1],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},
+
 
                 // This seems like an error.  In the php C source this is listed 
                 // after timeshort24.  However, if you do so it matches years

@@ -49,6 +49,13 @@ $dateFormats = array(
 	// datenodayrev
 	"Y F",
 	"Y M",
+	// datetextual
+	"F d Y",
+	"M dS",
+	// datenoyearrev
+	"d F",
+	"dS M",
+
 
 
 

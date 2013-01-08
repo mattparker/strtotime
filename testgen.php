@@ -57,6 +57,19 @@ $dateFormats = array(
 	"dS M",
 	// datenocolon
 	"Ymd",
+	// soap
+	"Y-m-d\TH:i:s.u\G\M\TP",
+	"Y-m-d\TH:i:s.u\G\M\T-2:30",
+	"Y-m-d\TH:i:s.u\G\M\T+5:00",
+	//xmlrpc
+	"Ymd\TH:i:s",
+	// xmlrpcnocolon
+	"Ymd\tHis",
+	// wddf
+	"Y-m-d\TH:i:s",
+	//exif
+	"Y:m:d H:i:s",
+
 
 
 

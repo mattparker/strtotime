@@ -299,6 +299,29 @@ YUI.add('strtotime', function (Y) {
             }
         },
 
+
+        /**
+         * Alters the timestamp depending on the timezone parsed 
+         * from the string
+         * 
+         * @method timezoneChange
+         * @param {Int} ts Timestamp
+         * @param {String} tz Timezone string
+         * @return {Int} Timestamp
+         */
+        timezoneChange = function (ts, tz) {
+            
+            // val should be +02:30 format
+            var sign = tz.substring(0, 1),
+                parts = tz.substring(1).split(":"),
+                h = parseInt(parts[0], 10),
+                i = parseInt(parts[1], 10),
+                mult = (sign === "+" ? -1 : 1);
+            ts = relChange.h(ts, (mult * h));
+            return relChange.i(ts, (mult * i));
+        },
+
+
         /**
          @method resetTime
 
@@ -520,6 +543,7 @@ YUI.add('strtotime', function (Y) {
                 h: undefined,
                 i: undefined,
                 s: undefined,
+                z: undefined,
                 fixTime: false,
                 fixDate: false,
                 specialFn: undefined
@@ -533,6 +557,7 @@ YUI.add('strtotime', function (Y) {
                 h: undefined,
                 i: undefined,
                 s: undefined,
+                z: undefined,
                 fixTime: false,
                 fixDate: false,
                 specialFn: undefined
@@ -579,7 +604,7 @@ YUI.add('strtotime', function (Y) {
                 for (i in oChange) {
                     if (oChange.hasOwnProperty(i)) {
 
-                        if (i === "fixTime" || i === "fixDate" || i === "specialFn") {
+                        if (i === "fixTime" || i === "fixDate" || i === "specialFn" || i === "z") {
                             aH[i] = oChange[i];
                         } else {
 
@@ -610,6 +635,15 @@ YUI.add('strtotime', function (Y) {
              */
             this.matchedKeys = [];
 
+
+            /**
+             * The timezone string parsed from the input string
+             *
+             * @property timezoneString
+             * @type {String}
+             * @default ""
+             */
+            this.timezoneString = "";
 
 
         },
@@ -801,6 +835,11 @@ YUI.add('strtotime', function (Y) {
                 ms = _findWeekdayOf(ms, mods.relativeFixedHash.weekdayOf);
             }
 
+            // Finally do timezone correction
+            if (mods.timezoneString !== '') {
+                ms = timezoneChange(ms, mods.timezoneString);
+            }
+
 
 
             return Math.floor(ms / 1000);
@@ -850,7 +889,7 @@ YUI.add('strtotime', function (Y) {
                 // case versions in INTL.P and INTL.p
                 meridian = strtotime.AMPM, // + space,
                 tz = '\(? [A-Za-z]{1,6}\)?|[A-Za-z]+([_\/\-][A-Za-z]+)+',
-                tzcorrection = 'GMT?[+-]' + hour24 + ':?' + minute + '?',
+                tzcorrection = 'GMT?([+-]' + hour24 + ':?' + minute + '?)',
 
                 daysuf = '(st|nd|rd|th)',
 
@@ -1318,6 +1357,34 @@ YUI.add('strtotime', function (Y) {
                 }},
 
 
+                {key: 'xmlrpcAndFriends', 
+                    re: new RegExp([oRegEx.xmlrpc, oRegEx.xmlrpcnocolon, oRegEx.soap, oRegEx.wddx, oRegEx.exif].join("|")), 
+                    fn: function (aRes, index, mods) {
+
+                        Y.log('strtotime: Matched xmlrpc|xmlrpcnocolon|soap|wddx|exif');
+
+                        mods.updateAbs({
+                            y: aRes[1] || aRes[7] || aRes[13] || aRes[23] || aRes[32],
+                            m: parseInt(aRes[2] || aRes[8] || aRes[14] || aRes[24] || aRes[33], 10) - 1,
+                            d: aRes[3] || aRes[9] || aRes[15] || aRes[25] || aRes[34],
+                            h: aRes[4] || aRes[10] || aRes[16] || aRes[29] || aRes[35],
+                            i: aRes[5] || aRes[11] || aRes[17] || aRes[30] || aRes[36],
+                            s: aRes[6] || aRes[12] || aRes[18] || aRes[31] || aRes[37]
+                        }, true, index);
+
+                        if (aRes[20] !== undefined) {
+                            mods.timezoneString = aRes[20];
+                        }
+
+                    }
+                },
+
+                // This is where 'times24' is in the C source, but I've moved it further down
+                // so that it doesn't catch the date bit of an exif format when it shouldn't.
+
+
+                // In the original this appears further up (see comment) but exif doesn't get picked up if we 
+                // have this first, as it pulls out the time
                 {key: 'times24', re: new RegExp([oRegEx.iso8601long, oRegEx.timelong24, oRegEx.timeshort24].join('|')), fn: function (aRes, index, mods) {
                     var hr,
                         mn,
@@ -1347,6 +1414,7 @@ YUI.add('strtotime', function (Y) {
                     mods.updateAbs(newAbs, null, index);
                     mods.incTime();
                 }},
+
 
 
                 {key: 'iso8601nocolon', re: new RegExp(oRegEx.iso8601nocolon), fn: function (aRes, index, mods) {
@@ -1596,6 +1664,9 @@ YUI.add('strtotime', function (Y) {
                     }, true, index);
 
                 }},
+
+// was here
+
 
 
                 // This seems like an error.  In the php C source this is listed 

@@ -55,6 +55,8 @@ $dateFormats = array(
 	// datenoyearrev
 	"d F",
 	"dS M",
+	// datenocolon
+	"Ymd",
 
 
 

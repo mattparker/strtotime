@@ -1582,6 +1582,21 @@ YUI.add('strtotime', function (Y) {
 
                 }},
 
+                {key: 'datenocolon', re: new RegExp(oRegEx.datenocolon), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched datenocolon');
+
+                    mods.updateAbs({
+                        y: aRes[1],
+                        m: parseInt(aRes[2], 10) - 1,
+                        d: aRes[3],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},
+
 
                 // This seems like an error.  In the php C source this is listed 
                 // after timeshort24.  However, if you do so it matches years

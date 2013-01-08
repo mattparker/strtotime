@@ -237,30 +237,123 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         Used internally by the function to store changes as they are parsed
-         from the text
+         * Used internally by the function to store changes as they are parsed
+         * from the text.  This cannot be instantiated directly: it's created
+         * by the strtotime function and passed to the test functions.
+         *
+         * As the string is parsed by srttotime, any relative (e.g. "-1 day") 
+         * or absolute changes ("noon") are held in the Modificator instance.
+         * Once parsing is complete, the stored changes are processed
+         * in the correct order to calculate the return timestamp.
+
+         * @constructor 
+         * @class Modificator
+         *
+         *
          */
         Modificator = function () {
             
-            // whether time/dates are fixed now
+            /**
+             * Whether times are fixed (ie may not be changed by subsequent terms)
+             * by a particular statement
+             *
+             * @property fixTime
+             * @type {Boolean}
+             * @default False
+             * @public
+             *
+             */
             this.fixTime = false;
+            /**
+             * Whether dates are fixed (ie may not be changed by subsequent terms)
+             * by a particular statement
+             *
+             * @property fixDate
+             * @type {Boolean}
+             * @default False
+             * @public
+             */
             this.fixDate = false;
 
-            // number of times time has been set
+            /**
+             * Count of number of times time has been set.
+             *
+             * @property hasTime
+             * @type {Int}
+             * @default 0
+             * @public
+             *
+             */
             this.hasTime = 0;
-            this.setTime = function () {
+
+            /**
+             * Increments this.hasTime by 1
+             *
+             * @method incTime
+             * @return {Int} New value of this.hasTime
+             * @public
+             *
+             */
+            this.incTime = function () {
                 this.hasTime = this.hasTime + 1;
+                return this.hasTime;
             };
-            // number of times date has been set
+
+            /**
+             * Count of number of times date has been set.
+             * @property hasDate
+             * @type {Int}
+             * @default 0
+             * @public
+             *
+             */
             this.hasDate = 0;
 
-            // A list of changes to make, in the order that they 
-            // are found in the statement
+
+            /**
+             * A list of relative (e.g. "-1 day") changes to make, 
+             * in the order that they are found in the statement.  
+             * Indexes in the array are the position that the test string 
+             * was found in the original string passed to strtotime()
+             *
+             * @property orderedRelChanges
+             * @type {Array}
+             * @default []
+             * @protected
+             *
+             */
             this.orderedRelChanges = [];
+            /**
+             * A list of absolute (e.g. "noon") changes to make, 
+             * in the order that they are found in the statement.  
+             * Indexes in the array are the position that the test string 
+             * was found in the original string passed to strtotime()
+             *
+             * @property orderedAbsChanges
+             * @type {Array}
+             * @default []
+             * @protected
+             *
+             */            
             this.orderedAbsChanges = [];
 
 
-            // stores changes to dates/times
+            /**
+             * 'Model' storage for relative changes to dates/times
+             *
+             * @property relativeHash
+             * @type {Object}
+             * @protected
+             * @default  {
+                y: 0,
+                m: 0,
+                d: 0,
+                h: 0,
+                i: 0,
+                s: 0
+               };
+             *
+             */
             this.relativeHash = {
                 y: 0,
                 m: 0,
@@ -270,13 +363,34 @@ YUI.add('strtotime', function (Y) {
                 s: 0
             };
 
+            /**
+             * Storage for 'weekday of' type statements, that will
+             * later on need other changes to be resolved before this
+             * can be.
+             * 
+             * @property relativeFixedHash
+             * @type {Object}
+             * @protected
+             * @default {weekdayOf: undefined}
+             *
+             */
             this.relativeFixedHash = {
                 weekdayOf: undefined
             };
 
             /**
+             * Processes and stores relative changes to dates or times.  
+             * This (along with updateAbs()) are the main methods to use
+             * in test -passing functions
+             *
+             * @method updateRel
+             * @public
              * @param {Object}   Properties to change
-             * @param {Boolean}  Whether to add to existing (true) or set (default)
+             * @param {Boolean}  Whether to add to existing (true) or set (default).
+             *                      In some cases we want to make culmulative changes
+             * @param {Int}      Index that the test string was found in the 
+             *                      original string
+             * @return {Object}  Object literal that we've stored
              */
             this.updateRel = function (oChange, addOrSet, index) {
                 var i,
@@ -302,9 +416,30 @@ YUI.add('strtotime', function (Y) {
                     }
                 }
                 this.orderedRelChanges[index] = rH;
+                return rh:
             };
 
-            // stores absolute dates/times set
+
+
+            /**
+             * 'Model' storage for absolute changes to dates/times
+             *
+             * @property absoluteHash
+             * @type {Object}
+             * @protected
+             * @default  {
+                y: undefined,
+                m: undefined,
+                d: undefined,
+                h: undefined,
+                i: undefined,
+                s: undefined,
+                fixTime: false,
+                fixDate: false,
+                specialFn: undefined
+               };
+             *
+             */
             this.absoluteHash = {
                 y: undefined,
                 m: undefined,
@@ -317,11 +452,39 @@ YUI.add('strtotime', function (Y) {
                 specialFn: undefined
             };
 
+            /**
+             * Storage for 'last day' type statements, that will
+             * later on need other changes to be resolved before this
+             * can be.
+             * 
+             * @property absoluteFixedHash
+             * @type {Object}
+             * @protected
+             * @default {
+                lastDay: undefined,
+                firstDay: undefined
+               }
+             *
+             */
             this.absoluteFixedHash = {
                 lastDay: undefined,
                 firstDay: undefined
             };
 
+            /**
+             * Processes and stores absolute changes to dates or times.  
+             * This (along with updateRel()) are the main methods to use
+             * in test -passing functions
+             *
+             * @method updateAbs
+             * @public
+             * @param {Object}   Properties to change
+             * @param {Boolean}  Whether to add to existing (true) or set (default).
+             *                      In some cases we want to make culmulative changes
+             * @param {Int}      Index that the test string was found in the 
+             *                      original string
+             * @return {Object}  Object literal that we've stored
+             */
             this.updateAbs = function (oChange, addOrSet, index) {
                 var i,
                     c,
@@ -348,6 +511,7 @@ YUI.add('strtotime', function (Y) {
                     }
                 }
                 this.orderedAbsChanges[index] = aH;
+                return aH;
             };
 
 
@@ -358,33 +522,32 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         @method strtotime
-         
-         Parses English (or other languages) date-related sentences into 
-         a timestamp.  A wide range of formats are supported, as is 
-         relative formats.
-
-         Note that to preserve compatability with php (from which this is ported)
-         timestamps are in seconds, not milliseconds.
-
-         See http://php.net/manual/en/function.strtotime.php for the php write-up
-    
-         Examples:
-           Y.DataType.Date.strtotime("2012-05-02")  // returns
-           Y.DataType.Date.strtotime("2/5/2012 5.15pm") // returns
-           Y.DataType.Date.strtotime("next Thursday", 1360022400)  // returns
-           Y.DataType.Date.strtotime("+3 months and 2 days", 1360022400) // returns
-
-
-         @static
-         @public
-
-         @param {String}  Date and modifier(s)
-         @param {Int}     Timestamp (in seconds)
-         @return {Int}    Parsed timestamp or false if there was an error
-
-        */
-
+         * @method strtotime
+         *
+         * Parses English (or other languages) date-related sentences into 
+         * a timestamp.  A wide range of formats are supported, as is 
+         * relative formats.
+         *
+         * Note that to preserve compatability with php (from which this is ported)
+         * timestamps are in seconds, not milliseconds.
+         *
+         * See http://php.net/manual/en/function.strtotime.php for the php write-up
+         *
+         * Examples:
+         *  Y.DataType.Date.strtotime("2012-05-02")  // returns
+         *  Y.DataType.Date.strtotime("2/5/2012 5.15pm") // returns
+         *  Y.DataType.Date.strtotime("next Thursday", 1360022400)  // returns
+         *  Y.DataType.Date.strtotime("+3 months and 2 days", 1360022400) // returns
+         *
+         *
+         * @static
+         * @public
+         *
+         * @param {String} time Date and/or modifier(s)
+         * @param {Int}* baseTimestamp Timestamp (in seconds)
+         * @return {Int}    Parsed timestamp (in seconds) or false if there was an error
+         *
+         */
         strtotime = function (time, baseTimestamp) {
 
 
@@ -393,21 +556,11 @@ YUI.add('strtotime', function (Y) {
                 parsedDate,
                 copyTime,
 
+                // This stores the changes we want to make
                 mods = new Modificator(),
 
 
-
-
-                resetTime = false,
-
-
-
-
-
-
-
-
-                // in the loop
+                // used in the loop
                 i = 0,
                 j = 0,
                 thisChange,
@@ -457,7 +610,7 @@ YUI.add('strtotime', function (Y) {
 
 
 
-
+            // We'll handle these things separately
             ignoreInAbs = ['specialFn', 'lastDay', 'firstDay', 'fixTime', 'fixDate'];
             // Now apply absolute changes
             for (j = 0; j < mods.orderedAbsChanges.length; j = j + 1) {
@@ -473,20 +626,27 @@ YUI.add('strtotime', function (Y) {
                             if (i === 'h' && mods.fixTime === true) {
                                 return false;
                             }
+
+                            // Make the actual change
                             ms = absChange[i](ms, thisChange[i]);
 
+                            // An error occurred
                             if (ms === false) {
                                 return false;
                             }
 
                         }
                     }
+                    // If this change has the effect of fixing time (ie it shouldn't be changed again)
+                    // we need to remember this:
                     if (thisChange.fixTime === true) {
                         mods.fixTime = true;
                     }
+                    // specialFn is called after everything else
                     if (thisChange.specialFn !== undefined) {
                         ms = thisChange.specialFn(ms, thisChange);
                     }
+                    // an error was detected by specialFn
                     if (ms === false) {
                         return false;
                     }
@@ -510,6 +670,8 @@ YUI.add('strtotime', function (Y) {
 
 
             // More complex changes that need the above to complete first
+
+            // last/first day:
             if (mods.absoluteFixedHash.lastDay === 1) {
                 // find date of last day of this month
                 ms = absChange.d(ms, _findLastDayOf(ms));
@@ -536,13 +698,13 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         @method constructRegExp
-         Builds up a set of strings that will be used in regex constructor in 
-         the tests.  This happens once, the first time the strtotime function
-         is used.
-         @protected
-         @static
-         @return {Object}
+         * @method constructRegExp
+         * Builds up a set of strings that will be used in regex constructor in 
+         * the tests.  This happens once, the first time the strtotime function
+         * is used.
+         * @protected
+         * @static
+         * @return {Object}
          */
         strtotime.constructRegExp = function () {
 
@@ -806,14 +968,14 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         @method finishRegExp
-         @static
-         User-overridable function that is called after the default regex strings
-         have been constructed, to allow user modification if needed.
-
-         @public
-         @param {Object}  The strings constructed by strtotime.constructRegExp
-         @return {Object}
+         * @method finishRegExp
+         * @static
+         * User-overridable function that is called after the default regex strings
+         * have been constructed, to allow user modification if needed.
+         *
+         * @public
+         * @param {Object}  The strings constructed by strtotime.constructRegExp
+         * @return {Object}
          */
         strtotime.finishRegExp = function (oRegEx) {
             return oRegEx;
@@ -821,14 +983,35 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         @method constructTests
-         Builds an array of tests to carry out, and what to do if they pass
-         - ie if there's a match to the regexp.  Each item in the array
-         is an object with keys `re`, `fn` and `key`
-         @protected
-         @static
-         @param {Object}  Regex strings built by constructRegExp
-         @return {Array}
+         * @method constructTests
+         *
+         * Builds an array of tests to carry out, and what to do if they pass
+         * - ie if there's a match to the regexp.  Each item in the array
+         * is an object with keys `re`, `fn` and `key`:
+         *
+         *   @param item.re {RegExp} A RegExp object that will be used to test the passed string
+         *   @param item.fn {Function} A function that is called if the RegExp returns a result.
+         *       
+         *       The function receives the following arguments:
+         *       @param {Array} aRes  Array (-like) returned by RegExp.exec()
+         *       @param {Int} index Position that the RegExp appeared in the original string.
+         *           This is different to aRes.index because the RegExp.exec() is in general 
+         *           called on a substring of the original string passed.  It's important to know
+         *           where in the original string the matching regexp string appears as the order
+         *           of items is important: "2am yesterday" is different to "yesterday 2am".  
+         *           Mostly, index will just be passed through to mods.updateRel() or mods.updateAbs()
+         *           where it's used to make sure that the date/time calculations happen in the 
+         *           correct order
+         *       @param {Modificator} mods An instance of Modificator that stores the changes 
+         *           that need to be made to the timestamp.
+         *
+         *   @param item.key {String} A string that identifies the test, for logging/debugging 
+         *       purposes mainly
+         *
+         * @protected
+         * @static
+         * @param {Object}  Regex strings built by constructRegExp
+         * @return {Array}
          */
         strtotime.constructTests = function (oRegEx) {
 
@@ -854,7 +1037,7 @@ YUI.add('strtotime', function (Y) {
                         s: 0, 
                         fixTime: true, 
                         specialFn: function (ms, oChange) {
-                            mods.setTime(); 
+                            mods.incTime(); 
                             return ms;
                         }
                     }, null, index);
@@ -885,7 +1068,7 @@ YUI.add('strtotime', function (Y) {
                         i: tmp.getUTCMinutes(),
                         s: tmp.getUTCSeconds()
                     }, true, index);
-                    mods.setTime();
+                    mods.incTime();
                 }},
 
 
@@ -916,7 +1099,7 @@ YUI.add('strtotime', function (Y) {
                         i: -15
                     }, null, index);
 
-                    mods.setTime();
+                    mods.incTime();
                 }},
                 {key: 'backof', re: new RegExp(oRegEx.backof), fn: function (aRes, index, mods) {
                     
@@ -932,7 +1115,7 @@ YUI.add('strtotime', function (Y) {
                         i: 15
                     }, null, index);
 
-                    mods.setTime();                        
+                    mods.incTime();                        
                 }},
 
 
@@ -984,7 +1167,7 @@ YUI.add('strtotime', function (Y) {
                         i: aRes[2],
                         s: aRes[3] + '.' + aRes[4]
                     }, null, index);
-                    mods.setTime();
+                    mods.incTime();
                 }},
 
                 {key: 'times12', re: new RegExp([oRegEx.timelong12, oRegEx.timeshort12, oRegEx.timetiny12].join('|')), fn: function (aRes, index, mods) {
@@ -1014,7 +1197,7 @@ YUI.add('strtotime', function (Y) {
                     }
 
                     mods.updateAbs(newAbs, null, index);
-                    mods.setTime();
+                    mods.incTime();
                 }},
 
 
@@ -1045,7 +1228,7 @@ YUI.add('strtotime', function (Y) {
                     } 
 
                     mods.updateAbs(newAbs, null, index);
-                    mods.setTime();
+                    mods.incTime();
                 }},
 
 
@@ -1064,6 +1247,11 @@ YUI.add('strtotime', function (Y) {
                         i: 0,
                         s: 0
                     }, true, index);
+                }},
+
+
+                {key: 'iso8601nocolon', re: new RegExp(oRegEx.iso8601nocolon), fn: function (aRes, index, mods) {
+
                 }},
 
 
@@ -1092,7 +1280,7 @@ YUI.add('strtotime', function (Y) {
                                     break
 
                                 case 0:
-                                    mods.setTime();
+                                    mods.incTime();
                                     ms = absChange.h(ms, aRes[2]);
                                     return absChange.i(ms, aRes[3]);
                                     break;
@@ -1112,20 +1300,39 @@ YUI.add('strtotime', function (Y) {
         };
 
         /**
-         @method finishTests
-         @static
-         User-overridable function that is called after the default
-         test builder (constructTests) to allow user modification if 
-         needed.
-
-         @public
-         @param {Object}  Regex strings built earlier
-         @param {Array}   Array of tests built by default process
-         @return {Array}
+         * @method finishTests
+         * @static
+         * User-overridable function that is called after the default
+         * test builder (constructTests) to allow user modification if 
+         * needed.
+         *
+         * @public
+         * @param {Object}  Regex strings built earlier
+         * @param {Array}   Array of tests built by default process
+         * @return {Array}
          */
         strtotime.finishTests = function (oRegEx, aTests) {
             return aTests;
-        }
+        };
+
+
+        /**
+         * Resets the built Regexp object and Test array that are used
+         * by strtotime.
+         *
+         * You may need this if you're changing languages on the fly so
+         * that you can re-build the regexps (and possibly tests) the 
+         * next time you use the strtotime function.
+         *
+         * @method resetTests
+         * @public
+         * @static
+         *
+         */ 
+        strtotime.resetTests = function () {
+            TESTS = [];
+            REGEXP = {};
+        };
 
 
 
@@ -1144,93 +1351,117 @@ YUI.add('strtotime', function (Y) {
     
 
     /**
-     @property DAYSPECIAL
-     @static
-     Array of terms meaning 'weekday'
-     @var {Array}
+     * Array of terms meaning 'weekday'
+     * 
+     * @property DAYSPECIAL
+     * @static
+     * 
+     * @type {Array}
+     * @default ['weekday', 'weekdays']
      */
     strtotime.DAYSPECIAL = ['weekday', 'weekdays'];
     /**
-     Terms meaning 'first day of'
-     @property FIRSTDAYOF
-     @static
-     @var {String}
+     * Terms meaning 'first day of'
+     * 
+     * @property FIRSTDAYOF
+     * @static
+     * @type {String}
+     * @default 'first day of'
      */
     strtotime.FIRSTDAYOF = 'first day of';
     /**
-     Term meaning 'last day of'
-     @property LASYDAYOF
-     @static
-     @var {String}
+     * Term meaning 'last day of'
+     *
+     * @property LASYDAYOF
+     * @static
+     * @type {String}
+     * @default 'last day of'
      */
     strtotime.LASTDAYOF = 'last day of';
      /**
-     Term meaning 'back of' (i.e. quarter past)
-     @property BACKOF
-     @static
-     @var {String}
-     */
+      * Term meaning 'back of' (i.e. quarter past)
+      *
+      * @property BACKOF
+      * @static
+      * @type {String}
+      * @default 'back of'
+      */
     strtotime.BACKOF = 'back of ';
     /**
-     Term meaning 'front of' (i.e. quarter to)
-     @property FRONTOF
-     @static
-     @var {String}
+     * Term meaning 'front of' (i.e. quarter to)
+     *
+     * @property FRONTOF
+     * @static
+     * @type {String}
+     * @default 'front of'
      */    
     strtotime.FRONTOF = 'front of ';
 
     /**
-     Array of full day names of the week.
-     Must be in order: must start with Sunday (as day 0).
-
-     Will use Intl module day names if available
-     @property DAYFULL
-     @static
-     @var {Array}
+     * Array of full day names of the week.
+     * Must be in order: must start with Sunday (as day 0).
+     *
+     * Will use Intl module day names if available
+     *
+     * @property DAYFULL
+     * @static
+     * @type {Array}
      */
     strtotime.DAYFULL = INTL.A ? INTL.A : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     /**
-     Array of shortened day names of the week.
-     Must be in order: must start with Sun (as day 0).
-
-     Will use Intl module day names if available
-     @property DAYABBR
-     @static
-     @var {Array}
+     * Array of shortened day names of the week.
+     * Must be in order: must start with Sun (as day 0).
+     *
+     * Will use Intl module day names if available
+     *
+     * @property DAYABBR
+     * @static
+     * @type {Array}
      */
     strtotime.DAYABBR = INTL.a ? INTL.a : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    /**
-     Array of shortened day names of the week.
-     Must be in order: must start with Sun (as day 0).
 
-     Will use Intl module day names if available
-     @property DAYABBR
-     @static
-     @var {Array}
+    /**
+     * String that will be used in RegExp constructor to identify am / pm.
+     *
+     * By default php can handle full stops and mixed capitalisation: for 
+     * internationalised versions we can't reliably and generally do this.
+     *
+     * So if you're using the Intl module there is a small incompatibility with
+     * php strtotime() as things like "8 A.m" won't be matched and processed.
+     *
+     * Over-write this if this matters to you: '([AaPp].?[Mm].?)' will work as
+     * php does.
+     *
+     * @property DAYABBR
+     * @static
+     * @type {String}
      */
     strtotime.AMPM = INTL.p || INTL.P ? 
         '(' + (INTL.P ? INTL.P.join('|') : '') + (INTL.P && INTL.p ? '|' : '') + (INTL.p ? INTL.p.join('|') : '') + ')' :
         '([AaPp].?[Mm].?)';
-     /**
-     Array of ordinals (first, second, third etc)
-     Must be in order: must start with 'first' in position 0
 
-     @property RELTEXTNUMBER
-     @static
-     @var {Array}
-     */
+     /**
+      * Array of ordinals (first, second, third etc)
+      * Must be in order: must start with 'first' in position 0
+      *
+      * @property RELTEXTNUMBER
+      * @static
+      * @type {Array}
+      */
     strtotime.RELTEXTNUMBER = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
-     /**
-     Array of text terms for 'next', 'last', 'previous', 'this'
-     Must be in order: must start with 'next' in position 0
 
-     @property RELTEXTTEXT
-     @static
-     @var {Array}
-     */    
-    strtotime.RELTEXTTEXT = ['next','last','previous','this'];
      /**
-     Array of time terms
+      * Array of text terms for 'next', 'last', 'previous', 'this'
+      * Must be in order: must start with 'next' in position 0
+      * 
+      * @property RELTEXTTEXT
+      * @static
+      * @var {Array}
+      */
+    strtotime.RELTEXTTEXT = ['next','last','previous','this'];
+
+     /**
+      * Array of time terms
      
 
      @property RELTEXTUNIT

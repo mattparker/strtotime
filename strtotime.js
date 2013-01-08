@@ -198,6 +198,30 @@ YUI.add('strtotime', function (Y) {
         },
 
 
+        /**
+         * Handles text month, looking it up in the original arrays
+         * to get the (human - 1-based) month number
+         *
+         * @method _handleMonthText
+         * @param {String} res Match from regexp
+         * @return {int} Month number (in human terms - Jan = 1)
+         */
+        _handleMonthText = function (res) {
+
+            var m, 
+                search = ['MONTHFULL', 'MONTHABBR', 'MONTHROMAN'],
+                i = 0;
+                
+            for (i = 0; i < 3; i = i + 1) {
+                m = strtotime[search[i]].indexOf(res);
+                if (m !== -1) {
+                    return m;
+                }
+            }
+            return false;
+
+        },
+
 
         /**
          * Makes relative changes to different components of the date
@@ -831,10 +855,10 @@ YUI.add('strtotime', function (Y) {
                 dayspecial = strtotime.DAYSPECIAL.join('|') || 'weekday|weekdays',  // apparently no INTL version of this
                 daytext = '(' + dayfull + '|' + dayabbr + '|' + dayspecial + ')',
 
-                monthfull = INTL.B ? INTL.B.join('|') : 'january|february|march|april|may|june|july|august|september|october|november|december',
-                monthabbr = INTL.b ? INTL.b.join('|') : 'jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec',
-                monthroman = 'I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII',
-                monthtext = '(' + monthfull + '|' + monthabbr + '|' + monthroman + ')',
+                monthfull = strtotime.MONTHFULL.join('|'),
+                monthabbr = strtotime.MONTHABBR.join('|'),
+                monthroman = strtotime.MONTHROMAN.join('|'),
+                monthtext = '((' + monthfull + ')|(' + monthabbr + ')|(' + monthroman + '))',
 
                 // Time
                 timetiny12 = hour12 + '(' + space + ')?' + meridian,
@@ -1410,7 +1434,23 @@ YUI.add('strtotime', function (Y) {
                 }},
 
 
-              
+     
+                {key: 'datefull', re: new RegExp(oRegEx.datefull), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched datefull');
+
+                    var m = _handleMonthText(aRes[6]);
+
+                    mods.updateAbs({
+                        y: aRes[11],
+                        m: m,
+                        d: aRes[1],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},         
 
 
 
@@ -1628,6 +1668,41 @@ YUI.add('strtotime', function (Y) {
      @var {Array}
      */
     strtotime.RELTEXTUNIT = ['sec','second','min','minute','hour','day','fortnight','forthnight','month','year'];// 's'?) , 'weeks' , daytext;
+
+    /**
+     * Array of full length months.
+     * Must by in order, and start at January
+     *
+     * @property MONTHFULL
+     * @static
+     * @type {Array}
+     * @default ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
+        'September', 'October', 'November', 'December']
+     */
+    strtotime.MONTHFULL = INTL.B ? INT.B : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
+        'September', 'October', 'November', 'December'];
+
+    /**
+     * Array of abbreviated length months.
+     * Must by in order, and start at Jan
+     *
+     * @property MONTHABBR
+     * @static
+     * @type {Array}
+     * @default ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+     */
+    strtotime.MONTHABBR = INTL.b ? INTL.b : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    /**
+     * Array of Roman numeral months (or could be anything, actually).
+     * Must by in order, and start at Jan
+     *
+     * @property MONTHROMAN
+     * @static
+     * @type {Array}
+     * @default ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
+     */
+    strtotime.MONTHROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
 
 

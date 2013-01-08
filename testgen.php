@@ -35,7 +35,12 @@ $dateFormats = array(
 	// gnudateshorter
 	"Y-m",
 	// gnudateshort
-	"Y-m-d"
+	"Y-m-d",
+	// date full (no date format for roman numerals!)
+	"d F Y",
+	"dS M. Y",
+
+
 
 
 );

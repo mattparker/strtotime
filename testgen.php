@@ -177,6 +177,22 @@ $extras = array(
 	//"first Wednesday of June 2013",
 	"first Wednesday of 2012/05/16",
 
+	"Mon",
+	"Tue", 
+	"Wed",
+	"Thu",
+	"Fri",
+	"Sat",
+	"Sun",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+	"Sunday",
+
+
 );
 
 
@@ -472,7 +488,7 @@ $html = '<!DOCTYPE html>
 <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui.js"></script>
 
 <script>
-YUI({
+var Y = YUI({
     coverage: ["strtotime"],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || "raw",
     modules: {

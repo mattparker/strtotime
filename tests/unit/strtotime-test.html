@@ -14,7 +14,7 @@
 <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui.js"></script>
 
 <script>
-YUI({
+var Y = YUI({
     coverage: ["strtotime"],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || "raw",
     modules: {

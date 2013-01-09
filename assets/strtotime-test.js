@@ -13468,6 +13468,62 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1335916800, strtotime('first Wednesday of 2012/05/16', 1360022400));
 		},
 
+		'Extras: strtotime("Mon", 1360022400) should give `1360540800`':  function () {
+			Y.Assert.areSame(1360540800, strtotime('Mon', 1360022400));
+		},
+
+		'Extras: strtotime("Tue", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('Tue', 1360022400));
+		},
+
+		'Extras: strtotime("Wed", 1360022400) should give `1360108800`':  function () {
+			Y.Assert.areSame(1360108800, strtotime('Wed', 1360022400));
+		},
+
+		'Extras: strtotime("Thu", 1360022400) should give `1360195200`':  function () {
+			Y.Assert.areSame(1360195200, strtotime('Thu', 1360022400));
+		},
+
+		'Extras: strtotime("Fri", 1360022400) should give `1360281600`':  function () {
+			Y.Assert.areSame(1360281600, strtotime('Fri', 1360022400));
+		},
+
+		'Extras: strtotime("Sat", 1360022400) should give `1360368000`':  function () {
+			Y.Assert.areSame(1360368000, strtotime('Sat', 1360022400));
+		},
+
+		'Extras: strtotime("Sun", 1360022400) should give `1360454400`':  function () {
+			Y.Assert.areSame(1360454400, strtotime('Sun', 1360022400));
+		},
+
+		'Extras: strtotime("Monday", 1360022400) should give `1360540800`':  function () {
+			Y.Assert.areSame(1360540800, strtotime('Monday', 1360022400));
+		},
+
+		'Extras: strtotime("Tuesday", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('Tuesday', 1360022400));
+		},
+
+		'Extras: strtotime("Wednesday", 1360022400) should give `1360108800`':  function () {
+			Y.Assert.areSame(1360108800, strtotime('Wednesday', 1360022400));
+		},
+
+		'Extras: strtotime("Thursday", 1360022400) should give `1360195200`':  function () {
+			Y.Assert.areSame(1360195200, strtotime('Thursday', 1360022400));
+		},
+
+		'Extras: strtotime("Friday", 1360022400) should give `1360281600`':  function () {
+			Y.Assert.areSame(1360281600, strtotime('Friday', 1360022400));
+		},
+
+		'Extras: strtotime("Saturday", 1360022400) should give `1360368000`':  function () {
+			Y.Assert.areSame(1360368000, strtotime('Saturday', 1360022400));
+		},
+
+		'Extras: strtotime("Sunday", 1360022400) should give `1360454400`':  function () {
+			Y.Assert.areSame(1360454400, strtotime('Sunday', 1360022400));
+		},
+
 		'Extras: strtotime("@1364811922", 1360022400) should give `1364811922`':  function () {
 			Y.Assert.areSame(1364811922, strtotime('@1364811922', 1360022400));
 		},

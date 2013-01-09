@@ -126,6 +126,11 @@ YUI.add('strtotime', function (Y) {
                 thisWeek,
                 addWeeks;
 
+
+            if (tofind.weekIndex === undefined) {
+                tofind.weekIndex = "next";
+            }
+
             // 'last' needs handling differently:
             if (tofind.weekIndex === 'last') {
                 // this is the hard one:
@@ -140,7 +145,7 @@ YUI.add('strtotime', function (Y) {
 
             //thisWeek = Math.floor(new Date(ts).getUTCDate() / 7);
 
-            tmp.setUTCDate(1);
+            
             
             // now add on the right number of weeks
             switch (tofind.weekIndex) {
@@ -151,9 +156,11 @@ YUI.add('strtotime', function (Y) {
                     addWeeks = -1;//thisWeek - 1;
                     break;
                 case 'first':
+                    tmp.setUTCDate(1);
                     addWeeks = 0;
                     break;
                 default:
+                    tmp.setUTCDate(1);
                     addWeeks = parseInt(tofind.weekIndex, 10);
                     break;
             }
@@ -1808,6 +1815,39 @@ YUI.add('strtotime', function (Y) {
                     mods.relativeDirection = -1;
 
                 }},
+
+
+
+
+
+
+                {key: 'daytext', re: new RegExp(oRegEx.daytext), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: Matched daytext');
+
+                    var dow = aRes[0],
+                        dowIndex = strtotime.DAYFULL.indexOf(dow) !== -1 ?
+                            strtotime.DAYFULL.indexOf(dow) :
+                            strtotime.DAYABBR.indexOf(dow);
+
+                    mods.updateAbs({
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                    mods.updateRel({
+                        weekdayOf: {
+                            dayIndex: dowIndex
+                        }
+                    });
+
+
+                }},
+
+
+
+
 
 
                 // This is an extra one to definitely pick up t0813 as a time

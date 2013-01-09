@@ -72,7 +72,14 @@ $dateFormats = array(
 	// pgydotd
 	"Y.z",
 	// isoweekday
-	"Y\WW-w"
+	"Y\WW-w",
+	// pgtextshort
+	"M-d-Y",
+	// pgtextreverse
+	"Y-M-d",
+	// clf
+	"d/M/Y:H:i:s \G\M\T3:30",
+
 
 
 
@@ -114,8 +121,10 @@ $timeFormats = array(
 	"1979",
 	// iso8601nocolon
 	"t081345",
-	"191222"	
+	"191222",
 
+	// year4
+	"2011"
 	/*"Y-m-d H:i:s",
 	"m/d",
 	"Y/m/d"

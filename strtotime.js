@@ -983,8 +983,8 @@ YUI.add('strtotime', function (Y) {
                 xmlrpcnocolon = year4 + monthlz + daylz + 't' + hour24 + minutelz + secondlz,
                 wddx = year4 + '-' + month + '-' + day + 'T' + hour24 + ':' + minute + ':' + second,
                 pgydotd = year4 + '\.?' + dayofyear,
-                pgtextshort = monthabbr + '-' + daylz + '-' + year,
-                pgtextreverse = year + '-' + monthabbr + '-' + daylz,
+                pgtextshort = '(' + monthabbr + ')-' + daylz + '-' + year,
+                pgtextreverse = year + '-(' + monthabbr + ')-' + daylz,
                 mssqltime = hour12 + ':' + minutelz + ':' + secondlz + '[:\.]([0-9]+)' + meridian,
                 isoweekday = year4 + '-?W' + weekofyear + '\-?([0-7])',
                 isoweek = year4 + '-?W' + weekofyear,
@@ -995,7 +995,7 @@ YUI.add('strtotime', function (Y) {
                 frontof = strtotime.FRONTOF + hour24 + '(' + space + ')?' + meridian + '?',
 
                 // common log format
-                clf = day + '\/' + monthabbr + '\/' + year4 + ':' + hour24lz + ':' + minutelz + ':' + secondlz + space + tzcorrection,
+                clf = day + '\/(' + monthabbr + ')\/' + year4 + ':' + hour24lz + ':' + minutelz + ':' + secondlz + space + tzcorrection,
 
                 // timestamp:
                 timestamp = "@(\-)?([0-9]+)",
@@ -1411,6 +1411,7 @@ YUI.add('strtotime', function (Y) {
                 },
 
 
+
                 {key: 'times24', re: new RegExp([oRegEx.iso8601long, oRegEx.timelong24, oRegEx.timeshort24].join('|')), fn: function (aRes, index, mods) {
                     var hr,
                         mn,
@@ -1733,7 +1734,67 @@ YUI.add('strtotime', function (Y) {
                 }},
 
 
+                {key: 'pgtextshort', re: new RegExp(oRegEx.pgtextshort), fn: function (aRes, index, mods) {
 
+                    Y.log('strtotime: matched pgtextshort');
+
+                    mods.updateAbs({
+                        y: aRes[3],
+                        m: _handleMonthText(aRes[1]),
+                        d: aRes[2],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},    
+
+                {key: 'pgtextreverse', re: new RegExp(oRegEx.pgtextreverse), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched pgtextreverse');
+
+                    mods.updateAbs({
+                        y: aRes[1],
+                        m: _handleMonthText(aRes[2]),
+                        d: aRes[3],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }},
+
+
+                // For the same reasons as above, this needs to come before times24
+                // instead of further down in the dates
+                {key: 'clf', re: new RegExp(oRegEx.clf), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched clf');
+
+                    mods.updateAbs({
+                        y: aRes[6],
+                        m: _handleMonthText(aRes[5]),
+                        d: aRes[1],
+                        h: aRes[7],
+                        i: aRes[8],
+                        s: aRes[9]
+                    }, true, index);
+
+                    mods.timezoneString = aRes[10];
+
+                }},
+
+                                // For the same reasons as above, this needs to come before times24
+                // instead of further down in the dates
+                {key: 'year4', re: new RegExp(oRegEx.year4), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched year4');
+
+                    mods.updateAbs({
+                        y: aRes[1]
+                    }, true, index);
+
+                }},
 
 
                 // This seems like an error.  In the php C source this is listed 

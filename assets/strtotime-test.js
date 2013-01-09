@@ -13524,6 +13524,22 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1360454400, strtotime('Sunday', 1360022400));
 		},
 
+		'Extras: strtotime("last week", 1360022400) should give `1359331200`':  function () {
+			Y.Assert.areSame(1359331200, strtotime('last week', 1360022400));
+		},
+
+		'Extras: strtotime("next week", 1360022400) should give `1360540800`':  function () {
+			Y.Assert.areSame(1360540800, strtotime('next week', 1360022400));
+		},
+
+		'Extras: strtotime("previous week", 1360022400) should give `1359331200`':  function () {
+			Y.Assert.areSame(1359331200, strtotime('previous week', 1360022400));
+		},
+
+		'Extras: strtotime("this week", 1360022400) should give `1359936000`':  function () {
+			Y.Assert.areSame(1359936000, strtotime('this week', 1360022400));
+		},
+
 		'Extras: strtotime("@1364811922", 1360022400) should give `1364811922`':  function () {
 			Y.Assert.areSame(1364811922, strtotime('@1364811922', 1360022400));
 		},

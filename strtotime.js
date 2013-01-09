@@ -136,11 +136,14 @@ YUI.add('strtotime', function (Y) {
                 // this is the hard one:
                 // find the last day of the month and do it again 
                 // backwarods
-                tmp.setUTCDate(_findLastDayOf(ts));
+                /*tmp.setUTCDate(_findLastDayOf(ts));
                 while (tmp.getUTCDay() !== tofind.dayIndex) {
                     tmp = new Date(tmp.getTime() - 86400000);
                 }
                 return tmp.getTime();
+                */
+                tmt = tmp.setUTCDate(_findLastDayOf(ts));
+                return _setToDay(tmt, tofind.dayIndex, -1);
             }
 
             //thisWeek = Math.floor(new Date(ts).getUTCDate() / 7);
@@ -166,13 +169,65 @@ YUI.add('strtotime', function (Y) {
             }
 
             // iterate through until we're on the correct day
-            while (tmp.getUTCDay() !== tofind.dayIndex) {
+            /*while (tmp.getUTCDay() !== tofind.dayIndex) {
                 tmp = new Date(tmp.getTime() + 86400000);
-            }
+            }*/
 
-            tmt = tmp.getTime();
+            tmt = _setToDay(ts, tofind.dayIndex, 1);// tmp.getTime();
             tmt = tmt + (604800000 * addWeeks);
             return tmt;
+        },
+
+
+        /**
+         * Gets a timestamp for the nearest day of the week
+         * from that passed, either forward or back
+         *
+         * @method _setToDay
+         * @param {Int} ts Timestamp
+         * @param {Int} dayIndex Day of the week: Sunday = 0, Monday = 1
+         * @param {Int} direction +1 = forward, -1 = last
+         * @return {Int} Timestamp
+         */
+        _setToDay = function (ts, dayIndex, direction) {
+            var tmp = new Date(ts);
+            while(tmp.getUTCDay() !== dayIndex) {
+                tmp = new Date(tmp.getTime() + (direction * 86400000));
+            }
+            return tmp.getTime();
+        },
+
+
+        /**
+         * Moves the date first|last|next|previous week
+         * 
+         * @method _findWeekOf
+         * @param {Int} ts Timestamp
+         * @param {String} Change
+         * @return {Int} Timestamp
+         */
+        _findWeekOf = function (ts, change) {
+
+            // need to set the day of week to a Monday
+            var isMonday = (new Date(ts).getUTCDay() === 1),
+                inc = (isMonday ? 86400000 : 0);
+
+            switch (change) {
+                case 'next':
+                    return _setToDay(ts + inc, 1, 1);
+                    break;
+                case 'last':
+                case 'previous':
+                    ts = ts - 604800000; // go back a week
+                    return _setToDay(ts - inc, 1, -1);
+                    break;
+                case 'this':
+                    return _setToDay(ts, 1, -1);
+                    break;
+                default:
+                    return false;
+            }
+
         },
 
         /**
@@ -519,7 +574,8 @@ YUI.add('strtotime', function (Y) {
              *
              */
             this.relativeFixedHash = {
-                weekdayOf: undefined
+                weekdayOf: undefined,
+                week: undefined
             };
 
             /**
@@ -548,6 +604,10 @@ YUI.add('strtotime', function (Y) {
                         if (i === "weekdayOf") {
 
                             this.relativeFixedHash.weekdayOf = oChange[i];
+
+                        } else if (i === "week") {
+
+                            this.relativeFixedHash.week = oChange[i];
 
                         } else {
                             c = parseInt(oChange[i], 10);
@@ -856,8 +916,10 @@ YUI.add('strtotime', function (Y) {
                 if (thisChange !== undefined) {
                     for (i in thisChange) {
                 
-                        if (thisChange.hasOwnProperty(i) && 'weekdayOf' && thisChange[i] !== 0) {
+                        if (thisChange.hasOwnProperty(i) && ['weekdayOf', 'week'].indexOf(i) === -1 && thisChange[i] !== 0) {
+
                             ms = relChange[i](ms, mods.relativeDirection * thisChange[i]);
+
                         }
                     }
                 }
@@ -881,6 +943,10 @@ YUI.add('strtotime', function (Y) {
             // Work out the 'first Wednesday' type modifiers
             if (mods.relativeFixedHash.weekdayOf !== undefined) {
                 ms = _findWeekdayOf(ms, mods.relativeFixedHash.weekdayOf);
+            }
+            // Work out 'last week' type modifier
+            if (mods.relativeFixedHash.week !== undefined) {
+                ms = _findWeekOf(ms, mods.relativeFixedHash.week);
             }
 
             // Finally do timezone correction
@@ -1842,6 +1908,19 @@ YUI.add('strtotime', function (Y) {
                         }
                     });
 
+
+                }},
+
+
+                {key: 'relativetextweek', re: new RegExp(oRegEx.relativetextweek), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: Matched relativetextweek');
+
+                    // (first|last|next|previous) week
+
+                    mods.updateRel({
+                        week: aRes[1]
+                    }, null, index);
 
                 }},
 

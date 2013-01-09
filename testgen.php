@@ -142,7 +142,8 @@ $changes = array(
 	"today",
 	"tomorrow",
 	"first day of",
-	"last day of"
+	"last day of",
+
 );
 
 $appendChanges = array(
@@ -192,6 +193,11 @@ $extras = array(
 	"Saturday",
 	"Sunday",
 
+	
+	"last week",
+	"next week",
+	"previous week",
+	"this week",
 
 );
 

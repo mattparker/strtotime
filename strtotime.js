@@ -845,10 +845,12 @@ YUI.add('strtotime', function (Y) {
             for (j = 0; j < mods.orderedRelChanges.length; j = j + 1) {
 
                 thisChange = mods.orderedRelChanges[j];
+
                 if (thisChange !== undefined) {
                     for (i in thisChange) {
+                
                         if (thisChange.hasOwnProperty(i) && 'weekdayOf' && thisChange[i] !== 0) {
-                            ms = relChange[i](ms, thisChange[i]);
+                            ms = relChange[i](ms, mods.relativeDirection * thisChange[i]);
                         }
                     }
                 }
@@ -967,6 +969,7 @@ YUI.add('strtotime', function (Y) {
                 iso8601normtz = timeshort24 + '[:.]' + secondlz + '(' + space + ')?' + '(' + tzcorrection + '|' + tz + ')',
 
                 gnunocolon = '(t)?' + hour24lz + minutelz,
+                gnunocolont = 't' + hour24lz + minutelz,
                 iso8601nocolon = '(t)?' + hour24lz + minutelz + secondlz,
 
                 // Dates
@@ -1087,6 +1090,7 @@ YUI.add('strtotime', function (Y) {
                 "iso8601normtz": space + iso8601normtz + space,
 
                 "gnunocolon": space + gnunocolon + space,
+                "gnunocolont": space + gnunocolont + space,
                 "iso8601nocolon": space + iso8601nocolon + space,
 
                 // Dates
@@ -1796,16 +1800,6 @@ YUI.add('strtotime', function (Y) {
                 }},
 
 
-                {key: 'year4', re: new RegExp(oRegEx.year4), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: matched year4');
-
-                    mods.updateAbs({
-                        y: aRes[1]
-                    }, true, index);
-
-                }},
-
 
                 {key: 'ago', re: new RegExp(oRegEx.ago), fn: function (aRes, index, mods) {
 
@@ -1815,6 +1809,30 @@ YUI.add('strtotime', function (Y) {
 
                 }},
 
+
+                // This is an extra one to definitely pick up t0813 as a time
+                {key: "gnunocolont", re: new RegExp(oRegEx.gnunocolont), fn: function (aRes, index, mods) {
+                    
+                    Y.log('strtotime: matched gnunocolont');
+
+                    mods.updateAbs({
+                        h: aRes[1],
+                        i: aRes[2]
+                    }, true, index);
+                }},
+
+
+
+                // this appears further up in the C source: possibly a source of error (as gnunocolon)
+                {key: 'year4', re: new RegExp(oRegEx.year4), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched year4');
+
+                    mods.updateAbs({
+                        y: aRes[1]
+                    }, true, index);
+
+                }},
 
                 // This seems like an error.  In the php C source this is listed 
                 // after timeshort24.  However, if you do so it matches years
@@ -1854,7 +1872,7 @@ YUI.add('strtotime', function (Y) {
                         }
                     }, null, index);
 
-                }}
+                }}              
 
             ];
 

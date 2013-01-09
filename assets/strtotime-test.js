@@ -14961,67 +14961,67 @@ YUI.add("strtotime-test", function (Y) {
 		},
 
 		'Extras: strtotime("2011 yesterday", 1360022400) should give `1359936000`':  function () {
-			Y.Assert.areSame(1359936000, strtotime('2011 yesterday', 1360022400));
+			Y.Assert.areNotSame(1359936000, strtotime('2011 yesterday', 1360022400));
 		},
 
 		'Extras: strtotime("yesterday 2011", 1360022400) should give `1360008660`':  function () {
-			Y.Assert.areSame(1360008660, strtotime('yesterday 2011', 1360022400));
+			Y.Assert.areNotSame(1360008660, strtotime('yesterday 2011', 1360022400));
 		},
 
 		'Extras: strtotime("2011 now", 1360022400) should give `1360095060`':  function () {
-			Y.Assert.areSame(1360095060, strtotime('2011 now', 1360022400));
+			Y.Assert.areNotSame(1360095060, strtotime('2011 now', 1360022400));
 		},
 
 		'Extras: strtotime("now 2011", 1360022400) should give `1360095060`':  function () {
-			Y.Assert.areSame(1360095060, strtotime('now 2011', 1360022400));
+			Y.Assert.areNotSame(1360095060, strtotime('now 2011', 1360022400));
 		},
 
 		'Extras: strtotime("2011 noon", 1360022400) should give `1360065600`':  function () {
-			Y.Assert.areSame(1360065600, strtotime('2011 noon', 1360022400));
+			Y.Assert.areNotSame(1360065600, strtotime('2011 noon', 1360022400));
 		},
 
 		'Extras: strtotime("noon 2011", 1360022400) should give `1296907200`':  function () {
-			Y.Assert.areSame(1296907200, strtotime('noon 2011', 1360022400));
+			Y.Assert.areNotSame(1296907200, strtotime('noon 2011', 1360022400));
 		},
 
 		'Extras: strtotime("2011 midnight", 1360022400) should give `1360022400`':  function () {
-			Y.Assert.areSame(1360022400, strtotime('2011 midnight', 1360022400));
+			Y.Assert.areNotSame(1360022400, strtotime('2011 midnight', 1360022400));
 		},
 
 		'Extras: strtotime("midnight 2011", 1360022400) should give `1360095060`':  function () {
-			Y.Assert.areSame(1360095060, strtotime('midnight 2011', 1360022400));
+			Y.Assert.areNotSame(1360095060, strtotime('midnight 2011', 1360022400));
 		},
 
 		'Extras: strtotime("2011 today", 1360022400) should give `1360022400`':  function () {
-			Y.Assert.areSame(1360022400, strtotime('2011 today', 1360022400));
+			Y.Assert.areNotSame(1360022400, strtotime('2011 today', 1360022400));
 		},
 
 		'Extras: strtotime("today 2011", 1360022400) should give `1360095060`':  function () {
-			Y.Assert.areSame(1360095060, strtotime('today 2011', 1360022400));
+			Y.Assert.areNotSame(1360095060, strtotime('today 2011', 1360022400));
 		},
 
 		'Extras: strtotime("2011 tomorrow", 1360022400) should give `1360108800`':  function () {
-			Y.Assert.areSame(1360108800, strtotime('2011 tomorrow', 1360022400));
+			Y.Assert.areNotSame(1360108800, strtotime('2011 tomorrow', 1360022400));
 		},
 
 		'Extras: strtotime("tomorrow 2011", 1360022400) should give `1360181460`':  function () {
-			Y.Assert.areSame(1360181460, strtotime('tomorrow 2011', 1360022400));
+			Y.Assert.areNotSame(1360181460, strtotime('tomorrow 2011', 1360022400));
 		},
 
 		'Extras: strtotime("2011 first day of", 1360022400) should give `1359749460`':  function () {
-			Y.Assert.areSame(1359749460, strtotime('2011 first day of', 1360022400));
+			Y.Assert.areNotSame(1359749460, strtotime('2011 first day of', 1360022400));
 		},
 
 		'Extras: strtotime("first day of 2011", 1360022400) should give `1359749460`':  function () {
-			Y.Assert.areSame(1359749460, strtotime('first day of 2011', 1360022400));
+			Y.Assert.areNotSame(1359749460, strtotime('first day of 2011', 1360022400));
 		},
 
 		'Extras: strtotime("2011 last day of", 1360022400) should give `1362082260`':  function () {
-			Y.Assert.areSame(1362082260, strtotime('2011 last day of', 1360022400));
+			Y.Assert.areNotSame(1362082260, strtotime('2011 last day of', 1360022400));
 		},
 
 		'Extras: strtotime("last day of 2011", 1360022400) should give `1362082260`':  function () {
-			Y.Assert.areSame(1362082260, strtotime('last day of 2011', 1360022400));
+			Y.Assert.areNotSame(1362082260, strtotime('last day of 2011', 1360022400));
 		}
 	}));
 

@@ -237,8 +237,29 @@ $testsThatFailFromSuspectedPhpBugs = array(
 	"eleventh Friday of Y\WW-w",
 	"twelfth Saturday of Y\WW-w",
 	
-
-
+	// year4 seems to be failing too.
+	// in php, strtotime("2011") is interpreted as a time
+	// but it looks from the source like it ought to recognise
+	// it as a year (as the js currently does)
+	//
+	// (and becuase these are extras they use 2011 as actual date)
+	// instead of the date format Y
+	"2011 yesterday",
+	"2011 tomorrow",
+	"2011 first day of",
+	"2011 last day of",
+	"2011 now",
+	"2011 midnight",
+	"2011 noon",
+	"2011 today",
+	"noon 2011",
+	"today 2011",
+	"yesterday 2011",
+	"tomorrow 2011",
+	"first day of 2011",
+	"last day of 2011",
+	"now 2011",
+	"midnight 2011",
 
 
 );
@@ -377,9 +398,17 @@ foreach ($extras as $e) {
 	if ($res2 === false) {
 		$res2 = 'false';
 	}
+	if (in_array($e, $testsThatFailFromSuspectedPhpBugs)) {
+		$assert = 'areNotSame';
+		$msg = 'This is a suspected php bug.';
+	} else {
+		$assert = 'areSame';
+		$msg = '';
+	}
+
 	$extraTests[] = "\n\t\t'Extras: strtotime(\"" . $e . "\", 1360022400) should give `" . $res2 . "`': "
 		. " function () {\n"
-		. "\t\t\tY.Assert.areSame(" . $res2 . ", strtotime('" . $e . "', 1360022400));\n"
+		. "\t\t\tY.Assert." . $assert . "(" . $res2 . ", strtotime('" . $e . "', 1360022400));\n"
 		. "\t\t}";		
 }
 

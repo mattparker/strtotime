@@ -557,6 +557,17 @@ YUI.add('strtotime', function (Y) {
             };
 
 
+            /**
+             * The direction (in time) relative changes should be made:
+             * +1 => into the future, -1 into the past
+             *
+             * @property relativeDirection
+             * @type {Int}
+             * @protected 
+             * @default 1
+             */
+            this.relativeDirection = 1;
+
 
             /**
              * 'Model' storage for absolute changes to dates/times
@@ -836,7 +847,7 @@ YUI.add('strtotime', function (Y) {
                 thisChange = mods.orderedRelChanges[j];
                 if (thisChange !== undefined) {
                     for (i in thisChange) {
-                        if (thisChange.hasOwnProperty(i), 'weekdayOf' && thisChange[i] !== 0) {
+                        if (thisChange.hasOwnProperty(i) && 'weekdayOf' && thisChange[i] !== 0) {
                             ms = relChange[i](ms, thisChange[i]);
                         }
                     }
@@ -904,7 +915,7 @@ YUI.add('strtotime', function (Y) {
 
                 space = '[ \t]+', 
                 frac = '[.]([0-9]+)',
-                ago = 'ago',
+                ago = strtotime.AGO,
                 hour24 = '(2[0-4]|[01]?[0-9])',
                 hour24lz = '(2[0-4]|[01][0-9])',
                 hour12 = '(1[0-2]|0?[1-9])',
@@ -919,7 +930,7 @@ YUI.add('strtotime', function (Y) {
                 tz = '\(? [A-Za-z]{1,6}\)?|[A-Za-z]+([_\/\-][A-Za-z]+)+',
                 tzcorrection = 'GMT?([+-]' + hour24 + ':?' + minute + '?)',
 
-                daysuf = '(st|nd|rd|th)',
+                daysuf = '(' + strtotime.DAYSUFFIXES.join('|') + ')',
 
                 month = '(1[0-2]|0?[0-9])',
                 day = '((3[0-1])|([0-2]?[0-9]))' + daysuf + '?',
@@ -1784,8 +1795,7 @@ YUI.add('strtotime', function (Y) {
 
                 }},
 
-                                // For the same reasons as above, this needs to come before times24
-                // instead of further down in the dates
+
                 {key: 'year4', re: new RegExp(oRegEx.year4), fn: function (aRes, index, mods) {
 
                     Y.log('strtotime: matched year4');
@@ -1793,6 +1803,15 @@ YUI.add('strtotime', function (Y) {
                     mods.updateAbs({
                         y: aRes[1]
                     }, true, index);
+
+                }},
+
+
+                {key: 'ago', re: new RegExp(oRegEx.ago), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched ago');
+
+                    mods.relativeDirection = -1;
 
                 }},
 
@@ -2048,6 +2067,26 @@ YUI.add('strtotime', function (Y) {
     strtotime.MONTHROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
 
+    /**
+     * Term meaning 'ago' (ie modifier that makes relative changes go into the past)
+     *
+     * @property AGO
+     * @static
+     * @type {String}
+     * @default 'ago',
+     */
+    strtotime.AGO = 'ago';
+
+
+    /**
+     * Suffixes that appear after day numbers (e.g. 22nd)
+
+     * @property DAYSUFFIXES
+     * @static
+     * @type {Array}
+     * @default '(st|nd|rd|th)'
+     */
+    strtotime.DAYSUFFIXES = ['st', 'nd', 'rd', 'th'];
 
     // Put in the DataType.Date namespace
     Y.DataType.Date.strtotime = strtotime;

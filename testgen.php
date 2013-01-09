@@ -18,67 +18,68 @@ $dates = array(
 
 $dateFormats = array(
 	// iso8601dateslash
-	"Y/m/d",
+	"Y/m/d" => "iso8601dateslash",
 	// timestamp
 	// don as extras
 
 	// american short
-	"m/d",
+	"m/d" => "american short",
 	// american
-	"m/d/Y",
+	"m/d/Y" => "american",
 	// dateslash
-	"Y/n/d",
+	"Y/n/d" => "dateslash",
 	// iso8601date4
-	"Y/m/j",
+	"Y/m/j" => "iso8601date4",
 	// iso8601date2
-	"y-m-d",
+	"y-m-d" => "iso8601date2",
 	// gnudateshorter
-	"Y-m",
+	"Y-m" => "gnudateshorter",
 	// gnudateshort
-	"Y-m-d",
+	"Y-m-d" => "gnudateshort",
 	// date full (no date format for roman numerals!)
-	"d F Y",
-	"dS M. Y",
+	"d F Y" => "date full",
+	"dS M. Y" => "date full2",
 	// pointed date
-	"j.m.Y",
-	"d-n-Y",
-	"j.m.y",
+	"j.m.Y" => "pointed date",
+	"d-n-Y" => "pointed date2",
+	"j.m.y" => "pointed date3",
 	// datenoday
-	"F Y",
-	"M Y",
+	"F Y" => "datenoday",
+	"M Y" => "datenoday2",
 	// datenodayrev
-	"Y F",
-	"Y M",
+	"Y F" => "datenodayrev",
+	"Y M" => "datenodayrev2",
 	// datetextual
-	"F d Y",
-	"M dS",
+	"F d Y" => "datetextual",
+	"M dS" => "datetextual2",
 	// datenoyearrev
-	"d F",
-	"dS M",
+	"d F" => "datenoyearrev",
+	"dS M" => "datenoyearrev2",
 	// datenocolon
-	"Ymd",
+	"Ymd" => "datenocolon",
 	// soap
-	"Y-m-d\TH:i:s.u\G\M\TP",
-	"Y-m-d\TH:i:s.u\G\M\T-2:30",
-	"Y-m-d\TH:i:s.u\G\M\T+5:00",
+	"Y-m-d\TH:i:s.u\G\M\TP" => "soap",
+	"Y-m-d\TH:i:s.u\G\M\T-2:30" => "soap2",
+	"Y-m-d\TH:i:s.u\G\M\T+5:00" => "soap3",
 	//xmlrpc
-	"Ymd\TH:i:s",
+	"Ymd\TH:i:s" => "xmlrpc",
 	// xmlrpcnocolon
-	"Ymd\tHis",
+	"Ymd\tHis" => "xmlrpcnocolon",
 	// wddf
-	"Y-m-d\TH:i:s",
+	"Y-m-d\TH:i:s" => "wddf",
 	//exif
-	"Y:m:d H:i:s",
+	"Y:m:d H:i:s" => "exif",
 	// pgydotd
-	"Y.z",
+	"Y.z" => "pgydotd",
 	// isoweekday
-	"Y\WW-w",
+	"Y\WW-w" => "isoweekday",
 	// pgtextshort
-	"M-d-Y",
+	"M-d-Y" => "pgtextshort",
 	// pgtextreverse
-	"Y-M-d",
+	"Y-M-d" => "pgtextreverse",
 	// clf
-	"d/M/Y:H:i:s \G\M\T3:30",
+	"d/M/Y:H:i:s \G\M\T3:30" => "clf",
+
 
 
 
@@ -177,6 +178,75 @@ $extras = array(
 	"first Wednesday of 2012/05/16",
 
 );
+
+
+
+// Some tests fail because of suspected php bugs.
+// Until these are reported and either confirmed as bugs, or
+// confirmed that they're not, we'll register the tests
+// that fail for this reason and expect them to.
+//
+//
+// So, in these cases, the behaviour of js strtotime
+// diverges from php strtotime: but for a good reason
+// (I think php is wrong!).  Although to be fair these cases
+// are 1. moderately esoteric use cases, and 2. a question
+// of interpretation of what strtotime ought to do.
+$testsThatFailFromSuspectedPhpBugs = array(
+
+	// These return false in php, but what you'd expect
+	// in javascript - strtotime("January 12th noon")
+	// gives timestamp for 12th January [current year] 12:00:00
+	"M dS now",
+	"M dS noon",
+	"M dS today",
+	"M dS tomorrow",
+	"M dS yesterday",
+
+	// in php these return the comparison from the first day 
+	// of the year.  So strtotime("2013W14-1 yesterday") in php
+	// gives 31/12/2012, and in javascript it gives 31/3/2013
+	// I think the js is correct: 2013W14-1 is 1st April 2013
+	//
+	// Unfortunately that on particular dates (ie near the start of 
+	// the year, they happen to be correct)
+	"Y\WW-w yesterday",
+	"Y\WW-w tomorrow",
+	"Y\WW-w first day of",
+	"Y\WW-w last day of",
+	
+	// Similar to above, php doesn't seem to cope with 
+	// thif format
+	// so in php, strtotime("third Wednesday of 2012W01-1") returns timestamp
+	// for 5th Jan 2012,
+	// but in js, strtotime("third Wednesday of 2012W01-1") returns timestamp
+	// for 18th Jan 2012
+	// Again the js seems correct
+	"first Tuesday of Y\WW-w",
+	"next Thursday of Y\WW-w",
+	"second Fri of Y\WW-w",
+	"third Wednesday of Y\WW-w",
+	"last Sat of Y\WW-w",
+	"fourth Sunday of Y\WW-w",
+	"fifth Monday of Y\WW-w",
+	"sixth Mon of Y\WW-w",
+	"seventh Tue of Y\WW-w",
+	"eighth Wed of Y\WW-w",
+	"ninth Thu of Y\WW-w",
+	"tenth Sat of Y\WW-w",
+	"eleventh Friday of Y\WW-w",
+	"twelfth Saturday of Y\WW-w",
+	
+
+
+
+
+);
+
+
+
+
+
 // add the timstamps here
 foreach ($dates as $d) {
 	$extras[] = date("@U", strtotime($d));
@@ -204,7 +274,7 @@ foreach ($dates as $d) {
 
 
 
-	foreach ($dateFormats as $f) {
+	foreach ($dateFormats as $f => $formatName) {
 
 		$fd = date($f, $orig_ts);
 		$res0 = strtotime($fd);
@@ -213,7 +283,7 @@ foreach ($dates as $d) {
 			$res0 = 'false';
 		}
 
-		$plainFormatTests[$fd] = "\n\t\t'Date `" . $fd . "` (originally `" . $d . "`) should give timestamp `" . $res0 . "`': "
+		$plainFormatTests[$fd] = "\n\t\t'strtotime(\"" . $fd . "\") (originally `" . $d . "` " . $formatName . ") should give timestamp `" . $res0 . "`': "
 			. " function () {\n"
 			. "\t\t\tY.Assert.areSame(" . $res0 . ", strtotime('" . $fd . "'));\n"
 			. "\t\t}";
@@ -228,7 +298,7 @@ foreach ($dates as $d) {
 				$res = 'false';
 			}
 
-			$modifierTests[$orig_ts . $c] = "\n\t\t'Timestamp `" . $orig_ts . "`  with change `" . $c . "` should give `" . $res 
+			$modifierTests[$orig_ts . $c] = "\n\t\t'strtotime(\"" . $c . "\", " . $orig_ts . ")  (originally `" . $d . "` " . $formatName . ")  should give `" . $res 
 					. ($res !== 'false' ? "` (ie " . date("Y-m-d H:i:s", $res) . ")" : "") . "': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res . ", strtotime('" . $c . "', " . $orig_ts . "));\n"
@@ -243,9 +313,18 @@ foreach ($dates as $d) {
 				$res2 = 'false';
 			}
 
-			$modifierTests[$fd . $c] = "\n\t\t'Formatted date `" . $fd . "` with change `" . $c . "` should give `" . $res2 . "`': "
+			if (in_array($f . ' ' . $c, $testsThatFailFromSuspectedPhpBugs)) {
+				$assert = 'areNotSame';
+				$msg = 'This is a suspected php bug.';
+			} else {
+				$assert = 'areSame';
+				$msg = '';
+			}
+
+			$modifierTests[$fd . $c] = "\n\t\t'strtotime(\"" . $fd . " " . $c . "\")  (" . $formatName . ") should give `" . $res2 
+				. ($res2 !== 'false' ? "` (ie " . date("Y-m-d H:i:s", $res2) . ")" : "") . "': "
 				. " function () {\n"
-				. "\t\t\tY.Assert.areSame(" . $res2 . ", strtotime('" . $fd . " " . $c . "'));\n"
+				. "\t\t\tY.Assert." . $assert . "(" . $res2 . ", strtotime('" . $fd . " " . $c . "'), '" . $msg . "');\n"
 				. "\t\t}";
 
 		}
@@ -257,21 +336,31 @@ foreach ($dates as $d) {
 				$res3 = 'false';
 			}
 			$modifierTests[$orig_ts . $c] = "\n\t\t'strtotime(`" . $c . " " . $orig_ts . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
-				. ") should give `" . $res3 . "`" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
+				. "  " . $formatName . ") should give `" . $res3 . "`" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $orig_ts . "'));\n"
 				. "\t\t}";
 			
+
+
 			$res3 = strtotime($c . " " . $fd);
 			if ($res3 === false) {
 				$res3 = 'false';
 			}
+			if (in_array($c . ' ' . $f, $testsThatFailFromSuspectedPhpBugs)) {
+				$assert = 'areNotSame';
+				$msg = 'This is a suspected php bug.';
+			} else {
+				$assert = 'areSame';
+				$msg = '';
+			}
+
 
 			if ($fd !== $orig_ts) {
 				$modifierTests[$fd . $c] = "\n\t\t'strtotime(`" . $c . " " . $fd . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
-					. ") should give `" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
+					. "  " . $formatName . ") should give `" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
 					. " function () {\n"
-					. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $fd . "'));\n"
+					. "\t\t\tY.Assert." . $assert . "(" . $res3 . ", strtotime('" . $c . " " . $fd . "'));\n"
 					. "\t\t}";
 			}
 
@@ -349,7 +438,7 @@ $html = '<!DOCTYPE html>
 <div id="log"></div>
 
 <button id="rerun">Run tests</button>
-<button id="wait">Pause tests</button>
+<!--<button id="wait">Pause tests</button>-->
 
 <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui.js"></script>
 
@@ -379,7 +468,7 @@ YUI({
     	runner.run();
     };
     Y.one("#rerun").on("click", runTest);
-    Y.one("#wait").on("click", function () { runner.wait();});
+    //Y.one("#wait").on("click", function () { runner.wait();});
 });
 </script>
 

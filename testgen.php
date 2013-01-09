@@ -193,15 +193,19 @@ $extras = array(
 	"Saturday",
 	"Sunday",
 
-	
-	"last week",
-	"next week",
-	"previous week",
-	"this week",
+	'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
+        'September', 'October', 'November', 'December',
+    'Jan', 'Feb', 'Mar', 'Apr',  'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 
 );
+foreach (array("next", "last", "previous", "this", "first", "second", 
+	"third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth") as $c) {
+	foreach (array("second", "sec", "minute", "min", "hour", "day", "week", "fortnight", "month", "year") as $t) {
+		$extras[] = $c . " " . $t;
+	}
+}
 
-
+//"first", "second", "third", "last", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"
 
 // Some tests fail because of suspected php bugs.
 // Until these are reported and either confirmed as bugs, or

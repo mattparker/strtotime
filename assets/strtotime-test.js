@@ -13524,20 +13524,736 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1360454400, strtotime('Sunday', 1360022400));
 		},
 
-		'Extras: strtotime("last week", 1360022400) should give `1359331200`':  function () {
-			Y.Assert.areSame(1359331200, strtotime('last week', 1360022400));
+		'Extras: strtotime("January", 1360022400) should give `1357344000`':  function () {
+			Y.Assert.areSame(1357344000, strtotime('January', 1360022400));
+		},
+
+		'Extras: strtotime("February", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('February', 1360022400));
+		},
+
+		'Extras: strtotime("March", 1360022400) should give `1362441600`':  function () {
+			Y.Assert.areSame(1362441600, strtotime('March', 1360022400));
+		},
+
+		'Extras: strtotime("April", 1360022400) should give `1365120000`':  function () {
+			Y.Assert.areSame(1365120000, strtotime('April', 1360022400));
+		},
+
+		'Extras: strtotime("May", 1360022400) should give `1367712000`':  function () {
+			Y.Assert.areSame(1367712000, strtotime('May', 1360022400));
+		},
+
+		'Extras: strtotime("June", 1360022400) should give `1370390400`':  function () {
+			Y.Assert.areSame(1370390400, strtotime('June', 1360022400));
+		},
+
+		'Extras: strtotime("July", 1360022400) should give `1372982400`':  function () {
+			Y.Assert.areSame(1372982400, strtotime('July', 1360022400));
+		},
+
+		'Extras: strtotime("August", 1360022400) should give `1375660800`':  function () {
+			Y.Assert.areSame(1375660800, strtotime('August', 1360022400));
+		},
+
+		'Extras: strtotime("September", 1360022400) should give `1378339200`':  function () {
+			Y.Assert.areSame(1378339200, strtotime('September', 1360022400));
+		},
+
+		'Extras: strtotime("October", 1360022400) should give `1380931200`':  function () {
+			Y.Assert.areSame(1380931200, strtotime('October', 1360022400));
+		},
+
+		'Extras: strtotime("November", 1360022400) should give `1383609600`':  function () {
+			Y.Assert.areSame(1383609600, strtotime('November', 1360022400));
+		},
+
+		'Extras: strtotime("December", 1360022400) should give `1386201600`':  function () {
+			Y.Assert.areSame(1386201600, strtotime('December', 1360022400));
+		},
+
+		'Extras: strtotime("Jan", 1360022400) should give `1357344000`':  function () {
+			Y.Assert.areSame(1357344000, strtotime('Jan', 1360022400));
+		},
+
+		'Extras: strtotime("Feb", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('Feb', 1360022400));
+		},
+
+		'Extras: strtotime("Mar", 1360022400) should give `1362441600`':  function () {
+			Y.Assert.areSame(1362441600, strtotime('Mar', 1360022400));
+		},
+
+		'Extras: strtotime("Apr", 1360022400) should give `1365120000`':  function () {
+			Y.Assert.areSame(1365120000, strtotime('Apr', 1360022400));
+		},
+
+		'Extras: strtotime("Jun", 1360022400) should give `1370390400`':  function () {
+			Y.Assert.areSame(1370390400, strtotime('Jun', 1360022400));
+		},
+
+		'Extras: strtotime("Jul", 1360022400) should give `1372982400`':  function () {
+			Y.Assert.areSame(1372982400, strtotime('Jul', 1360022400));
+		},
+
+		'Extras: strtotime("Aug", 1360022400) should give `1375660800`':  function () {
+			Y.Assert.areSame(1375660800, strtotime('Aug', 1360022400));
+		},
+
+		'Extras: strtotime("Sep", 1360022400) should give `1378339200`':  function () {
+			Y.Assert.areSame(1378339200, strtotime('Sep', 1360022400));
+		},
+
+		'Extras: strtotime("Oct", 1360022400) should give `1380931200`':  function () {
+			Y.Assert.areSame(1380931200, strtotime('Oct', 1360022400));
+		},
+
+		'Extras: strtotime("Nov", 1360022400) should give `1383609600`':  function () {
+			Y.Assert.areSame(1383609600, strtotime('Nov', 1360022400));
+		},
+
+		'Extras: strtotime("Dec", 1360022400) should give `1386201600`':  function () {
+			Y.Assert.areSame(1386201600, strtotime('Dec', 1360022400));
+		},
+
+		'Extras: strtotime("next second", 1360022400) should give `1360022401`':  function () {
+			Y.Assert.areSame(1360022401, strtotime('next second', 1360022400));
+		},
+
+		'Extras: strtotime("next sec", 1360022400) should give `1360022401`':  function () {
+			Y.Assert.areSame(1360022401, strtotime('next sec', 1360022400));
+		},
+
+		'Extras: strtotime("next minute", 1360022400) should give `1360022460`':  function () {
+			Y.Assert.areSame(1360022460, strtotime('next minute', 1360022400));
+		},
+
+		'Extras: strtotime("next min", 1360022400) should give `1360022460`':  function () {
+			Y.Assert.areSame(1360022460, strtotime('next min', 1360022400));
+		},
+
+		'Extras: strtotime("next hour", 1360022400) should give `1360026000`':  function () {
+			Y.Assert.areSame(1360026000, strtotime('next hour', 1360022400));
+		},
+
+		'Extras: strtotime("next day", 1360022400) should give `1360108800`':  function () {
+			Y.Assert.areSame(1360108800, strtotime('next day', 1360022400));
 		},
 
 		'Extras: strtotime("next week", 1360022400) should give `1360540800`':  function () {
 			Y.Assert.areSame(1360540800, strtotime('next week', 1360022400));
 		},
 
+		'Extras: strtotime("next fortnight", 1360022400) should give `1361232000`':  function () {
+			Y.Assert.areSame(1361232000, strtotime('next fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("next month", 1360022400) should give `1362441600`':  function () {
+			Y.Assert.areSame(1362441600, strtotime('next month', 1360022400));
+		},
+
+		'Extras: strtotime("next year", 1360022400) should give `1391558400`':  function () {
+			Y.Assert.areSame(1391558400, strtotime('next year', 1360022400));
+		},
+
+		'Extras: strtotime("last second", 1360022400) should give `1360022399`':  function () {
+			Y.Assert.areSame(1360022399, strtotime('last second', 1360022400));
+		},
+
+		'Extras: strtotime("last sec", 1360022400) should give `1360022399`':  function () {
+			Y.Assert.areSame(1360022399, strtotime('last sec', 1360022400));
+		},
+
+		'Extras: strtotime("last minute", 1360022400) should give `1360022340`':  function () {
+			Y.Assert.areSame(1360022340, strtotime('last minute', 1360022400));
+		},
+
+		'Extras: strtotime("last min", 1360022400) should give `1360022340`':  function () {
+			Y.Assert.areSame(1360022340, strtotime('last min', 1360022400));
+		},
+
+		'Extras: strtotime("last hour", 1360022400) should give `1360018800`':  function () {
+			Y.Assert.areSame(1360018800, strtotime('last hour', 1360022400));
+		},
+
+		'Extras: strtotime("last day", 1360022400) should give `1359936000`':  function () {
+			Y.Assert.areSame(1359936000, strtotime('last day', 1360022400));
+		},
+
+		'Extras: strtotime("last week", 1360022400) should give `1359331200`':  function () {
+			Y.Assert.areSame(1359331200, strtotime('last week', 1360022400));
+		},
+
+		'Extras: strtotime("last fortnight", 1360022400) should give `1358812800`':  function () {
+			Y.Assert.areSame(1358812800, strtotime('last fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("last month", 1360022400) should give `1357344000`':  function () {
+			Y.Assert.areSame(1357344000, strtotime('last month', 1360022400));
+		},
+
+		'Extras: strtotime("last year", 1360022400) should give `1328400000`':  function () {
+			Y.Assert.areSame(1328400000, strtotime('last year', 1360022400));
+		},
+
+		'Extras: strtotime("previous second", 1360022400) should give `1360022399`':  function () {
+			Y.Assert.areSame(1360022399, strtotime('previous second', 1360022400));
+		},
+
+		'Extras: strtotime("previous sec", 1360022400) should give `1360022399`':  function () {
+			Y.Assert.areSame(1360022399, strtotime('previous sec', 1360022400));
+		},
+
+		'Extras: strtotime("previous minute", 1360022400) should give `1360022340`':  function () {
+			Y.Assert.areSame(1360022340, strtotime('previous minute', 1360022400));
+		},
+
+		'Extras: strtotime("previous min", 1360022400) should give `1360022340`':  function () {
+			Y.Assert.areSame(1360022340, strtotime('previous min', 1360022400));
+		},
+
+		'Extras: strtotime("previous hour", 1360022400) should give `1360018800`':  function () {
+			Y.Assert.areSame(1360018800, strtotime('previous hour', 1360022400));
+		},
+
+		'Extras: strtotime("previous day", 1360022400) should give `1359936000`':  function () {
+			Y.Assert.areSame(1359936000, strtotime('previous day', 1360022400));
+		},
+
 		'Extras: strtotime("previous week", 1360022400) should give `1359331200`':  function () {
 			Y.Assert.areSame(1359331200, strtotime('previous week', 1360022400));
 		},
 
+		'Extras: strtotime("previous fortnight", 1360022400) should give `1358812800`':  function () {
+			Y.Assert.areSame(1358812800, strtotime('previous fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("previous month", 1360022400) should give `1357344000`':  function () {
+			Y.Assert.areSame(1357344000, strtotime('previous month', 1360022400));
+		},
+
+		'Extras: strtotime("previous year", 1360022400) should give `1328400000`':  function () {
+			Y.Assert.areSame(1328400000, strtotime('previous year', 1360022400));
+		},
+
+		'Extras: strtotime("this second", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this second', 1360022400));
+		},
+
+		'Extras: strtotime("this sec", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this sec', 1360022400));
+		},
+
+		'Extras: strtotime("this minute", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this minute', 1360022400));
+		},
+
+		'Extras: strtotime("this min", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this min', 1360022400));
+		},
+
+		'Extras: strtotime("this hour", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this hour', 1360022400));
+		},
+
+		'Extras: strtotime("this day", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this day', 1360022400));
+		},
+
 		'Extras: strtotime("this week", 1360022400) should give `1359936000`':  function () {
 			Y.Assert.areSame(1359936000, strtotime('this week', 1360022400));
+		},
+
+		'Extras: strtotime("this fortnight", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("this month", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this month', 1360022400));
+		},
+
+		'Extras: strtotime("this year", 1360022400) should give `1360022400`':  function () {
+			Y.Assert.areSame(1360022400, strtotime('this year', 1360022400));
+		},
+
+		'Extras: strtotime("first second", 1360022400) should give `1360022401`':  function () {
+			Y.Assert.areSame(1360022401, strtotime('first second', 1360022400));
+		},
+
+		'Extras: strtotime("first sec", 1360022400) should give `1360022401`':  function () {
+			Y.Assert.areSame(1360022401, strtotime('first sec', 1360022400));
+		},
+
+		'Extras: strtotime("first minute", 1360022400) should give `1360022460`':  function () {
+			Y.Assert.areSame(1360022460, strtotime('first minute', 1360022400));
+		},
+
+		'Extras: strtotime("first min", 1360022400) should give `1360022460`':  function () {
+			Y.Assert.areSame(1360022460, strtotime('first min', 1360022400));
+		},
+
+		'Extras: strtotime("first hour", 1360022400) should give `1360026000`':  function () {
+			Y.Assert.areSame(1360026000, strtotime('first hour', 1360022400));
+		},
+
+		'Extras: strtotime("first day", 1360022400) should give `1360108800`':  function () {
+			Y.Assert.areSame(1360108800, strtotime('first day', 1360022400));
+		},
+
+		'Extras: strtotime("first week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('first week', 1360022400));
+		},
+
+		'Extras: strtotime("first fortnight", 1360022400) should give `1361232000`':  function () {
+			Y.Assert.areSame(1361232000, strtotime('first fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("first month", 1360022400) should give `1362441600`':  function () {
+			Y.Assert.areSame(1362441600, strtotime('first month', 1360022400));
+		},
+
+		'Extras: strtotime("first year", 1360022400) should give `1391558400`':  function () {
+			Y.Assert.areSame(1391558400, strtotime('first year', 1360022400));
+		},
+
+		'Extras: strtotime("second second", 1360022400) should give `1360022402`':  function () {
+			Y.Assert.areSame(1360022402, strtotime('second second', 1360022400));
+		},
+
+		'Extras: strtotime("second sec", 1360022400) should give `1360022402`':  function () {
+			Y.Assert.areSame(1360022402, strtotime('second sec', 1360022400));
+		},
+
+		'Extras: strtotime("second minute", 1360022400) should give `1360022520`':  function () {
+			Y.Assert.areSame(1360022520, strtotime('second minute', 1360022400));
+		},
+
+		'Extras: strtotime("second min", 1360022400) should give `1360022520`':  function () {
+			Y.Assert.areSame(1360022520, strtotime('second min', 1360022400));
+		},
+
+		'Extras: strtotime("second hour", 1360022400) should give `1360029600`':  function () {
+			Y.Assert.areSame(1360029600, strtotime('second hour', 1360022400));
+		},
+
+		'Extras: strtotime("second day", 1360022400) should give `1360195200`':  function () {
+			Y.Assert.areSame(1360195200, strtotime('second day', 1360022400));
+		},
+
+		'Extras: strtotime("second week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('second week', 1360022400));
+		},
+
+		'Extras: strtotime("second fortnight", 1360022400) should give `1362441600`':  function () {
+			Y.Assert.areSame(1362441600, strtotime('second fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("second month", 1360022400) should give `1365120000`':  function () {
+			Y.Assert.areSame(1365120000, strtotime('second month', 1360022400));
+		},
+
+		'Extras: strtotime("second year", 1360022400) should give `1423094400`':  function () {
+			Y.Assert.areSame(1423094400, strtotime('second year', 1360022400));
+		},
+
+		'Extras: strtotime("third second", 1360022400) should give `1360022403`':  function () {
+			Y.Assert.areSame(1360022403, strtotime('third second', 1360022400));
+		},
+
+		'Extras: strtotime("third sec", 1360022400) should give `1360022403`':  function () {
+			Y.Assert.areSame(1360022403, strtotime('third sec', 1360022400));
+		},
+
+		'Extras: strtotime("third minute", 1360022400) should give `1360022580`':  function () {
+			Y.Assert.areSame(1360022580, strtotime('third minute', 1360022400));
+		},
+
+		'Extras: strtotime("third min", 1360022400) should give `1360022580`':  function () {
+			Y.Assert.areSame(1360022580, strtotime('third min', 1360022400));
+		},
+
+		'Extras: strtotime("third hour", 1360022400) should give `1360033200`':  function () {
+			Y.Assert.areSame(1360033200, strtotime('third hour', 1360022400));
+		},
+
+		'Extras: strtotime("third day", 1360022400) should give `1360281600`':  function () {
+			Y.Assert.areSame(1360281600, strtotime('third day', 1360022400));
+		},
+
+		'Extras: strtotime("third week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('third week', 1360022400));
+		},
+
+		'Extras: strtotime("third fortnight", 1360022400) should give `1363651200`':  function () {
+			Y.Assert.areSame(1363651200, strtotime('third fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("third month", 1360022400) should give `1367712000`':  function () {
+			Y.Assert.areSame(1367712000, strtotime('third month', 1360022400));
+		},
+
+		'Extras: strtotime("third year", 1360022400) should give `1454630400`':  function () {
+			Y.Assert.areSame(1454630400, strtotime('third year', 1360022400));
+		},
+
+		'Extras: strtotime("fourth second", 1360022400) should give `1360022404`':  function () {
+			Y.Assert.areSame(1360022404, strtotime('fourth second', 1360022400));
+		},
+
+		'Extras: strtotime("fourth sec", 1360022400) should give `1360022404`':  function () {
+			Y.Assert.areSame(1360022404, strtotime('fourth sec', 1360022400));
+		},
+
+		'Extras: strtotime("fourth minute", 1360022400) should give `1360022640`':  function () {
+			Y.Assert.areSame(1360022640, strtotime('fourth minute', 1360022400));
+		},
+
+		'Extras: strtotime("fourth min", 1360022400) should give `1360022640`':  function () {
+			Y.Assert.areSame(1360022640, strtotime('fourth min', 1360022400));
+		},
+
+		'Extras: strtotime("fourth hour", 1360022400) should give `1360036800`':  function () {
+			Y.Assert.areSame(1360036800, strtotime('fourth hour', 1360022400));
+		},
+
+		'Extras: strtotime("fourth day", 1360022400) should give `1360368000`':  function () {
+			Y.Assert.areSame(1360368000, strtotime('fourth day', 1360022400));
+		},
+
+		'Extras: strtotime("fourth week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('fourth week', 1360022400));
+		},
+
+		'Extras: strtotime("fourth fortnight", 1360022400) should give `1364860800`':  function () {
+			Y.Assert.areSame(1364860800, strtotime('fourth fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("fourth month", 1360022400) should give `1370390400`':  function () {
+			Y.Assert.areSame(1370390400, strtotime('fourth month', 1360022400));
+		},
+
+		'Extras: strtotime("fourth year", 1360022400) should give `1486252800`':  function () {
+			Y.Assert.areSame(1486252800, strtotime('fourth year', 1360022400));
+		},
+
+		'Extras: strtotime("fifth second", 1360022400) should give `1360022405`':  function () {
+			Y.Assert.areSame(1360022405, strtotime('fifth second', 1360022400));
+		},
+
+		'Extras: strtotime("fifth sec", 1360022400) should give `1360022405`':  function () {
+			Y.Assert.areSame(1360022405, strtotime('fifth sec', 1360022400));
+		},
+
+		'Extras: strtotime("fifth minute", 1360022400) should give `1360022700`':  function () {
+			Y.Assert.areSame(1360022700, strtotime('fifth minute', 1360022400));
+		},
+
+		'Extras: strtotime("fifth min", 1360022400) should give `1360022700`':  function () {
+			Y.Assert.areSame(1360022700, strtotime('fifth min', 1360022400));
+		},
+
+		'Extras: strtotime("fifth hour", 1360022400) should give `1360040400`':  function () {
+			Y.Assert.areSame(1360040400, strtotime('fifth hour', 1360022400));
+		},
+
+		'Extras: strtotime("fifth day", 1360022400) should give `1360454400`':  function () {
+			Y.Assert.areSame(1360454400, strtotime('fifth day', 1360022400));
+		},
+
+		'Extras: strtotime("fifth week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('fifth week', 1360022400));
+		},
+
+		'Extras: strtotime("fifth fortnight", 1360022400) should give `1366070400`':  function () {
+			Y.Assert.areSame(1366070400, strtotime('fifth fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("fifth month", 1360022400) should give `1372982400`':  function () {
+			Y.Assert.areSame(1372982400, strtotime('fifth month', 1360022400));
+		},
+
+		'Extras: strtotime("fifth year", 1360022400) should give `1517788800`':  function () {
+			Y.Assert.areSame(1517788800, strtotime('fifth year', 1360022400));
+		},
+
+		'Extras: strtotime("sixth second", 1360022400) should give `1360022406`':  function () {
+			Y.Assert.areSame(1360022406, strtotime('sixth second', 1360022400));
+		},
+
+		'Extras: strtotime("sixth sec", 1360022400) should give `1360022406`':  function () {
+			Y.Assert.areSame(1360022406, strtotime('sixth sec', 1360022400));
+		},
+
+		'Extras: strtotime("sixth minute", 1360022400) should give `1360022760`':  function () {
+			Y.Assert.areSame(1360022760, strtotime('sixth minute', 1360022400));
+		},
+
+		'Extras: strtotime("sixth min", 1360022400) should give `1360022760`':  function () {
+			Y.Assert.areSame(1360022760, strtotime('sixth min', 1360022400));
+		},
+
+		'Extras: strtotime("sixth hour", 1360022400) should give `1360044000`':  function () {
+			Y.Assert.areSame(1360044000, strtotime('sixth hour', 1360022400));
+		},
+
+		'Extras: strtotime("sixth day", 1360022400) should give `1360540800`':  function () {
+			Y.Assert.areSame(1360540800, strtotime('sixth day', 1360022400));
+		},
+
+		'Extras: strtotime("sixth week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('sixth week', 1360022400));
+		},
+
+		'Extras: strtotime("sixth fortnight", 1360022400) should give `1367280000`':  function () {
+			Y.Assert.areSame(1367280000, strtotime('sixth fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("sixth month", 1360022400) should give `1375660800`':  function () {
+			Y.Assert.areSame(1375660800, strtotime('sixth month', 1360022400));
+		},
+
+		'Extras: strtotime("sixth year", 1360022400) should give `1549324800`':  function () {
+			Y.Assert.areSame(1549324800, strtotime('sixth year', 1360022400));
+		},
+
+		'Extras: strtotime("seventh second", 1360022400) should give `1360022407`':  function () {
+			Y.Assert.areSame(1360022407, strtotime('seventh second', 1360022400));
+		},
+
+		'Extras: strtotime("seventh sec", 1360022400) should give `1360022407`':  function () {
+			Y.Assert.areSame(1360022407, strtotime('seventh sec', 1360022400));
+		},
+
+		'Extras: strtotime("seventh minute", 1360022400) should give `1360022820`':  function () {
+			Y.Assert.areSame(1360022820, strtotime('seventh minute', 1360022400));
+		},
+
+		'Extras: strtotime("seventh min", 1360022400) should give `1360022820`':  function () {
+			Y.Assert.areSame(1360022820, strtotime('seventh min', 1360022400));
+		},
+
+		'Extras: strtotime("seventh hour", 1360022400) should give `1360047600`':  function () {
+			Y.Assert.areSame(1360047600, strtotime('seventh hour', 1360022400));
+		},
+
+		'Extras: strtotime("seventh day", 1360022400) should give `1360627200`':  function () {
+			Y.Assert.areSame(1360627200, strtotime('seventh day', 1360022400));
+		},
+
+		'Extras: strtotime("seventh week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('seventh week', 1360022400));
+		},
+
+		'Extras: strtotime("seventh fortnight", 1360022400) should give `1368489600`':  function () {
+			Y.Assert.areSame(1368489600, strtotime('seventh fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("seventh month", 1360022400) should give `1378339200`':  function () {
+			Y.Assert.areSame(1378339200, strtotime('seventh month', 1360022400));
+		},
+
+		'Extras: strtotime("seventh year", 1360022400) should give `1580860800`':  function () {
+			Y.Assert.areSame(1580860800, strtotime('seventh year', 1360022400));
+		},
+
+		'Extras: strtotime("eighth second", 1360022400) should give `1360022408`':  function () {
+			Y.Assert.areSame(1360022408, strtotime('eighth second', 1360022400));
+		},
+
+		'Extras: strtotime("eighth sec", 1360022400) should give `1360022408`':  function () {
+			Y.Assert.areSame(1360022408, strtotime('eighth sec', 1360022400));
+		},
+
+		'Extras: strtotime("eighth minute", 1360022400) should give `1360022880`':  function () {
+			Y.Assert.areSame(1360022880, strtotime('eighth minute', 1360022400));
+		},
+
+		'Extras: strtotime("eighth min", 1360022400) should give `1360022880`':  function () {
+			Y.Assert.areSame(1360022880, strtotime('eighth min', 1360022400));
+		},
+
+		'Extras: strtotime("eighth hour", 1360022400) should give `1360051200`':  function () {
+			Y.Assert.areSame(1360051200, strtotime('eighth hour', 1360022400));
+		},
+
+		'Extras: strtotime("eighth day", 1360022400) should give `1360713600`':  function () {
+			Y.Assert.areSame(1360713600, strtotime('eighth day', 1360022400));
+		},
+
+		'Extras: strtotime("eighth week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('eighth week', 1360022400));
+		},
+
+		'Extras: strtotime("eighth fortnight", 1360022400) should give `1369699200`':  function () {
+			Y.Assert.areSame(1369699200, strtotime('eighth fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("eighth month", 1360022400) should give `1380931200`':  function () {
+			Y.Assert.areSame(1380931200, strtotime('eighth month', 1360022400));
+		},
+
+		'Extras: strtotime("eighth year", 1360022400) should give `1612483200`':  function () {
+			Y.Assert.areSame(1612483200, strtotime('eighth year', 1360022400));
+		},
+
+		'Extras: strtotime("ninth second", 1360022400) should give `1360022409`':  function () {
+			Y.Assert.areSame(1360022409, strtotime('ninth second', 1360022400));
+		},
+
+		'Extras: strtotime("ninth sec", 1360022400) should give `1360022409`':  function () {
+			Y.Assert.areSame(1360022409, strtotime('ninth sec', 1360022400));
+		},
+
+		'Extras: strtotime("ninth minute", 1360022400) should give `1360022940`':  function () {
+			Y.Assert.areSame(1360022940, strtotime('ninth minute', 1360022400));
+		},
+
+		'Extras: strtotime("ninth min", 1360022400) should give `1360022940`':  function () {
+			Y.Assert.areSame(1360022940, strtotime('ninth min', 1360022400));
+		},
+
+		'Extras: strtotime("ninth hour", 1360022400) should give `1360054800`':  function () {
+			Y.Assert.areSame(1360054800, strtotime('ninth hour', 1360022400));
+		},
+
+		'Extras: strtotime("ninth day", 1360022400) should give `1360800000`':  function () {
+			Y.Assert.areSame(1360800000, strtotime('ninth day', 1360022400));
+		},
+
+		'Extras: strtotime("ninth week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('ninth week', 1360022400));
+		},
+
+		'Extras: strtotime("ninth fortnight", 1360022400) should give `1370908800`':  function () {
+			Y.Assert.areSame(1370908800, strtotime('ninth fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("ninth month", 1360022400) should give `1383609600`':  function () {
+			Y.Assert.areSame(1383609600, strtotime('ninth month', 1360022400));
+		},
+
+		'Extras: strtotime("ninth year", 1360022400) should give `1644019200`':  function () {
+			Y.Assert.areSame(1644019200, strtotime('ninth year', 1360022400));
+		},
+
+		'Extras: strtotime("tenth second", 1360022400) should give `1360022410`':  function () {
+			Y.Assert.areSame(1360022410, strtotime('tenth second', 1360022400));
+		},
+
+		'Extras: strtotime("tenth sec", 1360022400) should give `1360022410`':  function () {
+			Y.Assert.areSame(1360022410, strtotime('tenth sec', 1360022400));
+		},
+
+		'Extras: strtotime("tenth minute", 1360022400) should give `1360023000`':  function () {
+			Y.Assert.areSame(1360023000, strtotime('tenth minute', 1360022400));
+		},
+
+		'Extras: strtotime("tenth min", 1360022400) should give `1360023000`':  function () {
+			Y.Assert.areSame(1360023000, strtotime('tenth min', 1360022400));
+		},
+
+		'Extras: strtotime("tenth hour", 1360022400) should give `1360058400`':  function () {
+			Y.Assert.areSame(1360058400, strtotime('tenth hour', 1360022400));
+		},
+
+		'Extras: strtotime("tenth day", 1360022400) should give `1360886400`':  function () {
+			Y.Assert.areSame(1360886400, strtotime('tenth day', 1360022400));
+		},
+
+		'Extras: strtotime("tenth week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('tenth week', 1360022400));
+		},
+
+		'Extras: strtotime("tenth fortnight", 1360022400) should give `1372118400`':  function () {
+			Y.Assert.areSame(1372118400, strtotime('tenth fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("tenth month", 1360022400) should give `1386201600`':  function () {
+			Y.Assert.areSame(1386201600, strtotime('tenth month', 1360022400));
+		},
+
+		'Extras: strtotime("tenth year", 1360022400) should give `1675555200`':  function () {
+			Y.Assert.areSame(1675555200, strtotime('tenth year', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh second", 1360022400) should give `1360022411`':  function () {
+			Y.Assert.areSame(1360022411, strtotime('eleventh second', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh sec", 1360022400) should give `1360022411`':  function () {
+			Y.Assert.areSame(1360022411, strtotime('eleventh sec', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh minute", 1360022400) should give `1360023060`':  function () {
+			Y.Assert.areSame(1360023060, strtotime('eleventh minute', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh min", 1360022400) should give `1360023060`':  function () {
+			Y.Assert.areSame(1360023060, strtotime('eleventh min', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh hour", 1360022400) should give `1360062000`':  function () {
+			Y.Assert.areSame(1360062000, strtotime('eleventh hour', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh day", 1360022400) should give `1360972800`':  function () {
+			Y.Assert.areSame(1360972800, strtotime('eleventh day', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh week', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh fortnight", 1360022400) should give `1373328000`':  function () {
+			Y.Assert.areSame(1373328000, strtotime('eleventh fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh month", 1360022400) should give `1388880000`':  function () {
+			Y.Assert.areSame(1388880000, strtotime('eleventh month', 1360022400));
+		},
+
+		'Extras: strtotime("eleventh year", 1360022400) should give `1707091200`':  function () {
+			Y.Assert.areSame(1707091200, strtotime('eleventh year', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth second", 1360022400) should give `1360022412`':  function () {
+			Y.Assert.areSame(1360022412, strtotime('twelfth second', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth sec", 1360022400) should give `1360022412`':  function () {
+			Y.Assert.areSame(1360022412, strtotime('twelfth sec', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth minute", 1360022400) should give `1360023120`':  function () {
+			Y.Assert.areSame(1360023120, strtotime('twelfth minute', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth min", 1360022400) should give `1360023120`':  function () {
+			Y.Assert.areSame(1360023120, strtotime('twelfth min', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth hour", 1360022400) should give `1360065600`':  function () {
+			Y.Assert.areSame(1360065600, strtotime('twelfth hour', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth day", 1360022400) should give `1361059200`':  function () {
+			Y.Assert.areSame(1361059200, strtotime('twelfth day', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth week", 1360022400) should give `false`':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth week', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth fortnight", 1360022400) should give `1374537600`':  function () {
+			Y.Assert.areSame(1374537600, strtotime('twelfth fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth month", 1360022400) should give `1391558400`':  function () {
+			Y.Assert.areSame(1391558400, strtotime('twelfth month', 1360022400));
+		},
+
+		'Extras: strtotime("twelfth year", 1360022400) should give `1738713600`':  function () {
+			Y.Assert.areSame(1738713600, strtotime('twelfth year', 1360022400));
 		},
 
 		'Extras: strtotime("@1364811922", 1360022400) should give `1364811922`':  function () {

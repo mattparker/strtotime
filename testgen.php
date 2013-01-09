@@ -79,6 +79,9 @@ $dateFormats = array(
 	"Y-M-d" => "pgtextreverse",
 	// clf
 	"d/M/Y:H:i:s \G\M\T3:30" => "clf",
+	// timezones
+	"Y-m-d H:i:s Europe/Vaduz",
+	"Y/m/d H:i:s Australia/Lord_Howe",
 
 
 

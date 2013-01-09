@@ -146,6 +146,14 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(false, strtotime('01/Apr/2013:10:25:22 GMT3:30'));
 		},
 
+		'strtotime("0") (originally `2012-02-29 08:02:38` Y-m-d H:i:s Europe/Vaduz) should give timestamp `false`':  function () {
+			Y.Assert.areSame(false, strtotime('0'));
+		},
+
+		'strtotime("1") (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe) should give timestamp `false`':  function () {
+			Y.Assert.areSame(false, strtotime('1'));
+		},
+
 		'strtotime("2012/12/31") (originally `2012-12-31 23:59:59` iso8601date4) should give timestamp `1356912000`':  function () {
 			Y.Assert.areSame(1356912000, strtotime('2012/12/31'));
 		},
@@ -579,7 +587,7 @@ YUI.add("strtotime-test", function (Y) {
 	    name: "Y.DataType.Date.strtotime php generated tests: modify dates",
 
 
-		'strtotime("yesterday", 1364811922)  (originally `2013-04-01 10:25:22` clf)  should give `1364688000` (ie 2013-03-31 00:00:00)':  function () {
+		'strtotime("yesterday", 1364811922)  (originally `2013-04-01 10:25:22` Y/m/d H:i:s Australia/Lord_Howe)  should give `1364688000` (ie 2013-03-31 00:00:00)':  function () {
 			Y.Assert.areSame(1364688000, strtotime('yesterday', 1364811922));
 		},
 
@@ -587,7 +595,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1364688000, strtotime('2013/04/01 yesterday'), '');
 		},
 
-		'strtotime("now", 1364811922)  (originally `2013-04-01 10:25:22` clf)  should give `1364811922` (ie 2013-04-01 10:25:22)':  function () {
+		'strtotime("now", 1364811922)  (originally `2013-04-01 10:25:22` Y/m/d H:i:s Australia/Lord_Howe)  should give `1364811922` (ie 2013-04-01 10:25:22)':  function () {
 			Y.Assert.areSame(1364811922, strtotime('now', 1364811922));
 		},
 
@@ -595,7 +603,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1364774400, strtotime('2013/04/01 now'), '');
 		},
 
-		'strtotime("noon", 1364811922)  (originally `2013-04-01 10:25:22` clf)  should give `1364817600` (ie 2013-04-01 12:00:00)':  function () {
+		'strtotime("noon", 1364811922)  (originally `2013-04-01 10:25:22` Y/m/d H:i:s Australia/Lord_Howe)  should give `1364817600` (ie 2013-04-01 12:00:00)':  function () {
 			Y.Assert.areSame(1364817600, strtotime('noon', 1364811922));
 		},
 
@@ -603,7 +611,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1364817600, strtotime('2013/04/01 noon'), '');
 		},
 
-		'strtotime("midnight", 1364811922)  (originally `2013-04-01 10:25:22` clf)  should give `1364774400` (ie 2013-04-01 00:00:00)':  function () {
+		'strtotime("midnight", 1364811922)  (originally `2013-04-01 10:25:22` Y/m/d H:i:s Australia/Lord_Howe)  should give `1364774400` (ie 2013-04-01 00:00:00)':  function () {
 			Y.Assert.areSame(1364774400, strtotime('midnight', 1364811922));
 		},
 
@@ -611,7 +619,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1364774400, strtotime('2013/04/01 midnight'), '');
 		},
 
-		'strtotime("today", 1364811922)  (originally `2013-04-01 10:25:22` clf)  should give `1364774400` (ie 2013-04-01 00:00:00)':  function () {
+		'strtotime("today", 1364811922)  (originally `2013-04-01 10:25:22` Y/m/d H:i:s Australia/Lord_Howe)  should give `1364774400` (ie 2013-04-01 00:00:00)':  function () {
 			Y.Assert.areSame(1364774400, strtotime('today', 1364811922));
 		},
 
@@ -619,7 +627,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1364774400, strtotime('2013/04/01 today'), '');
 		},
 
-		'strtotime("tomorrow", 1364811922)  (originally `2013-04-01 10:25:22` clf)  should give `1364860800` (ie 2013-04-02 00:00:00)':  function () {
+		'strtotime("tomorrow", 1364811922)  (originally `2013-04-01 10:25:22` Y/m/d H:i:s Australia/Lord_Howe)  should give `1364860800` (ie 2013-04-02 00:00:00)':  function () {
 			Y.Assert.areSame(1364860800, strtotime('tomorrow', 1364811922));
 		},
 
@@ -627,7 +635,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1364860800, strtotime('2013/04/01 tomorrow'), '');
 		},
 
-		'strtotime("first day of", 1364811922)  (originally `2013-04-01 10:25:22` clf)  should give `1364811922` (ie 2013-04-01 10:25:22)':  function () {
+		'strtotime("first day of", 1364811922)  (originally `2013-04-01 10:25:22` Y/m/d H:i:s Australia/Lord_Howe)  should give `1364811922` (ie 2013-04-01 10:25:22)':  function () {
 			Y.Assert.areSame(1364811922, strtotime('first day of', 1364811922));
 		},
 
@@ -635,7 +643,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1364774400, strtotime('2013/04/01 first day of'), '');
 		},
 
-		'strtotime("last day of", 1364811922)  (originally `2013-04-01 10:25:22` clf)  should give `1367317522` (ie 2013-04-30 10:25:22)':  function () {
+		'strtotime("last day of", 1364811922)  (originally `2013-04-01 10:25:22` Y/m/d H:i:s Australia/Lord_Howe)  should give `1367317522` (ie 2013-04-30 10:25:22)':  function () {
 			Y.Assert.areSame(1367317522, strtotime('last day of', 1364811922));
 		},
 
@@ -643,7 +651,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1367280000, strtotime('2013/04/01 last day of'), '');
 		},
 
-		'strtotime(`first Tuesday of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`first Tuesday of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('first Tuesday of 1364811922'));
 		},
 
@@ -651,7 +659,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1364860800, strtotime('first Tuesday of 2013/04/01'));
 		},
 
-		'strtotime(`next Thursday of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`next Thursday of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('next Thursday of 1364811922'));
 		},
 
@@ -659,7 +667,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1365033600, strtotime('next Thursday of 2013/04/01'));
 		},
 
-		'strtotime(`second Fri of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`second Fri of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('second Fri of 1364811922'));
 		},
 
@@ -667,7 +675,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1365724800, strtotime('second Fri of 2013/04/01'));
 		},
 
-		'strtotime(`third Wednesday of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`third Wednesday of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('third Wednesday of 1364811922'));
 		},
 
@@ -675,7 +683,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1366156800, strtotime('third Wednesday of 2013/04/01'));
 		},
 
-		'strtotime(`last Sat of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`last Sat of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('last Sat of 1364811922'));
 		},
 
@@ -683,7 +691,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1367020800, strtotime('last Sat of 2013/04/01'));
 		},
 
-		'strtotime(`fourth Sunday of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`fourth Sunday of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fourth Sunday of 1364811922'));
 		},
 
@@ -691,7 +699,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1367107200, strtotime('fourth Sunday of 2013/04/01'));
 		},
 
-		'strtotime(`fifth Monday of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`fifth Monday of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fifth Monday of 1364811922'));
 		},
 
@@ -699,7 +707,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1367193600, strtotime('fifth Monday of 2013/04/01'));
 		},
 
-		'strtotime(`sixth Mon of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`sixth Mon of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('sixth Mon of 1364811922'));
 		},
 
@@ -707,7 +715,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1367798400, strtotime('sixth Mon of 2013/04/01'));
 		},
 
-		'strtotime(`seventh Tue of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`seventh Tue of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('seventh Tue of 1364811922'));
 		},
 
@@ -715,7 +723,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1368489600, strtotime('seventh Tue of 2013/04/01'));
 		},
 
-		'strtotime(`eighth Wed of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`eighth Wed of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eighth Wed of 1364811922'));
 		},
 
@@ -723,7 +731,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1369180800, strtotime('eighth Wed of 2013/04/01'));
 		},
 
-		'strtotime(`ninth Thu of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`ninth Thu of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('ninth Thu of 1364811922'));
 		},
 
@@ -731,7 +739,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1369872000, strtotime('ninth Thu of 2013/04/01'));
 		},
 
-		'strtotime(`tenth Sat of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`tenth Sat of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('tenth Sat of 1364811922'));
 		},
 
@@ -739,7 +747,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1370649600, strtotime('tenth Sat of 2013/04/01'));
 		},
 
-		'strtotime(`eleventh Friday of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`eleventh Friday of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eleventh Friday of 1364811922'));
 		},
 
@@ -747,7 +755,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1371168000, strtotime('eleventh Friday of 2013/04/01'));
 		},
 
-		'strtotime(`twelfth Saturday of 1364811922`) (2013-04-01 10:25:22  clf) should give `false`':  function () {
+		'strtotime(`twelfth Saturday of 1364811922`) (2013-04-01 10:25:22  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1364811922'));
 		},
 
@@ -3659,7 +3667,183 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 01/Apr/2013:10:25:22 GMT3:30'));
 		},
 
-		'strtotime("yesterday", 1356998399)  (originally `2012-12-31 23:59:59` clf)  should give `1356825600` (ie 2012-12-30 00:00:00)':  function () {
+		'strtotime("0 yesterday")  (Y-m-d H:i:s Europe/Vaduz) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('0 yesterday'), '');
+		},
+
+		'strtotime("0 now")  (Y-m-d H:i:s Europe/Vaduz) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('0 now'), '');
+		},
+
+		'strtotime("0 noon")  (Y-m-d H:i:s Europe/Vaduz) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('0 noon'), '');
+		},
+
+		'strtotime("0 midnight")  (Y-m-d H:i:s Europe/Vaduz) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('0 midnight'), '');
+		},
+
+		'strtotime("0 today")  (Y-m-d H:i:s Europe/Vaduz) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('0 today'), '');
+		},
+
+		'strtotime("0 tomorrow")  (Y-m-d H:i:s Europe/Vaduz) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('0 tomorrow'), '');
+		},
+
+		'strtotime("0 first day of")  (Y-m-d H:i:s Europe/Vaduz) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('0 first day of'), '');
+		},
+
+		'strtotime("0 last day of")  (Y-m-d H:i:s Europe/Vaduz) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('0 last day of'), '');
+		},
+
+		'strtotime(`first Tuesday of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 0'));
+		},
+
+		'strtotime(`next Thursday of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 0'));
+		},
+
+		'strtotime(`second Fri of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 0'));
+		},
+
+		'strtotime(`third Wednesday of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 0'));
+		},
+
+		'strtotime(`last Sat of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 0'));
+		},
+
+		'strtotime(`fourth Sunday of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 0'));
+		},
+
+		'strtotime(`fifth Monday of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 0'));
+		},
+
+		'strtotime(`sixth Mon of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 0'));
+		},
+
+		'strtotime(`seventh Tue of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 0'));
+		},
+
+		'strtotime(`eighth Wed of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 0'));
+		},
+
+		'strtotime(`ninth Thu of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 0'));
+		},
+
+		'strtotime(`tenth Sat of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 0'));
+		},
+
+		'strtotime(`eleventh Friday of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 0'));
+		},
+
+		'strtotime(`twelfth Saturday of 0`) (2012-02-29 08:02:38  Y-m-d H:i:s Europe/Vaduz) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 0'));
+		},
+
+		'strtotime("1 yesterday")  (Y/m/d H:i:s Australia/Lord_Howe) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('1 yesterday'), '');
+		},
+
+		'strtotime("1 now")  (Y/m/d H:i:s Australia/Lord_Howe) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('1 now'), '');
+		},
+
+		'strtotime("1 noon")  (Y/m/d H:i:s Australia/Lord_Howe) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('1 noon'), '');
+		},
+
+		'strtotime("1 midnight")  (Y/m/d H:i:s Australia/Lord_Howe) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('1 midnight'), '');
+		},
+
+		'strtotime("1 today")  (Y/m/d H:i:s Australia/Lord_Howe) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('1 today'), '');
+		},
+
+		'strtotime("1 tomorrow")  (Y/m/d H:i:s Australia/Lord_Howe) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('1 tomorrow'), '');
+		},
+
+		'strtotime("1 first day of")  (Y/m/d H:i:s Australia/Lord_Howe) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('1 first day of'), '');
+		},
+
+		'strtotime("1 last day of")  (Y/m/d H:i:s Australia/Lord_Howe) should give `false':  function () {
+			Y.Assert.areSame(false, strtotime('1 last day of'), '');
+		},
+
+		'strtotime(`first Tuesday of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('first Tuesday of 1'));
+		},
+
+		'strtotime(`next Thursday of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('next Thursday of 1'));
+		},
+
+		'strtotime(`second Fri of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('second Fri of 1'));
+		},
+
+		'strtotime(`third Wednesday of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('third Wednesday of 1'));
+		},
+
+		'strtotime(`last Sat of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('last Sat of 1'));
+		},
+
+		'strtotime(`fourth Sunday of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('fourth Sunday of 1'));
+		},
+
+		'strtotime(`fifth Monday of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('fifth Monday of 1'));
+		},
+
+		'strtotime(`sixth Mon of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('sixth Mon of 1'));
+		},
+
+		'strtotime(`seventh Tue of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('seventh Tue of 1'));
+		},
+
+		'strtotime(`eighth Wed of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('eighth Wed of 1'));
+		},
+
+		'strtotime(`ninth Thu of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('ninth Thu of 1'));
+		},
+
+		'strtotime(`tenth Sat of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('tenth Sat of 1'));
+		},
+
+		'strtotime(`eleventh Friday of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('eleventh Friday of 1'));
+		},
+
+		'strtotime(`twelfth Saturday of 1`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `':  function () {
+			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1'));
+		},
+
+		'strtotime("yesterday", 1356998399)  (originally `2012-12-31 23:59:59` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356825600` (ie 2012-12-30 00:00:00)':  function () {
 			Y.Assert.areSame(1356825600, strtotime('yesterday', 1356998399));
 		},
 
@@ -3667,7 +3851,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356825600, strtotime('2012/12/31 yesterday'), '');
 		},
 
-		'strtotime("now", 1356998399)  (originally `2012-12-31 23:59:59` clf)  should give `1356998399` (ie 2012-12-31 23:59:59)':  function () {
+		'strtotime("now", 1356998399)  (originally `2012-12-31 23:59:59` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998399` (ie 2012-12-31 23:59:59)':  function () {
 			Y.Assert.areSame(1356998399, strtotime('now', 1356998399));
 		},
 
@@ -3675,7 +3859,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356912000, strtotime('2012/12/31 now'), '');
 		},
 
-		'strtotime("noon", 1356998399)  (originally `2012-12-31 23:59:59` clf)  should give `1356955200` (ie 2012-12-31 12:00:00)':  function () {
+		'strtotime("noon", 1356998399)  (originally `2012-12-31 23:59:59` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356955200` (ie 2012-12-31 12:00:00)':  function () {
 			Y.Assert.areSame(1356955200, strtotime('noon', 1356998399));
 		},
 
@@ -3683,7 +3867,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356955200, strtotime('2012/12/31 noon'), '');
 		},
 
-		'strtotime("midnight", 1356998399)  (originally `2012-12-31 23:59:59` clf)  should give `1356912000` (ie 2012-12-31 00:00:00)':  function () {
+		'strtotime("midnight", 1356998399)  (originally `2012-12-31 23:59:59` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356912000` (ie 2012-12-31 00:00:00)':  function () {
 			Y.Assert.areSame(1356912000, strtotime('midnight', 1356998399));
 		},
 
@@ -3691,7 +3875,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356912000, strtotime('2012/12/31 midnight'), '');
 		},
 
-		'strtotime("today", 1356998399)  (originally `2012-12-31 23:59:59` clf)  should give `1356912000` (ie 2012-12-31 00:00:00)':  function () {
+		'strtotime("today", 1356998399)  (originally `2012-12-31 23:59:59` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356912000` (ie 2012-12-31 00:00:00)':  function () {
 			Y.Assert.areSame(1356912000, strtotime('today', 1356998399));
 		},
 
@@ -3699,7 +3883,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356912000, strtotime('2012/12/31 today'), '');
 		},
 
-		'strtotime("tomorrow", 1356998399)  (originally `2012-12-31 23:59:59` clf)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
+		'strtotime("tomorrow", 1356998399)  (originally `2012-12-31 23:59:59` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
 			Y.Assert.areSame(1356998400, strtotime('tomorrow', 1356998399));
 		},
 
@@ -3707,7 +3891,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356998400, strtotime('2012/12/31 tomorrow'), '');
 		},
 
-		'strtotime("first day of", 1356998399)  (originally `2012-12-31 23:59:59` clf)  should give `1354406399` (ie 2012-12-01 23:59:59)':  function () {
+		'strtotime("first day of", 1356998399)  (originally `2012-12-31 23:59:59` Y/m/d H:i:s Australia/Lord_Howe)  should give `1354406399` (ie 2012-12-01 23:59:59)':  function () {
 			Y.Assert.areSame(1354406399, strtotime('first day of', 1356998399));
 		},
 
@@ -3715,7 +3899,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1354320000, strtotime('2012/12/31 first day of'), '');
 		},
 
-		'strtotime("last day of", 1356998399)  (originally `2012-12-31 23:59:59` clf)  should give `1356998399` (ie 2012-12-31 23:59:59)':  function () {
+		'strtotime("last day of", 1356998399)  (originally `2012-12-31 23:59:59` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998399` (ie 2012-12-31 23:59:59)':  function () {
 			Y.Assert.areSame(1356998399, strtotime('last day of', 1356998399));
 		},
 
@@ -3723,7 +3907,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356912000, strtotime('2012/12/31 last day of'), '');
 		},
 
-		'strtotime(`first Tuesday of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`first Tuesday of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998399'));
 		},
 
@@ -3731,7 +3915,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1354579200, strtotime('first Tuesday of 2012/12/31'));
 		},
 
-		'strtotime(`next Thursday of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`next Thursday of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('next Thursday of 1356998399'));
 		},
 
@@ -3739,7 +3923,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1354752000, strtotime('next Thursday of 2012/12/31'));
 		},
 
-		'strtotime(`second Fri of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`second Fri of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('second Fri of 1356998399'));
 		},
 
@@ -3747,7 +3931,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1355443200, strtotime('second Fri of 2012/12/31'));
 		},
 
-		'strtotime(`third Wednesday of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`third Wednesday of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998399'));
 		},
 
@@ -3755,7 +3939,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1355875200, strtotime('third Wednesday of 2012/12/31'));
 		},
 
-		'strtotime(`last Sat of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`last Sat of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('last Sat of 1356998399'));
 		},
 
@@ -3763,7 +3947,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356739200, strtotime('last Sat of 2012/12/31'));
 		},
 
-		'strtotime(`fourth Sunday of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`fourth Sunday of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998399'));
 		},
 
@@ -3771,7 +3955,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356220800, strtotime('fourth Sunday of 2012/12/31'));
 		},
 
-		'strtotime(`fifth Monday of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`fifth Monday of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998399'));
 		},
 
@@ -3779,7 +3963,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356912000, strtotime('fifth Monday of 2012/12/31'));
 		},
 
-		'strtotime(`sixth Mon of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`sixth Mon of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998399'));
 		},
 
@@ -3787,7 +3971,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1357516800, strtotime('sixth Mon of 2012/12/31'));
 		},
 
-		'strtotime(`seventh Tue of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`seventh Tue of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998399'));
 		},
 
@@ -3795,7 +3979,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1358208000, strtotime('seventh Tue of 2012/12/31'));
 		},
 
-		'strtotime(`eighth Wed of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`eighth Wed of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998399'));
 		},
 
@@ -3803,7 +3987,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1358899200, strtotime('eighth Wed of 2012/12/31'));
 		},
 
-		'strtotime(`ninth Thu of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`ninth Thu of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998399'));
 		},
 
@@ -3811,7 +3995,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359590400, strtotime('ninth Thu of 2012/12/31'));
 		},
 
-		'strtotime(`tenth Sat of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`tenth Sat of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998399'));
 		},
 
@@ -3819,7 +4003,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359763200, strtotime('tenth Sat of 2012/12/31'));
 		},
 
-		'strtotime(`eleventh Friday of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`eleventh Friday of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998399'));
 		},
 
@@ -3827,7 +4011,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1360886400, strtotime('eleventh Friday of 2012/12/31'));
 		},
 
-		'strtotime(`twelfth Saturday of 1356998399`) (2012-12-31 23:59:59  clf) should give `false`':  function () {
+		'strtotime(`twelfth Saturday of 1356998399`) (2012-12-31 23:59:59  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998399'));
 		},
 
@@ -6563,7 +6747,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 31/Dec/2012:23:59:59 GMT3:30'));
 		},
 
-		'strtotime("yesterday", 1356998400)  (originally `2013-01-01 00:00:00` clf)  should give `1356912000` (ie 2012-12-31 00:00:00)':  function () {
+		'strtotime("yesterday", 1356998400)  (originally `2013-01-01 00:00:00` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356912000` (ie 2012-12-31 00:00:00)':  function () {
 			Y.Assert.areSame(1356912000, strtotime('yesterday', 1356998400));
 		},
 
@@ -6571,7 +6755,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356912000, strtotime('2013/01/01 yesterday'), '');
 		},
 
-		'strtotime("now", 1356998400)  (originally `2013-01-01 00:00:00` clf)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
+		'strtotime("now", 1356998400)  (originally `2013-01-01 00:00:00` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
 			Y.Assert.areSame(1356998400, strtotime('now', 1356998400));
 		},
 
@@ -6579,7 +6763,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356998400, strtotime('2013/01/01 now'), '');
 		},
 
-		'strtotime("noon", 1356998400)  (originally `2013-01-01 00:00:00` clf)  should give `1357041600` (ie 2013-01-01 12:00:00)':  function () {
+		'strtotime("noon", 1356998400)  (originally `2013-01-01 00:00:00` Y/m/d H:i:s Australia/Lord_Howe)  should give `1357041600` (ie 2013-01-01 12:00:00)':  function () {
 			Y.Assert.areSame(1357041600, strtotime('noon', 1356998400));
 		},
 
@@ -6587,7 +6771,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1357041600, strtotime('2013/01/01 noon'), '');
 		},
 
-		'strtotime("midnight", 1356998400)  (originally `2013-01-01 00:00:00` clf)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
+		'strtotime("midnight", 1356998400)  (originally `2013-01-01 00:00:00` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
 			Y.Assert.areSame(1356998400, strtotime('midnight', 1356998400));
 		},
 
@@ -6595,7 +6779,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356998400, strtotime('2013/01/01 midnight'), '');
 		},
 
-		'strtotime("today", 1356998400)  (originally `2013-01-01 00:00:00` clf)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
+		'strtotime("today", 1356998400)  (originally `2013-01-01 00:00:00` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
 			Y.Assert.areSame(1356998400, strtotime('today', 1356998400));
 		},
 
@@ -6603,7 +6787,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356998400, strtotime('2013/01/01 today'), '');
 		},
 
-		'strtotime("tomorrow", 1356998400)  (originally `2013-01-01 00:00:00` clf)  should give `1357084800` (ie 2013-01-02 00:00:00)':  function () {
+		'strtotime("tomorrow", 1356998400)  (originally `2013-01-01 00:00:00` Y/m/d H:i:s Australia/Lord_Howe)  should give `1357084800` (ie 2013-01-02 00:00:00)':  function () {
 			Y.Assert.areSame(1357084800, strtotime('tomorrow', 1356998400));
 		},
 
@@ -6611,7 +6795,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1357084800, strtotime('2013/01/01 tomorrow'), '');
 		},
 
-		'strtotime("first day of", 1356998400)  (originally `2013-01-01 00:00:00` clf)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
+		'strtotime("first day of", 1356998400)  (originally `2013-01-01 00:00:00` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
 			Y.Assert.areSame(1356998400, strtotime('first day of', 1356998400));
 		},
 
@@ -6619,7 +6803,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356998400, strtotime('2013/01/01 first day of'), '');
 		},
 
-		'strtotime("last day of", 1356998400)  (originally `2013-01-01 00:00:00` clf)  should give `1359590400` (ie 2013-01-31 00:00:00)':  function () {
+		'strtotime("last day of", 1356998400)  (originally `2013-01-01 00:00:00` Y/m/d H:i:s Australia/Lord_Howe)  should give `1359590400` (ie 2013-01-31 00:00:00)':  function () {
 			Y.Assert.areSame(1359590400, strtotime('last day of', 1356998400));
 		},
 
@@ -6627,7 +6811,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359590400, strtotime('2013/01/01 last day of'), '');
 		},
 
-		'strtotime(`first Tuesday of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`first Tuesday of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998400'));
 		},
 
@@ -6635,7 +6819,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1356998400, strtotime('first Tuesday of 2013/01/01'));
 		},
 
-		'strtotime(`next Thursday of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`next Thursday of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('next Thursday of 1356998400'));
 		},
 
@@ -6643,7 +6827,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1357171200, strtotime('next Thursday of 2013/01/01'));
 		},
 
-		'strtotime(`second Fri of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`second Fri of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('second Fri of 1356998400'));
 		},
 
@@ -6651,7 +6835,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1357862400, strtotime('second Fri of 2013/01/01'));
 		},
 
-		'strtotime(`third Wednesday of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`third Wednesday of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998400'));
 		},
 
@@ -6659,7 +6843,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1358294400, strtotime('third Wednesday of 2013/01/01'));
 		},
 
-		'strtotime(`last Sat of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`last Sat of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('last Sat of 1356998400'));
 		},
 
@@ -6667,7 +6851,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359158400, strtotime('last Sat of 2013/01/01'));
 		},
 
-		'strtotime(`fourth Sunday of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`fourth Sunday of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998400'));
 		},
 
@@ -6675,7 +6859,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359244800, strtotime('fourth Sunday of 2013/01/01'));
 		},
 
-		'strtotime(`fifth Monday of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`fifth Monday of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998400'));
 		},
 
@@ -6683,7 +6867,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1359936000, strtotime('fifth Monday of 2013/01/01'));
 		},
 
-		'strtotime(`sixth Mon of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`sixth Mon of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998400'));
 		},
 
@@ -6691,7 +6875,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1360540800, strtotime('sixth Mon of 2013/01/01'));
 		},
 
-		'strtotime(`seventh Tue of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`seventh Tue of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998400'));
 		},
 
@@ -6699,7 +6883,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1360627200, strtotime('seventh Tue of 2013/01/01'));
 		},
 
-		'strtotime(`eighth Wed of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`eighth Wed of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998400'));
 		},
 
@@ -6707,7 +6891,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1361318400, strtotime('eighth Wed of 2013/01/01'));
 		},
 
-		'strtotime(`ninth Thu of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`ninth Thu of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998400'));
 		},
 
@@ -6715,7 +6899,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1362009600, strtotime('ninth Thu of 2013/01/01'));
 		},
 
-		'strtotime(`tenth Sat of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`tenth Sat of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998400'));
 		},
 
@@ -6723,7 +6907,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1362787200, strtotime('tenth Sat of 2013/01/01'));
 		},
 
-		'strtotime(`eleventh Friday of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`eleventh Friday of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998400'));
 		},
 
@@ -6731,7 +6915,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1363305600, strtotime('eleventh Friday of 2013/01/01'));
 		},
 
-		'strtotime(`twelfth Saturday of 1356998400`) (2013-01-01 00:00:00  clf) should give `false`':  function () {
+		'strtotime(`twelfth Saturday of 1356998400`) (2013-01-01 00:00:00  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998400'));
 		},
 
@@ -9643,91 +9827,91 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 01/Jan/2013:00:00:00 GMT3:30'));
 		},
 
-		'strtotime("yesterday", 1356998401)  (originally `2013-01-01 00:00:01` clf)  should give `1356912000` (ie 2012-12-31 00:00:00)':  function () {
+		'strtotime("yesterday", 1356998401)  (originally `2013-01-01 00:00:01` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356912000` (ie 2012-12-31 00:00:00)':  function () {
 			Y.Assert.areSame(1356912000, strtotime('yesterday', 1356998401));
 		},
 
-		'strtotime("now", 1356998401)  (originally `2013-01-01 00:00:01` clf)  should give `1356998401` (ie 2013-01-01 00:00:01)':  function () {
+		'strtotime("now", 1356998401)  (originally `2013-01-01 00:00:01` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998401` (ie 2013-01-01 00:00:01)':  function () {
 			Y.Assert.areSame(1356998401, strtotime('now', 1356998401));
 		},
 
-		'strtotime("noon", 1356998401)  (originally `2013-01-01 00:00:01` clf)  should give `1357041600` (ie 2013-01-01 12:00:00)':  function () {
+		'strtotime("noon", 1356998401)  (originally `2013-01-01 00:00:01` Y/m/d H:i:s Australia/Lord_Howe)  should give `1357041600` (ie 2013-01-01 12:00:00)':  function () {
 			Y.Assert.areSame(1357041600, strtotime('noon', 1356998401));
 		},
 
-		'strtotime("midnight", 1356998401)  (originally `2013-01-01 00:00:01` clf)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
+		'strtotime("midnight", 1356998401)  (originally `2013-01-01 00:00:01` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
 			Y.Assert.areSame(1356998400, strtotime('midnight', 1356998401));
 		},
 
-		'strtotime("today", 1356998401)  (originally `2013-01-01 00:00:01` clf)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
+		'strtotime("today", 1356998401)  (originally `2013-01-01 00:00:01` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998400` (ie 2013-01-01 00:00:00)':  function () {
 			Y.Assert.areSame(1356998400, strtotime('today', 1356998401));
 		},
 
-		'strtotime("tomorrow", 1356998401)  (originally `2013-01-01 00:00:01` clf)  should give `1357084800` (ie 2013-01-02 00:00:00)':  function () {
+		'strtotime("tomorrow", 1356998401)  (originally `2013-01-01 00:00:01` Y/m/d H:i:s Australia/Lord_Howe)  should give `1357084800` (ie 2013-01-02 00:00:00)':  function () {
 			Y.Assert.areSame(1357084800, strtotime('tomorrow', 1356998401));
 		},
 
-		'strtotime("first day of", 1356998401)  (originally `2013-01-01 00:00:01` clf)  should give `1356998401` (ie 2013-01-01 00:00:01)':  function () {
+		'strtotime("first day of", 1356998401)  (originally `2013-01-01 00:00:01` Y/m/d H:i:s Australia/Lord_Howe)  should give `1356998401` (ie 2013-01-01 00:00:01)':  function () {
 			Y.Assert.areSame(1356998401, strtotime('first day of', 1356998401));
 		},
 
-		'strtotime("last day of", 1356998401)  (originally `2013-01-01 00:00:01` clf)  should give `1359590401` (ie 2013-01-31 00:00:01)':  function () {
+		'strtotime("last day of", 1356998401)  (originally `2013-01-01 00:00:01` Y/m/d H:i:s Australia/Lord_Howe)  should give `1359590401` (ie 2013-01-31 00:00:01)':  function () {
 			Y.Assert.areSame(1359590401, strtotime('last day of', 1356998401));
 		},
 
-		'strtotime(`first Tuesday of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`first Tuesday of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('first Tuesday of 1356998401'));
 		},
 
-		'strtotime(`next Thursday of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`next Thursday of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('next Thursday of 1356998401'));
 		},
 
-		'strtotime(`second Fri of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`second Fri of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('second Fri of 1356998401'));
 		},
 
-		'strtotime(`third Wednesday of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`third Wednesday of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('third Wednesday of 1356998401'));
 		},
 
-		'strtotime(`last Sat of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`last Sat of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('last Sat of 1356998401'));
 		},
 
-		'strtotime(`fourth Sunday of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`fourth Sunday of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fourth Sunday of 1356998401'));
 		},
 
-		'strtotime(`fifth Monday of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`fifth Monday of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fifth Monday of 1356998401'));
 		},
 
-		'strtotime(`sixth Mon of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`sixth Mon of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('sixth Mon of 1356998401'));
 		},
 
-		'strtotime(`seventh Tue of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`seventh Tue of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('seventh Tue of 1356998401'));
 		},
 
-		'strtotime(`eighth Wed of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`eighth Wed of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eighth Wed of 1356998401'));
 		},
 
-		'strtotime(`ninth Thu of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`ninth Thu of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('ninth Thu of 1356998401'));
 		},
 
-		'strtotime(`tenth Sat of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`tenth Sat of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('tenth Sat of 1356998401'));
 		},
 
-		'strtotime(`eleventh Friday of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`eleventh Friday of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eleventh Friday of 1356998401'));
 		},
 
-		'strtotime(`twelfth Saturday of 1356998401`) (2013-01-01 00:00:01  clf) should give `false`':  function () {
+		'strtotime(`twelfth Saturday of 1356998401`) (2013-01-01 00:00:01  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1356998401'));
 		},
 
@@ -10435,7 +10619,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 01/Jan/2013:00:00:01 GMT3:30'));
 		},
 
-		'strtotime("yesterday", 1330502558)  (originally `2012-02-29 08:02:38` clf)  should give `1330387200` (ie 2012-02-28 00:00:00)':  function () {
+		'strtotime("yesterday", 1330502558)  (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe)  should give `1330387200` (ie 2012-02-28 00:00:00)':  function () {
 			Y.Assert.areSame(1330387200, strtotime('yesterday', 1330502558));
 		},
 
@@ -10443,7 +10627,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330387200, strtotime('2012/02/29 yesterday'), '');
 		},
 
-		'strtotime("now", 1330502558)  (originally `2012-02-29 08:02:38` clf)  should give `1330502558` (ie 2012-02-29 08:02:38)':  function () {
+		'strtotime("now", 1330502558)  (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe)  should give `1330502558` (ie 2012-02-29 08:02:38)':  function () {
 			Y.Assert.areSame(1330502558, strtotime('now', 1330502558));
 		},
 
@@ -10451,7 +10635,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330473600, strtotime('2012/02/29 now'), '');
 		},
 
-		'strtotime("noon", 1330502558)  (originally `2012-02-29 08:02:38` clf)  should give `1330516800` (ie 2012-02-29 12:00:00)':  function () {
+		'strtotime("noon", 1330502558)  (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe)  should give `1330516800` (ie 2012-02-29 12:00:00)':  function () {
 			Y.Assert.areSame(1330516800, strtotime('noon', 1330502558));
 		},
 
@@ -10459,7 +10643,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330516800, strtotime('2012/02/29 noon'), '');
 		},
 
-		'strtotime("midnight", 1330502558)  (originally `2012-02-29 08:02:38` clf)  should give `1330473600` (ie 2012-02-29 00:00:00)':  function () {
+		'strtotime("midnight", 1330502558)  (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe)  should give `1330473600` (ie 2012-02-29 00:00:00)':  function () {
 			Y.Assert.areSame(1330473600, strtotime('midnight', 1330502558));
 		},
 
@@ -10467,7 +10651,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330473600, strtotime('2012/02/29 midnight'), '');
 		},
 
-		'strtotime("today", 1330502558)  (originally `2012-02-29 08:02:38` clf)  should give `1330473600` (ie 2012-02-29 00:00:00)':  function () {
+		'strtotime("today", 1330502558)  (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe)  should give `1330473600` (ie 2012-02-29 00:00:00)':  function () {
 			Y.Assert.areSame(1330473600, strtotime('today', 1330502558));
 		},
 
@@ -10475,7 +10659,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330473600, strtotime('2012/02/29 today'), '');
 		},
 
-		'strtotime("tomorrow", 1330502558)  (originally `2012-02-29 08:02:38` clf)  should give `1330560000` (ie 2012-03-01 00:00:00)':  function () {
+		'strtotime("tomorrow", 1330502558)  (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe)  should give `1330560000` (ie 2012-03-01 00:00:00)':  function () {
 			Y.Assert.areSame(1330560000, strtotime('tomorrow', 1330502558));
 		},
 
@@ -10483,7 +10667,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330560000, strtotime('2012/02/29 tomorrow'), '');
 		},
 
-		'strtotime("first day of", 1330502558)  (originally `2012-02-29 08:02:38` clf)  should give `1328083358` (ie 2012-02-01 08:02:38)':  function () {
+		'strtotime("first day of", 1330502558)  (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe)  should give `1328083358` (ie 2012-02-01 08:02:38)':  function () {
 			Y.Assert.areSame(1328083358, strtotime('first day of', 1330502558));
 		},
 
@@ -10491,7 +10675,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1328054400, strtotime('2012/02/29 first day of'), '');
 		},
 
-		'strtotime("last day of", 1330502558)  (originally `2012-02-29 08:02:38` clf)  should give `1330502558` (ie 2012-02-29 08:02:38)':  function () {
+		'strtotime("last day of", 1330502558)  (originally `2012-02-29 08:02:38` Y/m/d H:i:s Australia/Lord_Howe)  should give `1330502558` (ie 2012-02-29 08:02:38)':  function () {
 			Y.Assert.areSame(1330502558, strtotime('last day of', 1330502558));
 		},
 
@@ -10499,7 +10683,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330473600, strtotime('2012/02/29 last day of'), '');
 		},
 
-		'strtotime(`first Tuesday of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`first Tuesday of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('first Tuesday of 1330502558'));
 		},
 
@@ -10507,7 +10691,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1328572800, strtotime('first Tuesday of 2012/02/29'));
 		},
 
-		'strtotime(`next Thursday of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`next Thursday of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('next Thursday of 1330502558'));
 		},
 
@@ -10515,7 +10699,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1328140800, strtotime('next Thursday of 2012/02/29'));
 		},
 
-		'strtotime(`second Fri of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`second Fri of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('second Fri of 1330502558'));
 		},
 
@@ -10523,7 +10707,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1328832000, strtotime('second Fri of 2012/02/29'));
 		},
 
-		'strtotime(`third Wednesday of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`third Wednesday of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('third Wednesday of 1330502558'));
 		},
 
@@ -10531,7 +10715,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1329264000, strtotime('third Wednesday of 2012/02/29'));
 		},
 
-		'strtotime(`last Sat of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`last Sat of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('last Sat of 1330502558'));
 		},
 
@@ -10539,7 +10723,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330128000, strtotime('last Sat of 2012/02/29'));
 		},
 
-		'strtotime(`fourth Sunday of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`fourth Sunday of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fourth Sunday of 1330502558'));
 		},
 
@@ -10547,7 +10731,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330214400, strtotime('fourth Sunday of 2012/02/29'));
 		},
 
-		'strtotime(`fifth Monday of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`fifth Monday of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('fifth Monday of 1330502558'));
 		},
 
@@ -10555,7 +10739,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1330905600, strtotime('fifth Monday of 2012/02/29'));
 		},
 
-		'strtotime(`sixth Mon of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`sixth Mon of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('sixth Mon of 1330502558'));
 		},
 
@@ -10563,7 +10747,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1331510400, strtotime('sixth Mon of 2012/02/29'));
 		},
 
-		'strtotime(`seventh Tue of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`seventh Tue of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('seventh Tue of 1330502558'));
 		},
 
@@ -10571,7 +10755,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1332201600, strtotime('seventh Tue of 2012/02/29'));
 		},
 
-		'strtotime(`eighth Wed of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`eighth Wed of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eighth Wed of 1330502558'));
 		},
 
@@ -10579,7 +10763,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1332288000, strtotime('eighth Wed of 2012/02/29'));
 		},
 
-		'strtotime(`ninth Thu of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`ninth Thu of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('ninth Thu of 1330502558'));
 		},
 
@@ -10587,7 +10771,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1332979200, strtotime('ninth Thu of 2012/02/29'));
 		},
 
-		'strtotime(`tenth Sat of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`tenth Sat of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('tenth Sat of 1330502558'));
 		},
 
@@ -10595,7 +10779,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1333756800, strtotime('tenth Sat of 2012/02/29'));
 		},
 
-		'strtotime(`eleventh Friday of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`eleventh Friday of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('eleventh Friday of 1330502558'));
 		},
 
@@ -10603,7 +10787,7 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1334275200, strtotime('eleventh Friday of 2012/02/29'));
 		},
 
-		'strtotime(`twelfth Saturday of 1330502558`) (2012-02-29 08:02:38  clf) should give `false`':  function () {
+		'strtotime(`twelfth Saturday of 1330502558`) (2012-02-29 08:02:38  Y/m/d H:i:s Australia/Lord_Howe) should give `false`':  function () {
 			Y.Assert.areSame(false, strtotime('twelfth Saturday of 1330502558'));
 		},
 

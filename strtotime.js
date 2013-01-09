@@ -990,7 +990,7 @@ YUI.add('strtotime', function (Y) {
                 // and this is easier than detecting start/end of strings
                 reResult = test.re.exec(" " + copyTime + " ");
 
-                if (reResult) {
+                while (reResult) {
                     index = test.re.exec(" " + time + " ").index;
                     test.fn.call(undefined, reResult, index, mods);
 
@@ -998,6 +998,9 @@ YUI.add('strtotime', function (Y) {
 
                     // remove the matched string from our copy.
                     copyTime = copyTime.replace(Y.Lang.trim(reResult[0]), "");
+
+                    // try the same one again:
+                    reResult = test.re.exec(" " + copyTime + " ");
                 }
 
             }
@@ -2147,6 +2150,33 @@ YUI.add('strtotime', function (Y) {
 
                 }},
 
+
+                {key: "relative", re: new RegExp(oRegEx.relative), fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: matched relative');
+
+                    var amt = parseInt(aRes[1], 10),
+                        period = _lookupRelTextUnit(aRes[5]),
+                        upd = {relative: {}};
+
+                    upd.relative[period] = amt;
+                    mods.updateRel(upd, true, index);
+
+                }},
+
+
+                // This is an extra one to definitely pick up t0813 as a time
+                {key: "gnunocolont", re: new RegExp(oRegEx.gnunocolont), fn: function (aRes, index, mods) {
+                    
+                    Y.log('strtotime: matched gnunocolont');
+
+                    mods.updateAbs({
+                        h: aRes[1],
+                        i: aRes[2]
+                    }, true, index);
+                }},
+
+
                 {key: 'timezone', re: new RegExp('(' + oRegEx.tzcorrection + ')|(' + oRegEx.tz + ')'), fn : function (aRes, index, mods) {
 
                     Y.log('strtotime: Matched timezone');
@@ -2168,18 +2198,6 @@ YUI.add('strtotime', function (Y) {
 
 
 
-
-
-                // This is an extra one to definitely pick up t0813 as a time
-                {key: "gnunocolont", re: new RegExp(oRegEx.gnunocolont), fn: function (aRes, index, mods) {
-                    
-                    Y.log('strtotime: matched gnunocolont');
-
-                    mods.updateAbs({
-                        h: aRes[1],
-                        i: aRes[2]
-                    }, true, index);
-                }},
 
 
 

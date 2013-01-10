@@ -138,7 +138,9 @@ javascript are more intuitive.
  	by default, using the Intl pack, things like "a.M." (ie mixing case and adding
  	full stops) will not be recognised.  In English, you can set
 
- 	```strtotime.AMPM = '([AaPp].?[Mm].?)'; 
+ 	```
+ 	strtotime.AMPM = '([AaPp].?[Mm].?)'; 
+ 	```
 
  	before using the function and it'll work as php does.
 

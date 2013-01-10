@@ -221,6 +221,9 @@ $extras[] = "3 months -4 days ago";
 $extras[] = "2 years 5 months 18 days -4 hours 20 minutes -12 seconds ago";
 //"first", "second", "third", "last", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"
 
+
+
+
 // Some tests fail because of suspected php bugs.
 // Until these are reported and either confirmed as bugs, or
 // confirmed that they're not, we'll register the tests
@@ -301,9 +304,26 @@ $testsThatFailFromSuspectedPhpBugs = array(
 	"now 2011",
 	"midnight 2011",
 
-
 );
 
+// However, by chance (ie the particular dates chosen)
+// and the nature of the bugs, a handful of the 
+// tests that should fail but actually pass
+$testsThatPassWhenTheyShouldFail = array(
+	'strtotime("Apr 01st yesterday")  (datetextual2) should give `1364688000` (ie 2013-03-31 00:00:00)',
+	'strtotime("Dec 31st yesterday")  (datetextual2) should give `1388361600` (ie 2013-12-30 00:00:00)',
+	'strtotime("2012W01-1 first day of")  (isoweekday) should give `1325376000` (ie 2012-01-01 00:00:00)',
+	'strtotime("2012W01-1 last day of")  (isoweekday) should give `1327968000` (ie 2012-01-31 00:00:00)',
+	'strtotime("Jan 01st yesterday")  (datetextual2) should give `1356912000` (ie 2012-12-31 00:00:00)',
+	'strtotime("2013W01-2 yesterday")  (isoweekday) should give `1356912000` (ie 2012-12-31 00:00:00)',
+	'strtotime("2013W01-2 tomorrow")  (isoweekday) should give `1357084800` (ie 2013-01-02 00:00:00)',
+	'strtotime("2013W01-2 first day of")  (isoweekday) should give `1356998400` (ie 2013-01-01 00:00:00)',
+	'strtotime("2013W01-2 last day of")  (isoweekday) should give `1359590400` (ie 2013-01-31 00:00:00)',
+	'strtotime(`first Tuesday of 2013W01-2`) (2013-01-01 00:00:01  isoweekday) should give ` (2013-01-01 00:00:00)',
+	'strtotime(`next Thursday of 2013W01-2`) (2013-01-01 00:00:01  isoweekday) should give ` (2013-01-03 00:00:00)',
+	'strtotime("Feb 29th yesterday")  (datetextual2) should give `1362009600` (ie 2013-02-28 00:00:00)',
+	'Extras: strtotime("noon 2011", 1360022400) should give `1296907200`'
+);
 
 
 
@@ -343,8 +363,10 @@ foreach ($dates as $d) {
 		if ($res0 === false) {
 			$res0 = 'false';
 		}
+		$testName = "strtotime(\"" . $fd . "\") (originally `" . $d . "` " . $formatName . ") should give timestamp `" . $res0 . "`";
 
-		$plainFormatTests[$fd] = "\n\t\t'strtotime(\"" . $fd . "\") (originally `" . $d . "` " . $formatName . ") should give timestamp `" . $res0 . "`': "
+
+		$plainFormatTests[$fd] = "\n\t\t'" . $testName . "': "
 			. " function () {\n"
 			. "\t\t\tY.Assert.areSame(" . $res0 . ", strtotime('" . $fd . "'));\n"
 			. "\t\t}";
@@ -358,9 +380,10 @@ foreach ($dates as $d) {
 			if ($res === false) {
 				$res = 'false';
 			}
+			$testName = "strtotime(\"" . $c . "\", " . $orig_ts . ")  (originally `" . $d . "` " . $formatName . ")  should give `" . $res 
+					. ($res !== 'false' ? "` (ie " . date("Y-m-d H:i:s", $res) . ")" : "");
 
-			$modifierTests[$orig_ts . $c] = "\n\t\t'strtotime(\"" . $c . "\", " . $orig_ts . ")  (originally `" . $d . "` " . $formatName . ")  should give `" . $res 
-					. ($res !== 'false' ? "` (ie " . date("Y-m-d H:i:s", $res) . ")" : "") . "': "
+			$modifierTests[$orig_ts . $c] = "\n\t\t'" . $testName . "': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res . ", strtotime('" . $c . "', " . $orig_ts . "));\n"
 				. "\t\t}";
@@ -374,7 +397,10 @@ foreach ($dates as $d) {
 				$res2 = 'false';
 			}
 
-			if (in_array($f . ' ' . $c, $testsThatFailFromSuspectedPhpBugs)) {
+			$testName = "strtotime(\"" . $fd . " " . $c . "\")  (" . $formatName . ") should give `" . $res2 
+				. ($res2 !== 'false' ? "` (ie " . date("Y-m-d H:i:s", $res2) . ")" : "");
+
+			if (in_array($f . ' ' . $c, $testsThatFailFromSuspectedPhpBugs) && !in_array($testName, $testsThatPassWhenTheyShouldFail)) {
 				$assert = 'areNotSame';
 				$msg = 'This is a suspected php bug.';
 			} else {
@@ -382,8 +408,8 @@ foreach ($dates as $d) {
 				$msg = '';
 			}
 
-			$modifierTests[$fd . $c] = "\n\t\t'strtotime(\"" . $fd . " " . $c . "\")  (" . $formatName . ") should give `" . $res2 
-				. ($res2 !== 'false' ? "` (ie " . date("Y-m-d H:i:s", $res2) . ")" : "") . "': "
+
+			$modifierTests[$fd . $c] = "\n\t\t'" . $testName . "': "
 				. " function () {\n"
 				. "\t\t\tY.Assert." . $assert . "(" . $res2 . ", strtotime('" . $fd . " " . $c . "'), '" . $msg . "');\n"
 				. "\t\t}";
@@ -396,8 +422,10 @@ foreach ($dates as $d) {
 			if ($res3 === false) {
 				$res3 = 'false';
 			}
-			$modifierTests[$orig_ts . $c] = "\n\t\t'strtotime(`" . $c . " " . $orig_ts . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
-				. "  " . $formatName . ") should give `" . $res3 . "`" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
+			$testName = "strtotime(`" . $c . " " . $orig_ts . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
+				. "  " . $formatName . ") should give `" . $res3 . "`" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" );
+
+			$modifierTests[$orig_ts . $c] = "\n\t\t'" . $testName . "': "
 				. " function () {\n"
 				. "\t\t\tY.Assert.areSame(" . $res3 . ", strtotime('" . $c . " " . $orig_ts . "'));\n"
 				. "\t\t}";
@@ -408,7 +436,11 @@ foreach ($dates as $d) {
 			if ($res3 === false) {
 				$res3 = 'false';
 			}
-			if (in_array($c . ' ' . $f, $testsThatFailFromSuspectedPhpBugs)) {
+			
+			$testName = "strtotime(`" . $c . " " . $fd . "`) (" . date("Y-m-d H:i:s", $orig_ts) 		
+					. "  " . $formatName . ") should give `" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" );
+
+			if (in_array($c . ' ' . $f, $testsThatFailFromSuspectedPhpBugs) && !in_array($testName, $testsThatPassWhenTheyShouldFail)) {
 				$assert = 'areNotSame';
 				$msg = 'This is a suspected php bug.';
 			} else {
@@ -418,8 +450,9 @@ foreach ($dates as $d) {
 
 
 			if ($fd !== $orig_ts) {
-				$modifierTests[$fd . $c] = "\n\t\t'strtotime(`" . $c . " " . $fd . "`) (" . date("Y-m-d H:i:s", $orig_ts) 
-					. "  " . $formatName . ") should give `" . ( $res3 !== 'false' ? " (" . date("Y-m-d H:i:s", $res3) . ")" : "" ) . "': "
+
+
+				$modifierTests[$fd . $c] = "\n\t\t'" . $testName . "': "
 					. " function () {\n"
 					. "\t\t\tY.Assert." . $assert . "(" . $res3 . ", strtotime('" . $c . " " . $fd . "'));\n"
 					. "\t\t}";
@@ -438,7 +471,10 @@ foreach ($extras as $e) {
 	if ($res2 === false) {
 		$res2 = 'false';
 	}
-	if (in_array($e, $testsThatFailFromSuspectedPhpBugs)) {
+		
+	$testName = "Extras: strtotime(\"" . $e . "\", 1360022400) should give `" . $res2 . "`";
+
+	if (in_array($e, $testsThatFailFromSuspectedPhpBugs) && !in_array($testName, $testsThatPassWhenTheyShouldFail)) {
 		$assert = 'areNotSame';
 		$msg = 'This is a suspected php bug.';
 	} else {
@@ -446,7 +482,7 @@ foreach ($extras as $e) {
 		$msg = '';
 	}
 
-	$extraTests[] = "\n\t\t'Extras: strtotime(\"" . $e . "\", 1360022400) should give `" . $res2 . "`': "
+	$extraTests[] = "\n\t\t'" . $testName . "`': "
 		. " function () {\n"
 		. "\t\t\tY.Assert." . $assert . "(" . $res2 . ", strtotime('" . $e . "', 1360022400));\n"
 		. "\t\t}";		

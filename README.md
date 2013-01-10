@@ -17,6 +17,58 @@ gallery is able to accept it.  The function is currently added to the
 Y.DataType.Date object, although it does not require it.
 
 
+
+
+Example usage
+=============
+
+The different formats and structures supported are fully documented at
+http://php.net/manual/en/function.strtotime.php and
+the sections from http://php.net/manual/en/datetime.formats.php
+
+All of the examples below will parse the date 7th August 2013, 8:18:23.124am
+in timezone GMT +00:00, although obviously if the time is not passed it will
+not be included in the output.
+
+```
+Y.DataType.Date.strtotime("2013-08-07"); // returns 1375833600
+Y.DataType.Date.strtotime("2013/08/07"); // returns 1375833600
+Y.DataType.Date.strtotime("08/07/2013"); // returns 1375833600
+Y.DataType.Date.strtotime("07-08-2013"); // returns 1375833600
+Y.DataType.Date.strtotime("7th Aug 13"); // returns 1375833600
+Y.DataType.Date.strtotime("August 7 2013"); // returns 1375833600
+```
+
+and so on.  There are multiple time formats too, plus timezones as differences
+or the places:
+
+```
+Y.DataType.Date.strtotime("7th August 2013 8:18:23.124 GMT"); // returns 1375863503
+Y.DataType.Date.strtotime("8.30pm"); // returns timestamp for 20:30:00 today
+Y.DataType.Date.strtotime("07 VIII 2013 20.18 Europe/London"); // returns 1375906680 (because of DST it's an hour different)
+```
+
+
+The relative formats let you move forwards and back in time:
+
+```
+Y.DataType.Date.strtotime("2013-08-07 +2 days");
+Y.DataType.Date.strtotime("2013-08-07 +6 months 1 week 2 days");
+Y.DataType.Date.strtotime("2013-08-07 10 years ago");
+Y.DataType.Date.strtotime("first day of 2013-08-07");  // goes to first of the month
+Y.DataType.Date.strtotime("last day of 2013-08-07");   // goes to last day in the month
+Y.DataType.Date.strtotime("tomorrow noon");  // returns timestamp 12:00:00 for tomorrow
+```
+
+
+You can also pass in the 'absolute' bit of the date as as timestamp
+as the second argument:
+
+```
+Y.DataType.Date.strtotime("+2 days", 1375833600);
+```
+
+
 Internationalisation
 ====================
 This version (unlike the php version, as far as I know) will use the YUI
@@ -45,50 +97,6 @@ translated.  They are all available as properties on the srttotime function:
 
 And there's a bunch more I'll write up later.
 
-
-
-Example usage
-=============
-
-The different formats and structures supported are fully documented at
-http://php.net/manual/en/function.strtotime.php and
-the sections from http://php.net/manual/en/datetime.formats.php
-
-All of the examples below will parse the date 7th August 2013, 8:18:23.124am
-in timezone GMT +00:00, although obviously if the time is not passed it will
-not be included in the output.
-
-```Y.DataType.Date.strtotime("2013-08-07"); // returns 1375833600
-```Y.DataType.Date.strtotime("2013/08/07"); // returns 1375833600
-```Y.DataType.Date.strtotime("08/07/2013"); // returns 1375833600
-```Y.DataType.Date.strtotime("07-08-2013"); // returns 1375833600
-```Y.DataType.Date.strtotime("7th Aug 13"); // returns 1375833600
-```Y.DataType.Date.strtotime("August 7 2013"); // returns 1375833600
-
-and so on.  There are multiple time formats too, plus timezones as differences
-or the places:
-
-```Y.DataType.Date.strtotime("7th August 2013 8:18:23.124 GMT") // returns 1375863503
-```Y.DataType.Date.strtotime("8.30pm") // returns timestamp for 20:30:00 today
-```Y.DataType.Date.strtotime("07 VIII 2013 20.18 Europe/London") // returns 1375906680 
-	(because of DST it's an hour different)
-
-
-The relative formats let you move forwards and back in time:
-
-```Y.DataType.Date.strtotime("2013-08-07 +2 days")
-```Y.DataType.Date.strtotime("2013-08-07 +6 months 1 week 2 days")
-```Y.DataType.Date.strtotime("2013-08-07 10 years ago")
-```Y.DataType.Date.strtotime("first day of 2013-08-07")  // goes to first of the month
-```Y.DataType.Date.strtotime("last day of 2013-08-07")   // goes to last day in the month
-```Y.DataType.Date.strtotime("tomorrow noon")  // returns timestamp 12:00:00 for tomorrow
-
-
-
-You can also pass in the 'absolute' bit of the date as as timestamp
-as the second argument:
-
-```Y.DataType.Date.strtotime("+2 days", 1375833600);
 
 
 Further customisation

@@ -104,14 +104,14 @@ Further customisation
 
 The first time you use strtotime, it'll build the regexp's it uses to parse the
 strings.  There are a couple of points that you can hook into to vary behaviour:
-```srttotime.finishRegExp(oRegEx)
+`srttotime.finishRegExp(oRegEx)`
 which is a function receiving an object with all the regexp components (as strings) 
 used to build the tests, and returns the object.  So you could alter some of the regexes
 here, if you wanted to.
 
 It then uses these strings to build an array of test objects.  Each object has a RegExp
 and a function to call if the regex matches.  Once this array is built, it's passed through
-```strtotime.finishTestsfunction (oRegEx, aTests)
+`strtotime.finishTestsfunction (oRegEx, aTests)`
 which returns the aTests array.  So you could add or remove tests & behaviours at this point too,
 if you wanted.
 

@@ -14444,160 +14444,320 @@ YUI.add("strtotime-test", function (Y) {
 			Y.Assert.areSame(1360022401, strtotime('+1 second', 1360022400));
 		},
 
+		'Extras: strtotime("+1 second ago", 1360022400) should give `1360022399`':  function () {
+			Y.Assert.areSame(1360022399, strtotime('+1 second ago', 1360022400));
+		},
+
 		'Extras: strtotime("+1 sec", 1360022400) should give `1360022401`':  function () {
 			Y.Assert.areSame(1360022401, strtotime('+1 sec', 1360022400));
+		},
+
+		'Extras: strtotime("+1 sec ago", 1360022400) should give `1360022399`':  function () {
+			Y.Assert.areSame(1360022399, strtotime('+1 sec ago', 1360022400));
 		},
 
 		'Extras: strtotime("+1 minute", 1360022400) should give `1360022460`':  function () {
 			Y.Assert.areSame(1360022460, strtotime('+1 minute', 1360022400));
 		},
 
+		'Extras: strtotime("+1 minute ago", 1360022400) should give `1360022340`':  function () {
+			Y.Assert.areSame(1360022340, strtotime('+1 minute ago', 1360022400));
+		},
+
 		'Extras: strtotime("+1 min", 1360022400) should give `1360022460`':  function () {
 			Y.Assert.areSame(1360022460, strtotime('+1 min', 1360022400));
+		},
+
+		'Extras: strtotime("+1 min ago", 1360022400) should give `1360022340`':  function () {
+			Y.Assert.areSame(1360022340, strtotime('+1 min ago', 1360022400));
 		},
 
 		'Extras: strtotime("+1 hour", 1360022400) should give `1360026000`':  function () {
 			Y.Assert.areSame(1360026000, strtotime('+1 hour', 1360022400));
 		},
 
+		'Extras: strtotime("+1 hour ago", 1360022400) should give `1360018800`':  function () {
+			Y.Assert.areSame(1360018800, strtotime('+1 hour ago', 1360022400));
+		},
+
 		'Extras: strtotime("+1 day", 1360022400) should give `1360108800`':  function () {
 			Y.Assert.areSame(1360108800, strtotime('+1 day', 1360022400));
+		},
+
+		'Extras: strtotime("+1 day ago", 1360022400) should give `1359936000`':  function () {
+			Y.Assert.areSame(1359936000, strtotime('+1 day ago', 1360022400));
 		},
 
 		'Extras: strtotime("+1 week", 1360022400) should give `1360627200`':  function () {
 			Y.Assert.areSame(1360627200, strtotime('+1 week', 1360022400));
 		},
 
+		'Extras: strtotime("+1 week ago", 1360022400) should give `1359417600`':  function () {
+			Y.Assert.areSame(1359417600, strtotime('+1 week ago', 1360022400));
+		},
+
 		'Extras: strtotime("+1 fortnight", 1360022400) should give `1361232000`':  function () {
 			Y.Assert.areSame(1361232000, strtotime('+1 fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("+1 fortnight ago", 1360022400) should give `1358812800`':  function () {
+			Y.Assert.areSame(1358812800, strtotime('+1 fortnight ago', 1360022400));
 		},
 
 		'Extras: strtotime("+1 month", 1360022400) should give `1362441600`':  function () {
 			Y.Assert.areSame(1362441600, strtotime('+1 month', 1360022400));
 		},
 
+		'Extras: strtotime("+1 month ago", 1360022400) should give `1357344000`':  function () {
+			Y.Assert.areSame(1357344000, strtotime('+1 month ago', 1360022400));
+		},
+
 		'Extras: strtotime("+1 year", 1360022400) should give `1391558400`':  function () {
 			Y.Assert.areSame(1391558400, strtotime('+1 year', 1360022400));
+		},
+
+		'Extras: strtotime("+1 year ago", 1360022400) should give `1328400000`':  function () {
+			Y.Assert.areSame(1328400000, strtotime('+1 year ago', 1360022400));
 		},
 
 		'Extras: strtotime("-2 second", 1360022400) should give `1360022398`':  function () {
 			Y.Assert.areSame(1360022398, strtotime('-2 second', 1360022400));
 		},
 
+		'Extras: strtotime("-2 second ago", 1360022400) should give `1360022402`':  function () {
+			Y.Assert.areSame(1360022402, strtotime('-2 second ago', 1360022400));
+		},
+
 		'Extras: strtotime("-2 sec", 1360022400) should give `1360022398`':  function () {
 			Y.Assert.areSame(1360022398, strtotime('-2 sec', 1360022400));
+		},
+
+		'Extras: strtotime("-2 sec ago", 1360022400) should give `1360022402`':  function () {
+			Y.Assert.areSame(1360022402, strtotime('-2 sec ago', 1360022400));
 		},
 
 		'Extras: strtotime("-2 minute", 1360022400) should give `1360022280`':  function () {
 			Y.Assert.areSame(1360022280, strtotime('-2 minute', 1360022400));
 		},
 
+		'Extras: strtotime("-2 minute ago", 1360022400) should give `1360022520`':  function () {
+			Y.Assert.areSame(1360022520, strtotime('-2 minute ago', 1360022400));
+		},
+
 		'Extras: strtotime("-2 min", 1360022400) should give `1360022280`':  function () {
 			Y.Assert.areSame(1360022280, strtotime('-2 min', 1360022400));
+		},
+
+		'Extras: strtotime("-2 min ago", 1360022400) should give `1360022520`':  function () {
+			Y.Assert.areSame(1360022520, strtotime('-2 min ago', 1360022400));
 		},
 
 		'Extras: strtotime("-2 hour", 1360022400) should give `1360015200`':  function () {
 			Y.Assert.areSame(1360015200, strtotime('-2 hour', 1360022400));
 		},
 
+		'Extras: strtotime("-2 hour ago", 1360022400) should give `1360029600`':  function () {
+			Y.Assert.areSame(1360029600, strtotime('-2 hour ago', 1360022400));
+		},
+
 		'Extras: strtotime("-2 day", 1360022400) should give `1359849600`':  function () {
 			Y.Assert.areSame(1359849600, strtotime('-2 day', 1360022400));
+		},
+
+		'Extras: strtotime("-2 day ago", 1360022400) should give `1360195200`':  function () {
+			Y.Assert.areSame(1360195200, strtotime('-2 day ago', 1360022400));
 		},
 
 		'Extras: strtotime("-2 week", 1360022400) should give `1358812800`':  function () {
 			Y.Assert.areSame(1358812800, strtotime('-2 week', 1360022400));
 		},
 
+		'Extras: strtotime("-2 week ago", 1360022400) should give `1361232000`':  function () {
+			Y.Assert.areSame(1361232000, strtotime('-2 week ago', 1360022400));
+		},
+
 		'Extras: strtotime("-2 fortnight", 1360022400) should give `1357603200`':  function () {
 			Y.Assert.areSame(1357603200, strtotime('-2 fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("-2 fortnight ago", 1360022400) should give `1362441600`':  function () {
+			Y.Assert.areSame(1362441600, strtotime('-2 fortnight ago', 1360022400));
 		},
 
 		'Extras: strtotime("-2 month", 1360022400) should give `1354665600`':  function () {
 			Y.Assert.areSame(1354665600, strtotime('-2 month', 1360022400));
 		},
 
+		'Extras: strtotime("-2 month ago", 1360022400) should give `1365120000`':  function () {
+			Y.Assert.areSame(1365120000, strtotime('-2 month ago', 1360022400));
+		},
+
 		'Extras: strtotime("-2 year", 1360022400) should give `1296864000`':  function () {
 			Y.Assert.areSame(1296864000, strtotime('-2 year', 1360022400));
+		},
+
+		'Extras: strtotime("-2 year ago", 1360022400) should give `1423094400`':  function () {
+			Y.Assert.areSame(1423094400, strtotime('-2 year ago', 1360022400));
 		},
 
 		'Extras: strtotime("14 second", 1360022400) should give `1360022414`':  function () {
 			Y.Assert.areSame(1360022414, strtotime('14 second', 1360022400));
 		},
 
+		'Extras: strtotime("14 second ago", 1360022400) should give `1360022386`':  function () {
+			Y.Assert.areSame(1360022386, strtotime('14 second ago', 1360022400));
+		},
+
 		'Extras: strtotime("14 sec", 1360022400) should give `1360022414`':  function () {
 			Y.Assert.areSame(1360022414, strtotime('14 sec', 1360022400));
+		},
+
+		'Extras: strtotime("14 sec ago", 1360022400) should give `1360022386`':  function () {
+			Y.Assert.areSame(1360022386, strtotime('14 sec ago', 1360022400));
 		},
 
 		'Extras: strtotime("14 minute", 1360022400) should give `1360023240`':  function () {
 			Y.Assert.areSame(1360023240, strtotime('14 minute', 1360022400));
 		},
 
+		'Extras: strtotime("14 minute ago", 1360022400) should give `1360021560`':  function () {
+			Y.Assert.areSame(1360021560, strtotime('14 minute ago', 1360022400));
+		},
+
 		'Extras: strtotime("14 min", 1360022400) should give `1360023240`':  function () {
 			Y.Assert.areSame(1360023240, strtotime('14 min', 1360022400));
+		},
+
+		'Extras: strtotime("14 min ago", 1360022400) should give `1360021560`':  function () {
+			Y.Assert.areSame(1360021560, strtotime('14 min ago', 1360022400));
 		},
 
 		'Extras: strtotime("14 hour", 1360022400) should give `1360072800`':  function () {
 			Y.Assert.areSame(1360072800, strtotime('14 hour', 1360022400));
 		},
 
+		'Extras: strtotime("14 hour ago", 1360022400) should give `1359972000`':  function () {
+			Y.Assert.areSame(1359972000, strtotime('14 hour ago', 1360022400));
+		},
+
 		'Extras: strtotime("14 day", 1360022400) should give `1361232000`':  function () {
 			Y.Assert.areSame(1361232000, strtotime('14 day', 1360022400));
+		},
+
+		'Extras: strtotime("14 day ago", 1360022400) should give `1358812800`':  function () {
+			Y.Assert.areSame(1358812800, strtotime('14 day ago', 1360022400));
 		},
 
 		'Extras: strtotime("14 week", 1360022400) should give `1368489600`':  function () {
 			Y.Assert.areSame(1368489600, strtotime('14 week', 1360022400));
 		},
 
+		'Extras: strtotime("14 week ago", 1360022400) should give `1351555200`':  function () {
+			Y.Assert.areSame(1351555200, strtotime('14 week ago', 1360022400));
+		},
+
 		'Extras: strtotime("14 fortnight", 1360022400) should give `1376956800`':  function () {
 			Y.Assert.areSame(1376956800, strtotime('14 fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("14 fortnight ago", 1360022400) should give `1343088000`':  function () {
+			Y.Assert.areSame(1343088000, strtotime('14 fortnight ago', 1360022400));
 		},
 
 		'Extras: strtotime("14 month", 1360022400) should give `1396656000`':  function () {
 			Y.Assert.areSame(1396656000, strtotime('14 month', 1360022400));
 		},
 
+		'Extras: strtotime("14 month ago", 1360022400) should give `1323043200`':  function () {
+			Y.Assert.areSame(1323043200, strtotime('14 month ago', 1360022400));
+		},
+
 		'Extras: strtotime("14 year", 1360022400) should give `1801785600`':  function () {
 			Y.Assert.areSame(1801785600, strtotime('14 year', 1360022400));
+		},
+
+		'Extras: strtotime("14 year ago", 1360022400) should give `918172800`':  function () {
+			Y.Assert.areSame(918172800, strtotime('14 year ago', 1360022400));
 		},
 
 		'Extras: strtotime("-4 second", 1360022400) should give `1360022396`':  function () {
 			Y.Assert.areSame(1360022396, strtotime('-4 second', 1360022400));
 		},
 
+		'Extras: strtotime("-4 second ago", 1360022400) should give `1360022404`':  function () {
+			Y.Assert.areSame(1360022404, strtotime('-4 second ago', 1360022400));
+		},
+
 		'Extras: strtotime("-4 sec", 1360022400) should give `1360022396`':  function () {
 			Y.Assert.areSame(1360022396, strtotime('-4 sec', 1360022400));
+		},
+
+		'Extras: strtotime("-4 sec ago", 1360022400) should give `1360022404`':  function () {
+			Y.Assert.areSame(1360022404, strtotime('-4 sec ago', 1360022400));
 		},
 
 		'Extras: strtotime("-4 minute", 1360022400) should give `1360022160`':  function () {
 			Y.Assert.areSame(1360022160, strtotime('-4 minute', 1360022400));
 		},
 
+		'Extras: strtotime("-4 minute ago", 1360022400) should give `1360022640`':  function () {
+			Y.Assert.areSame(1360022640, strtotime('-4 minute ago', 1360022400));
+		},
+
 		'Extras: strtotime("-4 min", 1360022400) should give `1360022160`':  function () {
 			Y.Assert.areSame(1360022160, strtotime('-4 min', 1360022400));
+		},
+
+		'Extras: strtotime("-4 min ago", 1360022400) should give `1360022640`':  function () {
+			Y.Assert.areSame(1360022640, strtotime('-4 min ago', 1360022400));
 		},
 
 		'Extras: strtotime("-4 hour", 1360022400) should give `1360008000`':  function () {
 			Y.Assert.areSame(1360008000, strtotime('-4 hour', 1360022400));
 		},
 
+		'Extras: strtotime("-4 hour ago", 1360022400) should give `1360036800`':  function () {
+			Y.Assert.areSame(1360036800, strtotime('-4 hour ago', 1360022400));
+		},
+
 		'Extras: strtotime("-4 day", 1360022400) should give `1359676800`':  function () {
 			Y.Assert.areSame(1359676800, strtotime('-4 day', 1360022400));
+		},
+
+		'Extras: strtotime("-4 day ago", 1360022400) should give `1360368000`':  function () {
+			Y.Assert.areSame(1360368000, strtotime('-4 day ago', 1360022400));
 		},
 
 		'Extras: strtotime("-4 week", 1360022400) should give `1357603200`':  function () {
 			Y.Assert.areSame(1357603200, strtotime('-4 week', 1360022400));
 		},
 
+		'Extras: strtotime("-4 week ago", 1360022400) should give `1362441600`':  function () {
+			Y.Assert.areSame(1362441600, strtotime('-4 week ago', 1360022400));
+		},
+
 		'Extras: strtotime("-4 fortnight", 1360022400) should give `1355184000`':  function () {
 			Y.Assert.areSame(1355184000, strtotime('-4 fortnight', 1360022400));
+		},
+
+		'Extras: strtotime("-4 fortnight ago", 1360022400) should give `1364860800`':  function () {
+			Y.Assert.areSame(1364860800, strtotime('-4 fortnight ago', 1360022400));
 		},
 
 		'Extras: strtotime("-4 month", 1360022400) should give `1349395200`':  function () {
 			Y.Assert.areSame(1349395200, strtotime('-4 month', 1360022400));
 		},
 
+		'Extras: strtotime("-4 month ago", 1360022400) should give `1370390400`':  function () {
+			Y.Assert.areSame(1370390400, strtotime('-4 month ago', 1360022400));
+		},
+
 		'Extras: strtotime("-4 year", 1360022400) should give `1233792000`':  function () {
 			Y.Assert.areSame(1233792000, strtotime('-4 year', 1360022400));
+		},
+
+		'Extras: strtotime("-4 year ago", 1360022400) should give `1486252800`':  function () {
+			Y.Assert.areSame(1486252800, strtotime('-4 year ago', 1360022400));
 		},
 
 		'Extras: strtotime("3 months -4 days", 1360022400) should give `1367366400`':  function () {
@@ -14606,6 +14766,14 @@ YUI.add("strtotime-test", function (Y) {
 
 		'Extras: strtotime("2 years 5 months 18 days -4 hours 20 minutes -12 seconds", 1360022400) should give `1437596388`':  function () {
 			Y.Assert.areSame(1437596388, strtotime('2 years 5 months 18 days -4 hours 20 minutes -12 seconds', 1360022400));
+		},
+
+		'Extras: strtotime("3 months -4 days ago", 1360022400) should give `1352419200`':  function () {
+			Y.Assert.areSame(1352419200, strtotime('3 months -4 days ago', 1360022400));
+		},
+
+		'Extras: strtotime("2 years 5 months 18 days -4 hours 20 minutes -12 seconds ago", 1360022400) should give `1282102812`':  function () {
+			Y.Assert.areSame(1282102812, strtotime('2 years 5 months 18 days -4 hours 20 minutes -12 seconds ago', 1360022400));
 		},
 
 		'Extras: strtotime("@1364811922", 1360022400) should give `1364811922`':  function () {

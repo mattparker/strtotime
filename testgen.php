@@ -212,11 +212,13 @@ foreach (array("next", "last", "previous", "this", "first", "second",
 foreach (array("+1", "-2", "14", "-4") as $c) {
 	foreach (array("second", "sec", "minute", "min", "hour", "day", "week", "fortnight", "month", "year") as $t) {
 			$extras[] = $c . " " . $t;
+			$extras[] = $c . " " . $t . " ago";
 	}
 }
 $extras[] = "3 months -4 days";
 $extras[] = "2 years 5 months 18 days -4 hours 20 minutes -12 seconds";
-
+$extras[] = "3 months -4 days ago";
+$extras[] = "2 years 5 months 18 days -4 hours 20 minutes -12 seconds ago";
 //"first", "second", "third", "last", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"
 
 // Some tests fail because of suspected php bugs.

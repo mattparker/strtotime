@@ -490,7 +490,7 @@ YUI.add('strtotime', function (Y) {
          * @return {Int} Timestamp
          * @private
          */
-        _processRelativeFixedHash = function (ts, oChange) {
+        _processRelativeFixedHash = function (ts, oChange, dir) {
 
             var num,
                 tmp,
@@ -510,22 +510,22 @@ YUI.add('strtotime', function (Y) {
 
             // tricky ones
             if (oChange.year !== undefined) {
-                num = _calculateRelTextValue(oChange.year);
+                num = dir * _calculateRelTextValue(oChange.year);
                 ts = relChange.y(ts, num);
             }            
             if (oChange.month !== undefined) {
-                num = _calculateRelTextValue(oChange.month);
+                num = dir * _calculateRelTextValue(oChange.month);
                 ts = relChange.m(ts, num);
             }
 
             if (oChange.weekKeepDay !== undefined) {
-                ts = _findWeekOf(ts, oChange.weekKeepDay, false);
+                ts = _findWeekOf(ts, dir * oChange.weekKeepDay, false);
             }
 
             // days, weeks, hours etc
             for (i in _timeList) {
                 if (_timeList.hasOwnProperty(i) && oChange[i] !== undefined) {
-                    num = _calculateRelTextValue(oChange[i]);
+                    num = dir * _calculateRelTextValue(oChange[i]);
                     ts = ts + (num * _timeList[i]);
                 }
             }
@@ -1172,7 +1172,7 @@ YUI.add('strtotime', function (Y) {
 
 
             // Do any final relative changes:
-            ms = _processRelativeFixedHash(ms, mods.relativeFixedHash);
+            ms = _processRelativeFixedHash(ms, mods.relativeFixedHash, mods.relativeDirection);
             if (ms === false) {
                 return false;
             }
@@ -2217,6 +2217,42 @@ YUI.add('strtotime', function (Y) {
                     }, true, index);
 
                 }},
+
+
+                {key: 'dateshortwithtime12', re: new RegExp(oRegEx.dateshortwithtimeshort12 + '|' + oRegEx.dateshortwithtimelong12),
+                    fn: function (aRes, index, mods) {
+
+                        // I can't see how this is ever triggered - it seems always to get 
+                        // picked up by the component regexes.  So I can't test any implementation!
+                        //
+                        // The C source for these mentions 'fix ambiguities'... 
+                        // 
+                        Y.log('strtotime: Matched dateshortwithtime(short|long)12 but not implemented', 'warn');
+
+                        // Until anyone can get to this point and report it,
+                        // there's no implementation
+                        return false;
+                    
+                    }
+                },
+
+                {key: 'dateshortwithtimelong', 
+                    re: new RegExp(oRegEx.dateshortwithtimeshort + '|' + oRegEx.dateshortwithtimelong+ '|' + oRegEx.dateshortwithtimelongtz),
+                    fn: function (aRes, index, mods) {
+
+                        // I can't see how this is ever triggered - it seems always to get 
+                        // picked up by the component regexes.  So I can't test any implementation!
+                        //
+                        // The C source for these mentions 'fix ambiguities'... 
+                        // 
+                        Y.log('strtotime: Matched dateshortwithtimelong but not implemented', 'warn');
+
+                        // Until anyone can get to this point and report it,
+                        // there's no implementation
+                        return false;
+                    
+                    }
+                },
 
 
                 {key: "relative", re: new RegExp(oRegEx.relative), fn: function (aRes, index, mods) {

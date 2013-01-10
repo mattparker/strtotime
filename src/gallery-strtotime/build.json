@@ -1,0 +1,10 @@
+{
+    "name": "gallery-strtotime",
+    "builds": {
+        "gallery-strtotime": {
+            "jsfiles": [
+                "js/gallery-strtotime.js"
+            ]
+        }
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "gallery-strtotime": {
+        "requires": [
+            "yui-base"
+        ]
+    }
+}

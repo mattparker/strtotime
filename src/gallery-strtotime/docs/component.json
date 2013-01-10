@@ -1,0 +1,11 @@
+{
+    "name"       : "gallery-strtotime",
+    "displayName": "Gallery: strtotime",
+    "description": "Parses just about any date/time string and changes to the dates",
+    "author"     : [ "mattatlamplight" ],
+    "use"        : [ "gallery-strtotime" ],
+
+    "tags": [ "gallery", "date"],
+
+    "examples": []
+}

@@ -16,7 +16,7 @@ YUI.add('strtotime', function (Y) {
 
 
     // Use Internationalised stuff if we can
-    var INTL = {}, //Y.Intl ? Y.Intl.get("datatype-date-format") : {},
+    var INTL = Y.Intl ? Y.Intl.get("datatype-date-format") : {},
         REGEXP = {},
         TESTS = [],
 
@@ -1248,7 +1248,7 @@ YUI.add('strtotime', function (Y) {
             // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
             // case versions in INTL.P and INTL.p
             meridian = strtotime.AMPM, // + space,
-            tz = '\\(? [A-Za-z]{1,6}\\)?|[A-Za-z]+([_/-][A-Za-z]+)+',
+            tz = '[A-Za-z]+([_\\/-][A-Za-z]+)+|\\(? [A-Za-z]{1,6}\\)?',
             tzcorrection = 'GMT?([+-]' + hour24 + ':?' + minute + '?)',
 
             daysuf = '(' + strtotime.DAYSUFFIXES.join('|') + ')',
@@ -1402,8 +1402,8 @@ YUI.add('strtotime', function (Y) {
             // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
             // case versions in INTL.P and INTL.p
             "meridian": meridian,
-            "tz": tz,
-            "tzcorrection": tzcorrection,
+            "tz": space + tz + space,
+            "tzcorrection": space + tzcorrection + space,
 
             "daysuf": daysuf,
 
@@ -2312,7 +2312,7 @@ YUI.add('strtotime', function (Y) {
 
                 Y.log('strtotime: Matched timezone');
 
-                var tz = aRes[1],
+                var tz = aRes[2],
                     tzStr = aRes[5];
 
                 if (tzStr !== undefined) {

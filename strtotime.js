@@ -22,6 +22,59 @@ YUI.add('strtotime', function (Y) {
 
 
 
+        // For minification purposes:
+        EUROPE = "Europe/",
+        AMERICA = "America/",
+        AFRICA = "Africa/",
+        ANTARCTICA = "Antarctica/",
+        ASIA = "Asia/",
+        ATLANTIC = "Atlantic/",
+        AUSTRALIA = "Australia",
+        BRAZIL = "Brazil/",
+        CANADA = "Canada/",
+        ETC = "Etc./",
+        INDIAN = "Indian/",
+        MEXICO = "Mexico/",
+        PACIFIC = "Pacific/",
+        US = "US/",
+        GMT = "GMT",
+        T0 = "+00:00",
+        T1 = "+01:00",
+        T2 = "+02:00",
+        T3 = "+03:00",
+        T4 = "+04:00",
+        T5 = "+05:00",
+        T6 = "+06:00",
+        T7 = "+07:00",
+        T8 = "+08:00",
+        T9 = "+09:00",
+        T10 = "+10:00",
+        T11 = "+11:00",
+        T12 = "+12:00",
+        T13 = "+13:00",
+        T1m = "-01:00",
+        T2m = "-02:00",
+        T3m = "-03:00",
+        T4m = "-04:00",
+        T5m = "-05:00",
+        T6m = "-06:00",
+        T7m = "-07:00",
+        T8m = "-08:00",
+        T9m = "-09:00",
+        T10m = "-10:00",
+        T11m = "-11:00",
+        T12m = "-12:00",
+        Z,
+
+
+
+
+        MSECS_IN_FORTNIGHT = 1209600000,
+        MSECS_IN_WEEK = 604800000,
+        MSECS_IN_DAY = 86400000,
+        MSECS_IN_HOUR = 3600000,
+        MSECS_IN_MINUTE = 60000,
+
 
 
         ///////////////////////////////////////////////////////////////////////
@@ -81,7 +134,7 @@ YUI.add('strtotime', function (Y) {
             // go to the first of the next month and subtract a day
             tmp.setUTCDate(1); 
             tmp.setUTCMonth((mon + 1) % 12);
-            ts = tmp.getTime() - 86400000;
+            ts = tmp.getTime() - MSECS_IN_DAY;
             tmp = new Date(ts);
             return tmp.getUTCDate();
         },
@@ -265,7 +318,7 @@ YUI.add('strtotime', function (Y) {
             }*/
 
             tmt = _setToDay(ts, tofind.dayIndex, 1);// tmp.getTime();
-            tmt = tmt + (604800000 * addWeeks);
+            tmt = tmt + (MSECS_IN_WEEK * addWeeks);
             return tmt;
         },
 
@@ -283,7 +336,7 @@ YUI.add('strtotime', function (Y) {
         _setToDay = function (ts, dayIndex, direction) {
             var tmp = new Date(ts);
             while(tmp.getUTCDay() !== dayIndex) {
-                tmp = new Date(tmp.getTime() + (direction * 86400000));
+                tmp = new Date(tmp.getTime() + (direction * MSECS_IN_DAY));
             }
             return tmp.getTime();
         },
@@ -297,11 +350,11 @@ YUI.add('strtotime', function (Y) {
          * @param {String} Change
          * @return {Int} Timestamp
          */
-        _findWeekOf = function (ts, change) {
+        _findWeekOf = function (ts, change, changeToMonday) {
 
             // need to set the day of week to a Monday
             var isMonday = (new Date(ts).getUTCDay() === 1),
-                inc = (isMonday ? 86400000 : 0);
+                inc = (isMonday && changeToMonday ? MSECS_IN_DAY : 0);
 
             change = _lookupRelTextText(change);
 
@@ -311,14 +364,19 @@ YUI.add('strtotime', function (Y) {
                     break;
                 case 'last':
                 case 'previous':
-                    ts = ts - 604800000; // go back a week
+                    ts = ts - MSECS_IN_WEEK; // go back a week
                     return _setToDay(ts - inc, 1, -1);
                     break;
                 case 'this':
                     return _setToDay(ts, 1, -1);
                     break;
                 default:
+                    // change may be a number
+                    if (Y.Lang.isNumber(change)) {
+                        return ts = ts + (change * MSECS_IN_WEEK);
+                    }
                     return false;
+                    break;
             }
 
         },
@@ -408,18 +466,18 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         * Hash of periods and the number of seconds in each
+         * Hash of periods and the number of milli-seconds in each
          * @property _timeList
          * @type {Object}
          * @private
          */
         _timeList = {
-            'fortnight': 1209600,
-            'week': 604800,
-            'day': 86400,
-            'hour': 3600,
-            'minute': 60,
-            'second': 1
+            'fortnight': MSECS_IN_FORTNIGHT,
+            'week': MSECS_IN_WEEK,
+            'day': MSECS_IN_DAY,
+            'hour': MSECS_IN_HOUR,
+            'minute': MSECS_IN_MINUTE,
+            'second': 1000
         },
 
 
@@ -446,7 +504,7 @@ YUI.add('strtotime', function (Y) {
             }
             // Work out 'last week' type modifier
             if (oChange.week !== undefined) {
-                ts = _findWeekOf(ts, oChange.week);
+                ts = _findWeekOf(ts, oChange.week, true);
                 return ts;
             }
 
@@ -460,11 +518,15 @@ YUI.add('strtotime', function (Y) {
                 ts = relChange.m(ts, num);
             }
 
+            if (oChange.weekKeepDay !== undefined) {
+                ts = _findWeekOf(ts, oChange.weekKeepDay, false);
+            }
+
             // days, weeks, hours etc
             for (i in _timeList) {
                 if (_timeList.hasOwnProperty(i) && oChange[i] !== undefined) {
                     num = _calculateRelTextValue(oChange[i]);
-                    ts = ts + (num * _timeList[i] * 1000);
+                    ts = ts + (num * _timeList[i]);
                 }
             }
 
@@ -497,13 +559,13 @@ YUI.add('strtotime', function (Y) {
                 return _change(ts, d, 'UTCMonth');
             },
             d: function (ts, d) {
-                return ts + (d * 86400000); // milliseconds in a day
+                return ts + (d * MSECS_IN_DAY); // milliseconds in a day
             },
             h: function (ts, d) {
-                return ts + (d * 3600000); // milliseconds in an hour
+                return ts + (d * MSECS_IN_HOUR); // milliseconds in an hour
             },
             i: function (ts, d) {
-                return ts + (d * 60000); // milliseconds in a minute
+                return ts + (d * MSECS_IN_MINUTE); // milliseconds in a minute
             },
             s: function (ts, d) {
                 return ts + (d * 1000);
@@ -769,7 +831,7 @@ YUI.add('strtotime', function (Y) {
 
                         } else if (i === "relative") {
 
-                            this.relativeFixedHash = oChange[i];
+                            this.relativeFixedHash = Y.merge(this.relativeFixedHash, oChange[i]);
                             
                         } else {
                             c = parseInt(oChange[i], 10);
@@ -988,9 +1050,10 @@ YUI.add('strtotime', function (Y) {
 
                 // spaces are added because we put them on the regexs
                 // and this is easier than detecting start/end of strings
-                reResult = test.re.exec(" " + copyTime + " ");
+                
+                // The same rule may match more than once so we keep going until it's done.
+                while ((reResult = test.re.exec(" " + copyTime + " ")) !== null) {
 
-                while (reResult) {
                     index = test.re.exec(" " + time + " ").index;
                     test.fn.call(undefined, reResult, index, mods);
 
@@ -999,8 +1062,11 @@ YUI.add('strtotime', function (Y) {
                     // remove the matched string from our copy.
                     copyTime = copyTime.replace(Y.Lang.trim(reResult[0]), "");
 
-                    // try the same one again:
-                    reResult = test.re.exec(" " + copyTime + " ");
+                }
+
+                // Are we there yet?
+                if (Y.Lang.trim(copyTime) === "") {
+                    break;
                 }
 
             }
@@ -1293,7 +1359,9 @@ YUI.add('strtotime', function (Y) {
                     }()) + ')s?)|' + daytext, //strtotime.RELTEXTUNIT.join('|') + ')s?)' + '|' + daytext, // no 'weeks' currently - need to check why it's separate
 
                 relnumber = '([+\-]*[ \t]*[0-9]+)',
-                relative = relnumber + '(' + space + ')?(' + reltextunit + '|week)', // this is weird too, the week
+
+                // this is weird too, the week. So I've removed it from here as it appears in reltextunit
+                relative = relnumber + '(' + space + ')?(' + reltextunit + ')', // |week)', 
                 relativetext = '(' + reltextnumber + '|' + reltexttext + ')' + space + reltextunit,
                 relativetextweek = reltexttext + space + 'week',
 
@@ -2159,6 +2227,14 @@ YUI.add('strtotime', function (Y) {
                         period = _lookupRelTextUnit(aRes[5]),
                         upd = {relative: {}};
 
+                    if (period === "week") {
+                        // we need to treat this slightly differently
+                        // to 'last week', which sets the day to Monday
+                        // - with something like "-2 week" we don't want
+                        // to change the day
+                        period = "weekKeepDay";
+                    }
+
                     upd.relative[period] = amt;
                     mods.updateRel(upd, true, index);
 
@@ -2516,557 +2592,557 @@ YUI.add('strtotime', function (Y) {
      * @property TIMEZONEMAP
      * @type {Object}
      */
-    strtotime.TIMEZONEMAP = {
-        'Africa/Abidjan':'+00:00',
-        'Africa/Accra':'+00:00',
-        'Africa/Addis_Ababa':'+03:00',
-        'Africa/Algiers':'+01:00',
-        'Africa/Asmara':'+03:00',
-        'Africa/Asmera':'+03:00',
-        'Africa/Bamako':'+00:00',
-        'Africa/Bangui':'+01:00',
-        'Africa/Banjul':'+00:00',
-        'Africa/Bissau':'+00:00',
-        'Africa/Blantyre':'+02:00',
-        'Africa/Brazzaville':'+01:00',
-        'Africa/Bujumbura':'+02:00',
-        'Africa/Cairo':'+02:00',
-        'Africa/Casablanca':'+00:00',
-        'Africa/Ceuta':'+01:00',
-        'Africa/Conakry':'+00:00',
-        'Africa/Dakar':'+00:00',
-        'Africa/Dar_es_Salaam':'+03:00',
-        'Africa/Djibouti':'+03:00',
-        'Africa/Douala':'+01:00',
-        'Africa/El_Aaiun':'+00:00',
-        'Africa/Freetown':'+00:00',
-        'Africa/Gaborone':'+02:00',
-        'Africa/Harare':'+02:00',
-        'Africa/Johannesburg':'+02:00',
-        'Africa/Juba':'+03:00',
-        'Africa/Kampala':'+03:00',
-        'Africa/Khartoum':'+03:00',
-        'Africa/Kigali':'+02:00',
-        'Africa/Kinshasa':'+01:00',
-        'Africa/Lagos':'+01:00',
-        'Africa/Libreville':'+01:00',
-        'Africa/Lome':'+00:00',
-        'Africa/Luanda':'+01:00',
-        'Africa/Lubumbashi':'+02:00',
-        'Africa/Lusaka':'+02:00',
-        'Africa/Malabo':'+01:00',
-        'Africa/Maputo':'+02:00',
-        'Africa/Maseru':'+02:00',
-        'Africa/Mbabane':'+02:00',
-        'Africa/Mogadishu':'+03:00',
-        'Africa/Monrovia':'+00:00',
-        'Africa/Nairobi':'+03:00',
-        'Africa/Ndjamena':'+01:00',
-        'Africa/Niamey':'+01:00',
-        'Africa/Nouakchott':'+00:00',
-        'Africa/Ouagadougou':'+00:00',
-        'Africa/Porto-Novo':'+01:00',
-        'Africa/Sao_Tome':'+00:00',
-        'Africa/Timbuktu':'+00:00',
-        'Africa/Tripoli':'+02:00',
-        'Africa/Tunis':'+01:00',
-        'Africa/Windhoek':'+01:00',
-        'AKST9AKDT':'−09:00',
-        'America/Adak':'−10:00',
-        'America/Anchorage':'−09:00',
-        'America/Anguilla':'−04:00',
-        'America/Antigua':'−04:00',
-        'America/Araguaina':'−03:00',
-        'America/Argentina/Buenos_Aires':'−03:00',
-        'America/Argentina/Catamarca':'−03:00',
-        'America/Argentina/ComodRivadavia':'−03:00',
-        'America/Argentina/Cordoba':'−03:00',
-        'America/Argentina/Jujuy':'−03:00',
-        'America/Argentina/La_Rioja':'−03:00',
-        'America/Argentina/Mendoza':'−03:00',
-        'America/Argentina/Rio_Gallegos':'−03:00',
-        'America/Argentina/Salta':'−03:00',
-        'America/Argentina/San_Juan':'−03:00',
-        'America/Argentina/San_Luis':'−03:00',
-        'America/Argentina/Tucuman':'−03:00',
-        'America/Argentina/Ushuaia':'−03:00',
-        'America/Aruba':'−04:00',
-        'America/Asuncion':'−04:00',
-        'America/Atikokan':'−05:00',
-        'America/Atka':'−10:00',
-        'America/Bahia':'−03:00',
-        'America/Bahia_Banderas':'−06:00',
-        'America/Barbados':'−04:00',
-        'America/Belem':'−03:00',
-        'America/Belize':'−06:00',
-        'America/Blanc-Sablon':'−04:00',
-        'America/Boa_Vista':'−04:00',
-        'America/Bogota':'−05:00',
-        'America/Boise':'−07:00',
-        'America/Buenos_Aires':'−03:00',
-        'America/Cambridge_Bay':'−07:00',
-        'America/Campo_Grande':'−04:00',
-        'America/Cancun':'−06:00',
-        'America/Caracas':'−04:30',
-        'America/Catamarca':'−03:00',
-        'America/Cayenne':'−03:00',
-        'America/Cayman':'−05:00',
-        'America/Chicago':'−06:00',
-        'America/Chihuahua':'−07:00',
-        'America/Coral_Harbour':'−05:00',
-        'America/Cordoba':'−03:00',
-        'America/Costa_Rica':'−06:00',
-        'America/Creston':'−07:00',
-        'America/Cuiaba':'−04:00',
-        'America/Curacao':'−04:00',
-        'America/Danmarkshavn':'+00:00',
-        'America/Dawson':'−08:00',
-        'America/Dawson_Creek':'−07:00',
-        'America/Denver':'−07:00',
-        'America/Detroit':'−05:00',
-        'America/Dominica':'−04:00',
-        'America/Edmonton':'−07:00',
-        'America/Eirunepe':'−04:00',
-        'America/El_Salvador':'−06:00',
-        'America/Ensenada':'−08:00',
-        'America/Fort_Wayne':'−05:00',
-        'America/Fortaleza':'−03:00',
-        'America/Glace_Bay':'−04:00',
-        'America/Godthab':'−03:00',
-        'America/Goose_Bay':'−04:00',
-        'America/Grand_Turk':'−05:00',
-        'America/Grenada':'−04:00',
-        'America/Guadeloupe':'−04:00',
-        'America/Guatemala':'−06:00',
-        'America/Guayaquil':'−05:00',
-        'America/Guyana':'−04:00',
-        'America/Halifax':'−04:00',
-        'America/Havana':'−05:00',
-        'America/Hermosillo':'−07:00',
-        'America/Indiana/Indianapolis':'−05:00',
-        'America/Indiana/Knox':'−06:00',
-        'America/Indiana/Marengo':'−05:00',
-        'America/Indiana/Petersburg':'−05:00',
-        'America/Indiana/Tell_City':'−06:00',
-        'America/Indiana/Vevay':'−05:00',
-        'America/Indiana/Vincennes':'−05:00',
-        'America/Indiana/Winamac':'−05:00',
-        'America/Indianapolis':'−05:00',
-        'America/Inuvik':'−07:00',
-        'America/Iqaluit':'−05:00',
-        'America/Jamaica':'−05:00',
-        'America/Jujuy':'−03:00',
-        'America/Juneau':'−09:00',
-        'America/Kentucky/Louisville':'−05:00',
-        'America/Kentucky/Monticello':'−05:00',
-        'America/Knox_IN':'−06:00',
-        'America/Kralendijk':'−04:00',
-        'America/La_Paz':'−04:00',
-        'America/Lima':'−05:00',
-        'America/Los_Angeles':'−08:00',
-        'America/Louisville':'−05:00',
-        'America/Lower_Princes':'−04:00',
-        'America/Maceio':'−03:00',
-        'America/Managua':'−06:00',
-        'America/Manaus':'−04:00',
-        'America/Marigot':'−04:00',
-        'America/Martinique':'−04:00',
-        'America/Matamoros':'−06:00',
-        'America/Mazatlan':'−07:00',
-        'America/Mendoza':'−03:00',
-        'America/Menominee':'−06:00',
-        'America/Merida':'−06:00',
-        'America/Metlakatla':'−08:00',
-        'America/Mexico_City':'−06:00',
-        'America/Miquelon':'−03:00',
-        'America/Moncton':'−04:00',
-        'America/Monterrey':'−06:00',
-        'America/Montevideo':'−03:00',
-        'America/Montreal':'−05:00',
-        'America/Montserrat':'−04:00',
-        'America/Nassau':'−05:00',
-        'America/New_York':'−05:00',
-        'America/Nipigon':'−05:00',
-        'America/Nome':'−09:00',
-        'America/Noronha':'−02:00',
-        'America/North_Dakota/Beulah':'−06:00',
-        'America/North_Dakota/Center':'−06:00',
-        'America/North_Dakota/New_Salem':'−06:00',
-        'America/Ojinaga':'−07:00',
-        'America/Panama':'−05:00',
-        'America/Pangnirtung':'−05:00',
-        'America/Paramaribo':'−03:00',
-        'America/Phoenix':'−07:00',
-        'America/Port_of_Spain':'−04:00',
-        'America/Port-au-Prince':'−05:00',
-        'America/Porto_Acre':'−04:00',
-        'America/Porto_Velho':'−04:00',
-        'America/Puerto_Rico':'−04:00',
-        'America/Rainy_River':'−06:00',
-        'America/Rankin_Inlet':'−06:00',
-        'America/Recife':'−03:00',
-        'America/Regina':'−06:00',
-        'America/Resolute':'−06:00',
-        'America/Rio_Branco':'−04:00',
-        'America/Rosario':'−03:00',
-        'America/Santa_Isabel':'−08:00',
-        'America/Santarem':'−03:00',
-        'America/Santiago':'−04:00',
-        'America/Santo_Domingo':'−04:00',
-        'America/Sao_Paulo':'−03:00',
-        'America/Scoresbysund':'−01:00',
-        'America/Shiprock':'−07:00',
-        'America/Sitka':'−09:00',
-        'America/St_Barthelemy':'−04:00',
-        'America/St_Johns':'−03:30',
-        'America/St_Kitts':'−04:00',
-        'America/St_Lucia':'−04:00',
-        'America/St_Thomas':'−04:00',
-        'America/St_Vincent':'−04:00',
-        'America/Swift_Current':'−06:00',
-        'America/Tegucigalpa':'−06:00',
-        'America/Thule':'−04:00',
-        'America/Thunder_Bay':'−05:00',
-        'America/Tijuana':'−08:00',
-        'America/Toronto':'−05:00',
-        'America/Tortola':'−04:00',
-        'America/Vancouver':'−08:00',
-        'America/Virgin':'−04:00',
-        'America/Whitehorse':'−08:00',
-        'America/Winnipeg':'−06:00',
-        'America/Yakutat':'−09:00',
-        'America/Yellowknife':'−07:00',
-        'Antarctica/Casey':'+11:00',
-        'Antarctica/Davis':'+05:00',
-        'Antarctica/DumontDUrville':'+10:00',
-        'Antarctica/Macquarie':'+11:00',
-        'Antarctica/Mawson':'+05:00',
-        'Antarctica/McMurdo':'+12:00',
-        'Antarctica/Palmer':'−04:00',
-        'Antarctica/Rothera':'−03:00',
-        'Antarctica/South_Pole':'+12:00',
-        'Antarctica/Syowa':'+03:00',
-        'Antarctica/Vostok':'+06:00',
-        'Arctic/Longyearbyen':'+01:00',
-        'Asia/Aden':'+03:00',
-        'Asia/Almaty':'+06:00',
-        'Asia/Amman':'+02:00',
-        'Asia/Anadyr':'+12:00',
-        'Asia/Aqtau':'+05:00',
-        'Asia/Aqtobe':'+05:00',
-        'Asia/Ashgabat':'+05:00',
-        'Asia/Ashkhabad':'+05:00',
-        'Asia/Baghdad':'+03:00',
-        'Asia/Bahrain':'+03:00',
-        'Asia/Baku':'+04:00',
-        'Asia/Bangkok':'+07:00',
-        'Asia/Beirut':'+02:00',
-        'Asia/Bishkek':'+06:00',
-        'Asia/Brunei':'+08:00',
-        'Asia/Calcutta':'+05:30',
-        'Asia/Choibalsan':'+08:00',
-        'Asia/Chongqing':'+08:00',
-        'Asia/Chungking':'+08:00',
-        'Asia/Colombo':'+05:30',
-        'Asia/Dacca':'+06:00',
-        'Asia/Damascus':'+02:00',
-        'Asia/Dhaka':'+06:00',
-        'Asia/Dili':'+09:00',
-        'Asia/Dubai':'+04:00',
-        'Asia/Dushanbe':'+05:00',
-        'Asia/Gaza':'+02:00',
-        'Asia/Harbin':'+08:00',
-        'Asia/Hebron':'+02:00',
-        'Asia/Ho_Chi_Minh':'+07:00',
-        'Asia/Hong_Kong':'+08:00',
-        'Asia/Hovd':'+07:00',
-        'Asia/Irkutsk':'+09:00',
-        'Asia/Istanbul':'+02:00',
-        'Asia/Jakarta':'+07:00',
-        'Asia/Jayapura':'+09:00',
-        'Asia/Jerusalem':'+02:00',
-        'Asia/Kabul':'+04:30',
-        'Asia/Kamchatka':'+12:00',
-        'Asia/Karachi':'+05:00',
-        'Asia/Kashgar':'+08:00',
-        'Asia/Kathmandu':'+05:45',
-        'Asia/Katmandu':'+05:45',
-        'Asia/Kolkata':'+05:30',
-        'Asia/Krasnoyarsk':'+08:00',
-        'Asia/Kuala_Lumpur':'+08:00',
-        'Asia/Kuching':'+08:00',
-        'Asia/Kuwait':'+03:00',
-        'Asia/Macao':'+08:00',
-        'Asia/Macau':'+08:00',
-        'Asia/Magadan':'+12:00',
-        'Asia/Makassar':'+08:00',
-        'Asia/Manila':'+08:00',
-        'Asia/Muscat':'+04:00',
-        'Asia/Nicosia':'+02:00',
-        'Asia/Novokuznetsk':'+07:00',
-        'Asia/Novosibirsk':'+07:00',
-        'Asia/Omsk':'+07:00',
-        'Asia/Oral':'+05:00',
-        'Asia/Phnom_Penh':'+07:00',
-        'Asia/Pontianak':'+07:00',
-        'Asia/Pyongyang':'+09:00',
-        'Asia/Qatar':'+03:00',
-        'Asia/Qyzylorda':'+06:00',
-        'Asia/Rangoon':'+06:30',
-        'Asia/Riyadh':'+03:00',
-        'Asia/Saigon':'+07:00',
-        'Asia/Sakhalin':'+11:00',
-        'Asia/Samarkand':'+05:00',
-        'Asia/Seoul':'+09:00',
-        'Asia/Shanghai':'+08:00',
-        'Asia/Singapore':'+08:00',
-        'Asia/Taipei':'+08:00',
-        'Asia/Tashkent':'+05:00',
-        'Asia/Tbilisi':'+04:00',
-        'Asia/Tehran':'+03:30',
-        'Asia/Tel_Aviv':'+02:00',
-        'Asia/Thimbu':'+06:00',
-        'Asia/Thimphu':'+06:00',
-        'Asia/Tokyo':'+09:00',
-        'Asia/Ujung_Pandang':'+08:00',
-        'Asia/Ulaanbaatar':'+08:00',
-        'Asia/Ulan_Bator':'+08:00',
-        'Asia/Urumqi':'+08:00',
-        'Asia/Vientiane':'+07:00',
-        'Asia/Vladivostok':'+11:00',
-        'Asia/Yakutsk':'+10:00',
-        'Asia/Yekaterinburg':'+06:00',
-        'Asia/Yerevan':'+04:00',
-        'Atlantic/Azores':'−01:00',
-        'Atlantic/Bermuda':'−04:00',
-        'Atlantic/Canary':'+00:00',
-        'Atlantic/Cape_Verde':'−01:00',
-        'Atlantic/Faeroe':'+00:00',
-        'Atlantic/Faroe':'+00:00',
-        'Atlantic/Jan_Mayen':'+01:00',
-        'Atlantic/Madeira':'+00:00',
-        'Atlantic/Reykjavik':'+00:00',
-        'Atlantic/South_Georgia':'−02:00',
-        'Atlantic/St_Helena':'+00:00',
-        'Atlantic/Stanley':'−03:00',
-        'Australia/ACT':'+10:00',
-        'Australia/Adelaide':'+09:30',
-        'Australia/Brisbane':'+10:00',
-        'Australia/Broken_Hill':'+09:30',
-        'Australia/Canberra':'+10:00',
-        'Australia/Currie':'+10:00',
-        'Australia/Darwin':'+09:30',
-        'Australia/Eucla':'+08:45',
-        'Australia/Hobart':'+10:00',
-        'Australia/LHI':'+10:30',
-        'Australia/Lindeman':'+10:00',
-        'Australia/Lord_Howe':'+10:30',
-        'Australia/Melbourne':'+10:00',
-        'Australia/North':'+09:30',
-        'Australia/NSW':'+10:00',
-        'Australia/Perth':'+08:00',
-        'Australia/Queensland':'+10:00',
-        'Australia/South':'+09:30',
-        'Australia/Sydney':'+10:00',
-        'Australia/Tasmania':'+10:00',
-        'Australia/Victoria':'+10:00',
-        'Australia/West':'+08:00',
-        'Australia/Yancowinna':'+09:30',
-        'Brazil/Acre':'−04:00',
-        'Brazil/DeNoronha':'−02:00',
-        'Brazil/East':'−03:00',
-        'Brazil/West':'−04:00',
-        'Canada/Atlantic':'−04:00',
-        'Canada/Central':'−06:00',
-        'Canada/Eastern':'−05:00',
-        'Canada/East-Saskatchewan':'−06:00',
-        'Canada/Mountain':'−07:00',
-        'Canada/Newfoundland':'−03:30',
-        'Canada/Pacific':'−08:00',
-        'Canada/Saskatchewan':'−06:00',
-        'Canada/Yukon':'−08:00',
-        'CET':'+01:00',
-        'Chile/Continental':'−04:00',
-        'Chile/EasterIsland':'−06:00',
-        'CST6CDT':'−06:00',
-        'Cuba':'−05:00',
-        'EET':'+02:00',
-        'Egypt':'+02:00',
-        'Eire':'+00:00',
-        'EST':'−05:00',
-        'EST5EDT':'−05:00',
-        'Etc./GMT':'+00:00',
-        'Etc./GMT+0':'+00:00',
-        'Etc./UCT':'+00:00',
-        'Etc./Universal':'+00:00',
-        'Etc./UTC':'+00:00',
-        'Etc./Zulu':'+00:00',
-        'Europe/Amsterdam':'+01:00',
-        'Europe/Andorra':'+01:00',
-        'Europe/Athens':'+02:00',
-        'Europe/Belfast':'+00:00',
-        'Europe/Belgrade':'+01:00',
-        'Europe/Berlin':'+01:00',
-        'Europe/Bratislava':'+01:00',
-        'Europe/Brussels':'+01:00',
-        'Europe/Bucharest':'+02:00',
-        'Europe/Budapest':'+01:00',
-        'Europe/Chisinau':'+02:00',
-        'Europe/Copenhagen':'+01:00',
-        'Europe/Dublin':'+00:00',
-        'Europe/Gibraltar':'+01:00',
-        'Europe/Guernsey':'+00:00',
-        'Europe/Helsinki':'+02:00',
-        'Europe/Isle_of_Man':'+00:00',
-        'Europe/Istanbul':'+02:00',
-        'Europe/Jersey':'+00:00',
-        'Europe/Kaliningrad':'+03:00',
-        'Europe/Kiev':'+02:00',
-        'Europe/Lisbon':'+00:00',
-        'Europe/Ljubljana':'+01:00',
-        'Europe/London':'+00:00',
-        'Europe/Luxembourg':'+01:00',
-        'Europe/Madrid':'+01:00',
-        'Europe/Malta':'+01:00',
-        'Europe/Mariehamn':'+02:00',
-        'Europe/Minsk':'+03:00',
-        'Europe/Monaco':'+01:00',
-        'Europe/Moscow':'+04:00',
-        'Europe/Nicosia':'+02:00',
-        'Europe/Oslo':'+01:00',
-        'Europe/Paris':'+01:00',
-        'Europe/Podgorica':'+01:00',
-        'Europe/Prague':'+01:00',
-        'Europe/Riga':'+02:00',
-        'Europe/Rome':'+01:00',
-        'Europe/Samara':'+04:00',
-        'Europe/San_Marino':'+01:00',
-        'Europe/Sarajevo':'+01:00',
-        'Europe/Simferopol':'+02:00',
-        'Europe/Skopje':'+01:00',
-        'Europe/Sofia':'+02:00',
-        'Europe/Stockholm':'+01:00',
-        'Europe/Tallinn':'+02:00',
-        'Europe/Tirane':'+01:00',
-        'Europe/Tiraspol':'+02:00',
-        'Europe/Uzhgorod':'+02:00',
-        'Europe/Vaduz':'+01:00',
-        'Europe/Vatican':'+01:00',
-        'Europe/Vienna':'+01:00',
-        'Europe/Vilnius':'+02:00',
-        'Europe/Volgograd':'+04:00',
-        'Europe/Warsaw':'+01:00',
-        'Europe/Zagreb':'+01:00',
-        'Europe/Zaporozhye':'+02:00',
-        'Europe/Zurich':'+01:00',
-        'GB':'+00:00',
-        'GB-Eire':'+00:00',
-        'GMT':'+00:00',
-        'GMT+0':'+00:00',
-        'GMT0':'+00:00',
-        'GMT-0':'+00:00',
-        'Greenwich':'+00:00',
-        'Hong Kong':'+08:00',
-        'HST':'−10:00',
-        'Iceland':'+00:00',
-        'Indian/Antananarivo':'+03:00',
-        'Indian/Chagos':'+06:00',
-        'Indian/Christmas':'+07:00',
-        'Indian/Cocos':'+06:30',
-        'Indian/Comoro':'+03:00',
-        'Indian/Kerguelen':'+05:00',
-        'Indian/Mahe':'+04:00',
-        'Indian/Maldives':'+05:00',
-        'Indian/Mauritius':'+04:00',
-        'Indian/Mayotte':'+03:00',
-        'Indian/Reunion':'+04:00',
-        'Iran':'+03:30',
-        'Israel':'+02:00',
-        'Jamaica':'−05:00',
-        'Japan':'+09:00',
-        'JST-9':'+09:00',
-        'Kwajalein':'+12:00',
-        'Libya':'+02:00',
-        'MET':'+01:00',
-        'Mexico/BajaNorte':'−08:00',
-        'Mexico/BajaSur':'−07:00',
-        'Mexico/General':'−06:00',
-        'MST':'−07:00',
-        'MST7MDT':'−07:00',
-        'Navajo':'−07:00',
-        'NZ':'+12:00',
-        'NZ-CHAT':'+12:45',
-        'Pacific/Apia':'+13:00',
-        'Pacific/Auckland':'+12:00',
-        'Pacific/Chatham':'+12:45',
-        'Pacific/Chuuk':'+10:00',
-        'Pacific/Easter':'−06:00',
-        'Pacific/Efate':'+11:00',
-        'Pacific/Enderbury':'+13:00',
-        'Pacific/Fakaofo':'+13:00',
-        'Pacific/Fiji':'+12:00',
-        'Pacific/Funafuti':'+12:00',
-        'Pacific/Galapagos':'−06:00',
-        'Pacific/Gambier':'−09:00',
-        'Pacific/Guadalcanal':'+11:00',
-        'Pacific/Guam':'+10:00',
-        'Pacific/Honolulu':'−10:00',
-        'Pacific/Johnston':'−10:00',
-        'Pacific/Kiritimati':'+14:00',
-        'Pacific/Kosrae':'+11:00',
-        'Pacific/Kwajalein':'+12:00',
-        'Pacific/Majuro':'+12:00',
-        'Pacific/Marquesas':'−09:30',
-        'Pacific/Midway':'−11:00',
-        'Pacific/Nauru':'+12:00',
-        'Pacific/Niue':'−11:00',
-        'Pacific/Norfolk':'+11:30',
-        'Pacific/Noumea':'+11:00',
-        'Pacific/Pago_Pago':'−11:00',
-        'Pacific/Palau':'+09:00',
-        'Pacific/Pitcairn':'−08:00',
-        'Pacific/Pohnpei':'+11:00',
-        'Pacific/Ponape':'+11:00',
-        'Pacific/Port_Moresby':'+10:00',
-        'Pacific/Rarotonga':'−10:00',
-        'Pacific/Saipan':'+10:00',
-        'Pacific/Samoa':'−11:00',
-        'Pacific/Tahiti':'−10:00',
-        'Pacific/Tarawa':'+12:00',
-        'Pacific/Tongatapu':'+13:00',
-        'Pacific/Truk':'+10:00',
-        'Pacific/Wake':'+12:00',
-        'Pacific/Wallis':'+12:00',
-        'Pacific/Yap':'+10:00',
-        'Poland':'+01:00',
-        'Portugal':'+00:00',
-        'PRC':'+08:00',
-        'PST8PDT':'−08:00',
-        'ROC':'+08:00',
-        'ROK':'+09:00',
-        'Singapore':'+08:00',
-        'Turkey':'+02:00',
-        'UCT':'+00:00',
-        'Universal':'+00:00',
-        'US/Alaska':'−09:00',
-        'US/Aleutian':'−10:00',
-        'US/Arizona':'−07:00',
-        'US/Central':'−06:00',
-        'US/Eastern':'−05:00',
-        'US/East-Indiana':'−05:00',
-        'US/Hawaii':'−10:00',
-        'US/Indiana-Starke':'−06:00',
-        'US/Michigan':'−05:00',
-        'US/Mountain':'−07:00',
-        'US/Pacific':'−08:00',
-        'US/Pacific-New':'−08:00',
-        'US/Samoa':'−11:00',
-        'UTC':'+00:00',
-        'WET':'+00:00',
-        'W-SU':'+04:00',
-        'Zulu':'+00:00'
+    Z = {};
+    Z[AFRICA + 'Abidjan'] = T0;
+    Z[AFRICA + 'Accra'] = T0;
+    Z[AFRICA + 'Addis_Ababa'] = T3;
+    Z[AFRICA + 'Algiers'] = T1;
+    Z[AFRICA + 'Asmara'] = T3;
+    Z[AFRICA + 'Asmera'] = T3;
+    Z[AFRICA + 'Bamako'] = T0;
+    Z[AFRICA + 'Bangui'] = T1;
+    Z[AFRICA + 'Banjul'] = T0;
+    Z[AFRICA + 'Bissau'] = T0;
+    Z[AFRICA + 'Blantyre'] = T2;
+    Z[AFRICA + 'Brazzaville'] = T1;
+    Z[AFRICA + 'Bujumbura'] = T2;
+    Z[AFRICA + 'Cairo'] = T2;
+    Z[AFRICA + 'Casablanca'] = T0;
+    Z[AFRICA + 'Ceuta'] = T1;
+    Z[AFRICA + 'Conakry'] = T0;
+    Z[AFRICA + 'Dakar'] = T0;
+    Z[AFRICA + 'Dar_es_Salaam'] = T3;
+    Z[AFRICA + 'Djibouti'] = T3;
+    Z[AFRICA + 'Douala'] = T1;
+    Z[AFRICA + 'El_Aaiun'] = T0;
+    Z[AFRICA + 'Freetown'] = T0;
+    Z[AFRICA + 'Gaborone'] = T2;
+    Z[AFRICA + 'Harare'] = T2;
+    Z[AFRICA + 'Johannesburg'] = T2;
+    Z[AFRICA + 'Juba'] = T3;
+    Z[AFRICA + 'Kampala'] = T3;
+    Z[AFRICA + 'Khartoum'] = T3;
+    Z[AFRICA + 'Kigali'] = T2;
+    Z[AFRICA + 'Kinshasa'] = T1;
+    Z[AFRICA + 'Lagos'] = T1;
+    Z[AFRICA + 'Libreville'] = T1;
+    Z[AFRICA + 'Lome'] = T0;
+    Z[AFRICA + 'Luanda'] = T1;
+    Z[AFRICA + 'Lubumbashi'] = T2;
+    Z[AFRICA + 'Lusaka'] = T2;
+    Z[AFRICA + 'Malabo'] = T1;
+    Z[AFRICA + 'Maputo'] = T2;
+    Z[AFRICA + 'Maseru'] = T2;
+    Z[AFRICA + 'Mbabane'] = T2;
+    Z[AFRICA + 'Mogadishu'] = T3;
+    Z[AFRICA + 'Monrovia'] = T0;
+    Z[AFRICA + 'Nairobi'] = T3;
+    Z[AFRICA + 'Ndjamena'] = T1;
+    Z[AFRICA + 'Niamey'] = T1;
+    Z[AFRICA + 'Nouakchott'] = T0;
+    Z[AFRICA + 'Ouagadougou'] = T0;
+    Z[AFRICA + 'Porto-Novo'] = T1;
+    Z[AFRICA + 'Sao_Tome'] = T0;
+    Z[AFRICA + 'Timbuktu'] = T0;
+    Z[AFRICA + 'Tripoli'] = T2;
+    Z[AFRICA + 'Tunis'] = T1;
+    Z[AFRICA + 'Windhoek'] = T1;
+    Z['AKST9AKDT'] = T9m;
+    Z[AMERICA + 'Adak'] = T10m;
+    Z[AMERICA + 'Anchorage'] = T9m;
+    Z[AMERICA + 'Anguilla'] = T4m;
+    Z[AMERICA + 'Antigua'] = T4m;
+    Z[AMERICA + 'Araguaina'] = T3m;
+    Z[AMERICA + 'Argentina/Buenos_Aires'] = T3m;
+    Z[AMERICA + 'Argentina/Catamarca'] = T3m;
+    Z[AMERICA + 'Argentina/ComodRivadavia'] = T3m;
+    Z[AMERICA + 'Argentina/Cordoba'] = T3m;
+    Z[AMERICA + 'Argentina/Jujuy'] = T3m;
+    Z[AMERICA + 'Argentina/La_Rioja'] = T3m;
+    Z[AMERICA + 'Argentina/Mendoza'] = T3m;
+    Z[AMERICA + 'Argentina/Rio_Gallegos'] = T3m;
+    Z[AMERICA + 'Argentina/Salta'] = T3m;
+    Z[AMERICA + 'Argentina/San_Juan'] = T3m;
+    Z[AMERICA + 'Argentina/San_Luis'] = T3m;
+    Z[AMERICA + 'Argentina/Tucuman'] = T3m;
+    Z[AMERICA + 'Argentina/Ushuaia'] = T3m;
+    Z[AMERICA + 'Aruba'] = T4m;
+    Z[AMERICA + 'Asuncion'] = T4m;
+    Z[AMERICA + 'Atikokan'] = T5m;
+    Z[AMERICA + 'Atka'] = T10m;
+    Z[AMERICA + 'Bahia'] = T3m;
+    Z[AMERICA + 'Bahia_Banderas'] = T6m;
+    Z[AMERICA + 'Barbados'] = T4m;
+    Z[AMERICA + 'Belem'] = T3m;
+    Z[AMERICA + 'Belize'] = T6m;
+    Z[AMERICA + 'Blanc-Sablon'] = T4m;
+    Z[AMERICA + 'Boa_Vista'] = T4m;
+    Z[AMERICA + 'Bogota'] = T5m;
+    Z[AMERICA + 'Boise'] = T7m;
+    Z[AMERICA + 'Buenos_Aires'] = T3m;
+    Z[AMERICA + 'Cambridge_Bay'] = T7m;
+    Z[AMERICA + 'Campo_Grande'] = T4m;
+    Z[AMERICA + 'Cancun'] = T6m;
+    Z[AMERICA + 'Caracas'] = '−04:30',
+    Z[AMERICA + 'Catamarca'] = T3m;
+    Z[AMERICA + 'Cayenne'] = T3m;
+    Z[AMERICA + 'Cayman'] = T5m;
+    Z[AMERICA + 'Chicago'] = T6m;
+    Z[AMERICA + 'Chihuahua'] = T7m;
+    Z[AMERICA + 'Coral_Harbour'] = T5m;
+    Z[AMERICA + 'Cordoba'] = T3m;
+    Z[AMERICA + 'Costa_Rica'] = T6m;
+    Z[AMERICA + 'Creston'] = T7m;
+    Z[AMERICA + 'Cuiaba'] = T4m;
+    Z[AMERICA + 'Curacao'] = T4m;
+    Z[AMERICA + 'Danmarkshavn'] = T0;
+    Z[AMERICA + 'Dawson'] = T8m;
+    Z[AMERICA + 'Dawson_Creek'] = T7m;
+    Z[AMERICA + 'Denver'] = T7m;
+    Z[AMERICA + 'Detroit'] = T5m;
+    Z[AMERICA + 'Dominica'] = T4m;
+    Z[AMERICA + 'Edmonton'] = T7m;
+    Z[AMERICA + 'Eirunepe'] = T4m;
+    Z[AMERICA + 'El_Salvador'] = T6m;
+    Z[AMERICA + 'Ensenada'] = T8m;
+    Z[AMERICA + 'Fort_Wayne'] = T5m;
+    Z[AMERICA + 'Fortaleza'] = T3m;
+    Z[AMERICA + 'Glace_Bay'] = T4m;
+    Z[AMERICA + 'Godthab'] = T3m;
+    Z[AMERICA + 'Goose_Bay'] = T4m;
+    Z[AMERICA + 'Grand_Turk'] = T5m;
+    Z[AMERICA + 'Grenada'] = T4m;
+    Z[AMERICA + 'Guadeloupe'] = T4m;
+    Z[AMERICA + 'Guatemala'] = T6m;
+    Z[AMERICA + 'Guayaquil'] = T5m;
+    Z[AMERICA + 'Guyana'] = T4m;
+    Z[AMERICA + 'Halifax'] = T4m;
+    Z[AMERICA + 'Havana'] = T5m;
+    Z[AMERICA + 'Hermosillo'] = T7m;
+    Z[AMERICA + 'Indiana/Indianapolis'] = T5m;
+    Z[AMERICA + 'Indiana/Knox'] = T6m;
+    Z[AMERICA + 'Indiana/Marengo'] = T5m;
+    Z[AMERICA + 'Indiana/Petersburg'] = T5m;
+    Z[AMERICA + 'Indiana/Tell_City'] = T6m;
+    Z[AMERICA + 'Indiana/Vevay'] = T5m;
+    Z[AMERICA + 'Indiana/Vincennes'] = T5m;
+    Z[AMERICA + 'Indiana/Winamac'] = T5m;
+    Z[AMERICA + 'Indianapolis'] = T5m;
+    Z[AMERICA + 'Inuvik'] = T7m;
+    Z[AMERICA + 'Iqaluit'] = T5m;
+    Z[AMERICA + 'Jamaica'] = T5m;
+    Z[AMERICA + 'Jujuy'] = T3m;
+    Z[AMERICA + 'Juneau'] = T9m;
+    Z[AMERICA + 'Kentucky/Louisville'] = T5m;
+    Z[AMERICA + 'Kentucky/Monticello'] = T5m;
+    Z[AMERICA + 'Knox_IN'] = T6m;
+    Z[AMERICA + 'Kralendijk'] = T4m;
+    Z[AMERICA + 'La_Paz'] = T4m;
+    Z[AMERICA + 'Lima'] = T5m;
+    Z[AMERICA + 'Los_Angeles'] = T8m;
+    Z[AMERICA + 'Louisville'] = T5m;
+    Z[AMERICA + 'Lower_Princes'] = T4m;
+    Z[AMERICA + 'Maceio'] = T3m;
+    Z[AMERICA + 'Managua'] = T6m;
+    Z[AMERICA + 'Manaus'] = T4m;
+    Z[AMERICA + 'Marigot'] = T4m;
+    Z[AMERICA + 'Martinique'] = T4m;
+    Z[AMERICA + 'Matamoros'] = T6m;
+    Z[AMERICA + 'Mazatlan'] = T7m;
+    Z[AMERICA + 'Mendoza'] = T3m;
+    Z[AMERICA + 'Menominee'] = T6m;
+    Z[AMERICA + 'Merida'] = T6m;
+    Z[AMERICA + 'Metlakatla'] = T8m;
+    Z[AMERICA + 'Mexico_City'] = T6m;
+    Z[AMERICA + 'Miquelon'] = T3m;
+    Z[AMERICA + 'Moncton'] = T4m;
+    Z[AMERICA + 'Monterrey'] = T6m;
+    Z[AMERICA + 'Montevideo'] = T3m;
+    Z[AMERICA + 'Montreal'] = T5m;
+    Z[AMERICA + 'Montserrat'] = T4m;
+    Z[AMERICA + 'Nassau'] = T5m;
+    Z[AMERICA + 'New_York'] = T5m;
+    Z[AMERICA + 'Nipigon'] = T5m;
+    Z[AMERICA + 'Nome'] = T9m;
+    Z[AMERICA + 'Noronha'] = T2m;
+    Z[AMERICA + 'North_Dakota/Beulah'] = T6m;
+    Z[AMERICA + 'North_Dakota/Center'] = T6m;
+    Z[AMERICA + 'North_Dakota/New_Salem'] = T6m;
+    Z[AMERICA + 'Ojinaga'] = T7m;
+    Z[AMERICA + 'Panama'] = T5m;
+    Z[AMERICA + 'Pangnirtung'] = T5m;
+    Z[AMERICA + 'Paramaribo'] = T3m;
+    Z[AMERICA + 'Phoenix'] = T7m;
+    Z[AMERICA + 'Port_of_Spain'] = T4m;
+    Z[AMERICA + 'Port-au-Prince'] = T5m;
+    Z[AMERICA + 'Porto_Acre'] = T4m;
+    Z[AMERICA + 'Porto_Velho'] = T4m;
+    Z[AMERICA + 'Puerto_Rico'] = T4m;
+    Z[AMERICA + 'Rainy_River'] = T6m;
+    Z[AMERICA + 'Rankin_Inlet'] = T6m;
+    Z[AMERICA + 'Recife'] = T3m;
+    Z[AMERICA + 'Regina'] = T6m;
+    Z[AMERICA + 'Resolute'] = T6m;
+    Z[AMERICA + 'Rio_Branco'] = T4m;
+    Z[AMERICA + 'Rosario'] = T3m;
+    Z[AMERICA + 'Santa_Isabel'] = T8m;
+    Z[AMERICA + 'Santarem'] = T3m;
+    Z[AMERICA + 'Santiago'] = T4m;
+    Z[AMERICA + 'Santo_Domingo'] = T4m;
+    Z[AMERICA + 'Sao_Paulo'] = T3m;
+    Z[AMERICA + 'Scoresbysund'] = T1m;
+    Z[AMERICA + 'Shiprock'] = T7m;
+    Z[AMERICA + 'Sitka'] = T9m;
+    Z[AMERICA + 'St_Barthelemy'] = T4m;
+    Z[AMERICA + 'St_Johns'] = '−03:30',
+    Z[AMERICA + 'St_Kitts'] = T4m;
+    Z[AMERICA + 'St_Lucia'] = T4m;
+    Z[AMERICA + 'St_Thomas'] = T4m;
+    Z[AMERICA + 'St_Vincent'] = T4m;
+    Z[AMERICA + 'Swift_Current'] = T6m;
+    Z[AMERICA + 'Tegucigalpa'] = T6m;
+    Z[AMERICA + 'Thule'] = T4m;
+    Z[AMERICA + 'Thunder_Bay'] = T5m;
+    Z[AMERICA + 'Tijuana'] = T8m;
+    Z[AMERICA + 'Toronto'] = T5m;
+    Z[AMERICA + 'Tortola'] = T4m;
+    Z[AMERICA + 'Vancouver'] = T8m;
+    Z[AMERICA + 'Virgin'] = T4m;
+    Z[AMERICA + 'Whitehorse'] = T8m;
+    Z[AMERICA + 'Winnipeg'] = T6m;
+    Z[AMERICA + 'Yakutat'] = T9m;
+    Z[AMERICA + 'Yellowknife'] = T7m;
+    Z[ANTARCTICA + 'Casey'] = T11;
+    Z[ANTARCTICA + 'Davis'] = T5;
+    Z[ANTARCTICA + 'DumontDUrville'] = T10;
+    Z[ANTARCTICA + 'Macquarie'] = T11;
+    Z[ANTARCTICA + 'Mawson'] = T5;
+    Z[ANTARCTICA + 'McMurdo'] = T12;
+    Z[ANTARCTICA + 'Palmer'] = T4m;
+    Z[ANTARCTICA + 'Rothera'] = T3m;
+    Z[ANTARCTICA + 'South_Pole'] = T12;
+    Z[ANTARCTICA + 'Syowa'] = T3;
+    Z[ANTARCTICA + 'Vostok'] = T6;
+    Z['Arctic/Longyearbyen'] = T1;
+    Z[ASIA + 'Aden'] = T3;
+    Z[ASIA + 'Almaty'] = T6;
+    Z[ASIA + 'Amman'] = T2;
+    Z[ASIA + 'Anadyr'] = T12;
+    Z[ASIA + 'Aqtau'] = T5;
+    Z[ASIA + 'Aqtobe'] = T5;
+    Z[ASIA + 'Ashgabat'] = T5;
+    Z[ASIA + 'Ashkhabad'] = T5;
+    Z[ASIA + 'Baghdad'] = T3;
+    Z[ASIA + 'Bahrain'] = T3;
+    Z[ASIA + 'Baku'] = T4;
+    Z[ASIA + 'Bangkok'] = T7;
+    Z[ASIA + 'Beirut'] = T2;
+    Z[ASIA + 'Bishkek'] = T6;
+    Z[ASIA + 'Brunei'] = T8;
+    Z[ASIA + 'Calcutta'] = '+05:30',
+    Z[ASIA + 'Choibalsan'] = T8;
+    Z[ASIA + 'Chongqing'] = T8;
+    Z[ASIA + 'Chungking'] = T8;
+    Z[ASIA + 'Colombo'] = '+05:30',
+    Z[ASIA + 'Dacca'] = T6;
+    Z[ASIA + 'Damascus'] = T2;
+    Z[ASIA + 'Dhaka'] = T6;
+    Z[ASIA + 'Dili'] = T9;
+    Z[ASIA + 'Dubai'] = T4;
+    Z[ASIA + 'Dushanbe'] = T5;
+    Z[ASIA + 'Gaza'] = T2;
+    Z[ASIA + 'Harbin'] = T8;
+    Z[ASIA + 'Hebron'] = T2;
+    Z[ASIA + 'Ho_Chi_Minh'] = T7;
+    Z[ASIA + 'Hong_Kong'] = T8;
+    Z[ASIA + 'Hovd'] = T7;
+    Z[ASIA + 'Irkutsk'] = T9;
+    Z[ASIA + 'Istanbul'] = T2;
+    Z[ASIA + 'Jakarta'] = T7;
+    Z[ASIA + 'Jayapura'] = T9;
+    Z[ASIA + 'Jerusalem'] = T2;
+    Z[ASIA + 'Kabul'] = '+04:30',
+    Z[ASIA + 'Kamchatka'] = T12;
+    Z[ASIA + 'Karachi'] = T5;
+    Z[ASIA + 'Kashgar'] = T8;
+    Z[ASIA + 'Kathmandu'] = '+05:45',
+    Z[ASIA + 'Katmandu'] = '+05:45',
+    Z[ASIA + 'Kolkata'] = '+05:30',
+    Z[ASIA + 'Krasnoyarsk'] = T8;
+    Z[ASIA + 'Kuala_Lumpur'] = T8;
+    Z[ASIA + 'Kuching'] = T8;
+    Z[ASIA + 'Kuwait'] = T3;
+    Z[ASIA + 'Macao'] = T8;
+    Z[ASIA + 'Macau'] = T8;
+    Z[ASIA + 'Magadan'] = T12;
+    Z[ASIA + 'Makassar'] = T8;
+    Z[ASIA + 'Manila'] = T8;
+    Z[ASIA + 'Muscat'] = T4;
+    Z[ASIA + 'Nicosia'] = T2;
+    Z[ASIA + 'Novokuznetsk'] = T7;
+    Z[ASIA + 'Novosibirsk'] = T7;
+    Z[ASIA + 'Omsk'] = T7;
+    Z[ASIA + 'Oral'] = T5;
+    Z[ASIA + 'Phnom_Penh'] = T7;
+    Z[ASIA + 'Pontianak'] = T7;
+    Z[ASIA + 'Pyongyang'] = T9;
+    Z[ASIA + 'Qatar'] = T3;
+    Z[ASIA + 'Qyzylorda'] = T6;
+    Z[ASIA + 'Rangoon'] = '+06:30',
+    Z[ASIA + 'Riyadh'] = T3;
+    Z[ASIA + 'Saigon'] = T7;
+    Z[ASIA + 'Sakhalin'] = T11;
+    Z[ASIA + 'Samarkand'] = T5;
+    Z[ASIA + 'Seoul'] = T9;
+    Z[ASIA + 'Shanghai'] = T8;
+    Z[ASIA + 'Singapore'] = T8;
+    Z[ASIA + 'Taipei'] = T8;
+    Z[ASIA + 'Tashkent'] = T5;
+    Z[ASIA + 'Tbilisi'] = T4;
+    Z[ASIA + 'Tehran'] = '+03:30',
+    Z[ASIA + 'Tel_Aviv'] = T2;
+    Z[ASIA + 'Thimbu'] = T6;
+    Z[ASIA + 'Thimphu'] = T6;
+    Z[ASIA + 'Tokyo'] = T9;
+    Z[ASIA + 'Ujung_Pandang'] = T8;
+    Z[ASIA + 'Ulaanbaatar'] = T8;
+    Z[ASIA + 'Ulan_Bator'] = T8;
+    Z[ASIA + 'Urumqi'] = T8;
+    Z[ASIA + 'Vientiane'] = T7;
+    Z[ASIA + 'Vladivostok'] = T11;
+    Z[ASIA + 'Yakutsk'] = T10;
+    Z[ASIA + 'Yekaterinburg'] = T6;
+    Z[ASIA + 'Yerevan'] = T4;
+    Z[ATLANTIC + 'Azores'] = T1m;
+    Z[ATLANTIC + 'Bermuda'] = T4m;
+    Z[ATLANTIC + 'Canary'] = T0;
+    Z[ATLANTIC + 'Cape_Verde'] = T1m;
+    Z[ATLANTIC + 'Faeroe'] = T0;
+    Z[ATLANTIC + 'Faroe'] = T0;
+    Z[ATLANTIC + 'Jan_Mayen'] = T1;
+    Z[ATLANTIC + 'Madeira'] = T0;
+    Z[ATLANTIC + 'Reykjavik'] = T0;
+    Z[ATLANTIC + 'South_Georgia'] = T2m;
+    Z[ATLANTIC + 'St_Helena'] = T0;
+    Z[ATLANTIC + 'Stanley'] = T3m;
+    Z[AUSTRALIA + 'ACT'] = T10;
+    Z[AUSTRALIA + 'Adelaide'] = '+09:30',
+    Z[AUSTRALIA + 'Brisbane'] = T10;
+    Z[AUSTRALIA + 'Broken_Hill'] = '+09:30',
+    Z[AUSTRALIA + 'Canberra'] = T10;
+    Z[AUSTRALIA + 'Currie'] = T10;
+    Z[AUSTRALIA + 'Darwin'] = '+09:30',
+    Z[AUSTRALIA + 'Eucla'] = '+08:45',
+    Z[AUSTRALIA + 'Hobart'] = T10;
+    Z[AUSTRALIA + 'LHI'] = '+10:30',
+    Z[AUSTRALIA + 'Lindeman'] = T10;
+    Z[AUSTRALIA + 'Lord_Howe'] = '+10:30',
+    Z[AUSTRALIA + 'Melbourne'] = T10;
+    Z[AUSTRALIA + 'North'] = '+09:30',
+    Z[AUSTRALIA + 'NSW'] = T10;
+    Z[AUSTRALIA + 'Perth'] = T8;
+    Z[AUSTRALIA + 'Queensland'] = T10;
+    Z[AUSTRALIA + 'South'] = '+09:30',
+    Z[AUSTRALIA + 'Sydney'] = T10;
+    Z[AUSTRALIA + 'Tasmania'] = T10;
+    Z[AUSTRALIA + 'Victoria'] = T10;
+    Z[AUSTRALIA + 'West'] = T8;
+    Z[AUSTRALIA + 'Yancowinna'] = '+09:30',
+    Z[BRAZIL + 'Acre'] = T4m;
+    Z[BRAZIL + 'DeNoronha'] = T2m;
+    Z[BRAZIL + 'East'] = T3m;
+    Z[BRAZIL + 'West'] = T4m;
+    Z[CANADA + 'Atlantic'] = T4m;
+    Z[CANADA + 'Central'] = T6m;
+    Z[CANADA + 'Eastern'] = T5m;
+    Z[CANADA + 'East-Saskatchewan'] = T6m;
+    Z[CANADA + 'Mountain'] = T7m;
+    Z[CANADA + 'Newfoundland'] = '−03:30',
+    Z[CANADA + 'Pacific'] = T8m;
+    Z[CANADA + 'Saskatchewan'] = T6m;
+    Z[CANADA + 'Yukon'] = T8m;
+    Z['CET'] = T1;
+    Z['Chile/Continental'] = T4m;
+    Z['Chile/EasterIsland'] = T6m;
+    Z['CST6CDT'] = T6m;
+    Z['Cuba'] = T5m;
+    Z['EET'] = T2;
+    Z['Egypt'] = T2;
+    Z['Eire'] = T0;
+    Z['EST'] = T5m;
+    Z['EST5EDT'] = T5m;
+    Z[ETC + GMT] = T0;
+    Z[ETC + GMT + '+0'] = T0;
+    Z[ETC + 'UCT'] = T0;
+    Z[ETC + 'Universal'] = T0;
+    Z[ETC + 'UTC'] = T0;
+    Z[ETC + 'Zulu'] = T0;
+    Z[EUROPE + 'Amsterdam'] = T1;
+    Z[EUROPE + 'Andorra'] = T1;
+    Z[EUROPE + 'Athens'] = T2;
+    Z[EUROPE + 'Belfast'] = T0;
+    Z[EUROPE + 'Belgrade'] = T1;
+    Z[EUROPE + 'Berlin'] = T1;
+    Z[EUROPE + 'Bratislava'] = T1;
+    Z[EUROPE + 'Brussels'] = T1;
+    Z[EUROPE + 'Bucharest'] = T2;
+    Z[EUROPE + 'Budapest'] = T1;
+    Z[EUROPE + 'Chisinau'] = T2;
+    Z[EUROPE + 'Copenhagen'] = T1;
+    Z[EUROPE + 'Dublin'] = T0;
+    Z[EUROPE + 'Gibraltar'] = T1;
+    Z[EUROPE + 'Guernsey'] = T0;
+    Z[EUROPE + 'Helsinki'] = T2;
+    Z[EUROPE + 'Isle_of_Man'] = T0;
+    Z[EUROPE + 'Istanbul'] = T2;
+    Z[EUROPE + 'Jersey'] = T0;
+    Z[EUROPE + 'Kaliningrad'] = T3;
+    Z[EUROPE + 'Kiev'] = T2;
+    Z[EUROPE + 'Lisbon'] = T0;
+    Z[EUROPE + 'Ljubljana'] = T1;
+    Z[EUROPE + 'London'] = T0;
+    Z[EUROPE + 'Luxembourg'] = T1;
+    Z[EUROPE + 'Madrid'] = T1;
+    Z[EUROPE + 'Malta'] = T1;
+    Z[EUROPE + 'Mariehamn'] = T2;
+    Z[EUROPE + 'Minsk'] = T3;
+    Z[EUROPE + 'Monaco'] = T1;
+    Z[EUROPE + 'Moscow'] = T4;
+    Z[EUROPE + 'Nicosia'] = T2;
+    Z[EUROPE + 'Oslo'] = T1;
+    Z[EUROPE + 'Paris'] = T1;
+    Z[EUROPE + 'Podgorica'] = T1;
+    Z[EUROPE + 'Prague'] = T1;
+    Z[EUROPE + 'Riga'] = T2;
+    Z[EUROPE + 'Rome'] = T1;
+    Z[EUROPE + 'Samara'] = T4;
+    Z[EUROPE + 'San_Marino'] = T1;
+    Z[EUROPE + 'Sarajevo'] = T1;
+    Z[EUROPE + 'Simferopol'] = T2;
+    Z[EUROPE + 'Skopje'] = T1;
+    Z[EUROPE + 'Sofia'] = T2;
+    Z[EUROPE + 'Stockholm'] = T1;
+    Z[EUROPE + 'Tallinn'] = T2;
+    Z[EUROPE + 'Tirane'] = T1;
+    Z[EUROPE + 'Tiraspol'] = T2;
+    Z[EUROPE + 'Uzhgorod'] = T2;
+    Z[EUROPE + 'Vaduz'] = T1;
+    Z[EUROPE + 'Vatican'] = T1;
+    Z[EUROPE + 'Vienna'] = T1;
+    Z[EUROPE + 'Vilnius'] = T2;
+    Z[EUROPE + 'Volgograd'] = T4;
+    Z[EUROPE + 'Warsaw'] = T1;
+    Z[EUROPE + 'Zagreb'] = T1;
+    Z[EUROPE + 'Zaporozhye'] = T2;
+    Z[EUROPE + 'Zurich'] = T1;
+    Z['GB'] = T0;
+    Z['GB-Eire'] = T0;
+    Z[GMT] = T0;
+    Z[GMT + '+0'] = T0;
+    Z[GMT + '0'] = T0;
+    Z[GMT + '-0'] = T0;
+    Z['Greenwich'] = T0;
+    Z['Hong Kong'] = T8;
+    Z['HST'] = T10m;
+    Z['Iceland'] = T0;
+    Z[INDIAN + 'Antananarivo'] = T3;
+    Z[INDIAN + 'Chagos'] = T6;
+    Z[INDIAN + 'Christmas'] = T7;
+    Z[INDIAN + 'Cocos'] = '+06:30',
+    Z[INDIAN + 'Comoro'] = T3;
+    Z[INDIAN + 'Kerguelen'] = T5;
+    Z[INDIAN + 'Mahe'] = T4;
+    Z[INDIAN + 'Maldives'] = T5;
+    Z[INDIAN + 'Mauritius'] = T4;
+    Z[INDIAN + 'Mayotte'] = T3;
+    Z[INDIAN + 'Reunion'] = T4;
+    Z['Iran'] = '+03:30',
+    Z['Israel'] = T2;
+    Z['Jamaica'] = T5m;
+    Z['Japan'] = T9;
+    Z['JST-9'] = T9;
+    Z['Kwajalein'] = T12;
+    Z['Libya'] = T2;
+    Z['MET'] = T1;
+    Z[MEXICO + 'BajaNorte'] = T8m;
+    Z[MEXICO + 'BajaSur'] = T7m;
+    Z[MEXICO + 'General'] = T6m;
+    Z['MST'] = T7m;
+    Z['MST7MDT'] = T7m;
+    Z['Navajo'] = T7m;
+    Z['NZ'] = T12;
+    Z['NZ-CHAT'] = '+12:45',
+    Z[PACIFIC + 'Apia'] = T13;
+    Z[PACIFIC + 'Auckland'] = T12;
+    Z[PACIFIC + 'Chatham'] = '+12:45',
+    Z[PACIFIC + 'Chuuk'] = T10;
+    Z[PACIFIC + 'Easter'] = T6m;
+    Z[PACIFIC + 'Efate'] = T11;
+    Z[PACIFIC + 'Enderbury'] = T13;
+    Z[PACIFIC + 'Fakaofo'] = T13;
+    Z[PACIFIC + 'Fiji'] = T12;
+    Z[PACIFIC + 'Funafuti'] = T12;
+    Z[PACIFIC + 'Galapagos'] = T6m;
+    Z[PACIFIC + 'Gambier'] = T9m;
+    Z[PACIFIC + 'Guadalcanal'] = T11;
+    Z[PACIFIC + 'Guam'] = T10;
+    Z[PACIFIC + 'Honolulu'] = T10m;
+    Z[PACIFIC + 'Johnston'] = T10m;
+    Z[PACIFIC + 'Kiritimati'] = '+14:00',
+    Z[PACIFIC + 'Kosrae'] = T11;
+    Z[PACIFIC + 'Kwajalein'] = T12;
+    Z[PACIFIC + 'Majuro'] = T12;
+    Z[PACIFIC + 'Marquesas'] = '−09:30',
+    Z[PACIFIC + 'Midway'] = T11m;
+    Z[PACIFIC + 'Nauru'] = T12;
+    Z[PACIFIC + 'Niue'] = T11m;
+    Z[PACIFIC + 'Norfolk'] = '+11:30',
+    Z[PACIFIC + 'Noumea'] = T11;
+    Z[PACIFIC + 'Pago_Pago'] = T11m;
+    Z[PACIFIC + 'Palau'] = T9;
+    Z[PACIFIC + 'Pitcairn'] = T8m;
+    Z[PACIFIC + 'Pohnpei'] = T11;
+    Z[PACIFIC + 'Ponape'] = T11;
+    Z[PACIFIC + 'Port_Moresby'] = T10;
+    Z[PACIFIC + 'Rarotonga'] = T10m;
+    Z[PACIFIC + 'Saipan'] = T10;
+    Z[PACIFIC + 'Samoa'] = T11m;
+    Z[PACIFIC + 'Tahiti'] = T10m;
+    Z[PACIFIC + 'Tarawa'] = T12;
+    Z[PACIFIC + 'Tongatapu'] = T13;
+    Z[PACIFIC + 'Truk'] = T10;
+    Z[PACIFIC + 'Wake'] = T12;
+    Z[PACIFIC + 'Wallis'] = T12;
+    Z[PACIFIC + 'Yap'] = T10;
+    Z['Poland'] = T1;
+    Z['Portugal'] = T0;
+    Z['PRC'] = T8;
+    Z['PST8PDT'] = T8m;
+    Z['ROC'] = T8;
+    Z['ROK'] = T9;
+    Z['Singapore'] = T8;
+    Z['Turkey'] = T2;
+    Z['UCT'] = T0;
+    Z['Universal'] = T0;
+    Z[US + 'Alaska'] = T9m;
+    Z[US + 'Aleutian'] = T10m;
+    Z[US + 'Arizona'] = T7m;
+    Z[US + 'Central'] = T6m;
+    Z[US + 'Eastern'] = T5m;
+    Z[US + 'East-Indiana'] = T5m;
+    Z[US + 'Hawaii'] = T10m;
+    Z[US + 'Indiana-Starke'] = T6m;
+    Z[US + 'Michigan'] = T5m;
+    Z[US + 'Mountain'] = T7m;
+    Z[US + 'Pacific'] = T8m;
+    Z[US + 'Pacific-New'] = T8m;
+    Z[US + 'Samoa'] = T11m;
+    Z['UTC'] = T0;
+    Z['WET'] = T0;
+    Z['W-SU'] = T4;
+    Z['Zulu'] = T0;
 
-    }
+    strtotime.TIMEZONEMAP = Z;
 
     // Put in the DataType.Date namespace
     Y.DataType.Date.strtotime = strtotime;

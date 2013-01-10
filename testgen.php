@@ -79,7 +79,7 @@ $dateFormats = array(
 	"Y-M-d" => "pgtextreverse",
 	// clf
 	"d/M/Y:H:i:s \G\M\T3:30" => "clf",
-	// timezones
+	// a couple of timezones:
 	"Y-m-d H:i:s Europe/Vaduz",
 	"Y/m/d H:i:s Australia/Lord_Howe",
 
@@ -207,6 +207,15 @@ foreach (array("next", "last", "previous", "this", "first", "second",
 		$extras[] = $c . " " . $t;
 	}
 }
+
+// relative:
+foreach (array("+1", "-2", "14", "-4") as $c) {
+	foreach (array("second", "sec", "minute", "min", "hour", "day", "week", "fortnight", "month", "year") as $t) {
+			$extras[] = $c . " " . $t;
+	}
+}
+$extras[] = "3 months -4 days";
+$extras[] = "2 years 5 months 18 days -4 hours 20 minutes -12 seconds";
 
 //"first", "second", "third", "last", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"
 
@@ -542,4 +551,4 @@ file_put_contents('n:\wamp\yui3contrib\strtotime\tests\unit\strtotime-test.html'
 
 
 echo "\r\nFile created.  " . count($plainFormatTests) . " plain format tests added; " . count($modifierTests) . " modifier tests added; "
-	. count($extraTests) . " extra tests added.";
+	. count($extraTests) . " extra tests added: " . (count($plainFormatTests) + count($modifierTests) + count($extraTests)) . " in total.";

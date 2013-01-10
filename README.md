@@ -1,0 +1,151 @@
+strtotime
+=========
+
+An implementation of php's strtotime function.  It parses strings
+containing absolute dates (e.g. 12th March 2013) and relative ones
+(e.g. "3 months 12 days ago"), and returns a timestamp (in seconds).
+
+It supports a very wide range of date and time formats without you 
+needing to tell it what you're passing in.  
+
+The second argument is a timestamp (in seconds) which will be used 
+the reference point for relative strings.  If no second argument is
+passed, the current date/time is used.
+
+The function will be a YUI3 gallery module, once the new yogi-based
+gallery is able to accept it.  The function is currently added to the 
+Y.DataType.Date object, although it does not require it.
+
+
+Internationalisation
+====================
+This version (unlike the php version, as far as I know) will use the YUI
+Intl module if it is available on the page.  This means that it should be
+able to parse date/time strings in other languages.  There are also other
+terms that have particular meanings (e.g. "ago" or "tomorrow") that may be
+translated.  They are all available as properties on the srttotime function:
+
+- strtotime.DAYSPECIAL  An array of words meaning 'weekday'
+- strtotime.FIRSTDAYOF  A string meaning 'first day of' (as in "the first day of June")
+- strtotime.LASYDAYOF   A string meaning 'last day of'
+- strtotime.BACKOF      A string meaning 'back of ' - I'd say 'quarter past ' 
+							(as in 'back of 2pm' or 'quarter past 2pm')
+- strtotime.FRONTOF     A string meaning 'front of ' (or 'quarter to ')
+- strtotime.DAYFULL     An ordered array of full day names.   
+							Y.Intl.get("datatype-date-format").A will 
+							automatically be used if available.
+- strtotime.DAYABBR     An ordered array of abbreviated day names
+							Y.Intl.get("datatype-date-format").a will
+							automatically be used if available.
+- strtotime.AMPM        A string to use in a RegExp() to identify 'am' or 'pm'.
+							Y.Intl.get("datatype-date-format").p is used
+							automatically if available
+- strtotime.RELTEXTNUMBER  An ordered array of ordinals ('first', 'second', 'third')
+							up to 12.
+
+And there's a bunch more I'll write up later.
+
+
+
+Example usage
+=============
+
+The different formats and structures supported are fully documented at
+http://php.net/manual/en/function.strtotime.php and
+the sections from http://php.net/manual/en/datetime.formats.php
+
+All of the examples below will parse the date 7th August 2013, 8:18:23.124am
+in timezone GMT +00:00, although obviously if the time is not passed it will
+not be included in the output.
+
+```Y.DataType.Date.strtotime("2013-08-07"); // returns 1375833600
+```Y.DataType.Date.strtotime("2013/08/07"); // returns 1375833600
+```Y.DataType.Date.strtotime("08/07/2013"); // returns 1375833600
+```Y.DataType.Date.strtotime("07-08-2013"); // returns 1375833600
+```Y.DataType.Date.strtotime("7th Aug 13"); // returns 1375833600
+```Y.DataType.Date.strtotime("August 7 2013"); // returns 1375833600
+
+and so on.  There are multiple time formats too, plus timezones as differences
+or the places:
+
+```Y.DataType.Date.strtotime("7th August 2013 8:18:23.124 GMT") // returns 1375863503
+```Y.DataType.Date.strtotime("8.30pm") // returns timestamp for 20:30:00 today
+```Y.DataType.Date.strtotime("07 VIII 2013 20.18 Europe/London") // returns 1375906680 
+	(because of DST it's an hour different)
+
+
+The relative formats let you move forwards and back in time:
+
+```Y.DataType.Date.strtotime("2013-08-07 +2 days")
+```Y.DataType.Date.strtotime("2013-08-07 +6 months 1 week 2 days")
+```Y.DataType.Date.strtotime("2013-08-07 10 years ago")
+```Y.DataType.Date.strtotime("first day of 2013-08-07")  // goes to first of the month
+```Y.DataType.Date.strtotime("last day of 2013-08-07")   // goes to last day in the month
+```Y.DataType.Date.strtotime("tomorrow noon")  // returns timestamp 12:00:00 for tomorrow
+
+
+
+You can also pass in the 'absolute' bit of the date as as timestamp
+as the second argument:
+
+```Y.DataType.Date.strtotime("+2 days", 1375833600);
+
+
+Further customisation
+=====================
+
+The first time you use strtotime, it'll build the regexp's it uses to parse the
+strings.  There are a couple of points that you can hook into to vary behaviour:
+```srttotime.finishRegExp(oRegEx)
+which is a function receiving an object with all the regexp components (as strings) 
+used to build the tests, and returns the object.  So you could alter some of the regexes
+here, if you wanted to.
+
+It then uses these strings to build an array of test objects.  Each object has a RegExp
+and a function to call if the regex matches.  Once this array is built, it's passed through
+```strtotime.finishTestsfunction (oRegEx, aTests)
+which returns the aTests array.  So you could add or remove tests & behaviours at this point too,
+if you wanted.
+
+
+
+Notes and Issues
+================
+
+This function has over 4000 tests, generated by a php script, that checks that the
+return values match.  However, there's a few areas where they diverge, possibly
+due to bugs in the php version.  Where they differ, I think the results of this
+javascript are more intuitive.
+
+ - The php implementation uses timestamps in seconds.  So does this one.
+ 	Unfortunately, javascript uses timestamps in milliseconds, which means
+ 	that at the moment you have to multiple or divide by 1000 to use the
+ 	native javascript Date() function.
+ - Order is important.  'noon tomorrow' !== 'tomorrow noon', because 'tomorrow'
+ 	sets the time to midnight.  So 'noon tomorrow' first sets the time to 12:00
+ 	and then moves the day back one and sets the time to 00:00.
+ - In the php version, "am", "AM", "a.M.", "A.m" etc will all be understood as meaning
+ 	"am".  In this version, because it's Internationalised you can't assume that
+ 	you can split the letters and add full-stops in other lanuages.  This means that
+ 	by default, using the Intl pack, things like "a.M." (ie mixing case and adding
+ 	full stops) will not be recognised.  In English, you can set
+
+ 	```strtotime.AMPM = '([AaPp].?[Mm].?)'; 
+
+ 	before using the function and it'll work as php does.
+
+
+ - Strings like "January 12th noon" (using month names followed by date and no year,
+ 	and where noon is one of 'noon', 'now', 'today', 'tomorrow', 'yesterday')
+ 	return false in php but do what you'd expect in this js version.
+ - Strings like "2013W25-4 yesterday" (where 25 is the week number and 4 is the day
+ 	of the week number) seem to ignore the week/day and do the relative movement
+ 	from the first day of the year.  So "2013W14-1 yesterday" gives a timestamp
+ 	for 31st December 2012.  This js version does what you'd expect (returns a
+ 	timestamp for 31st March 2013, as 2013W14-1 is 1st April 2013).  These date
+ 	formats also differ from php when used with statements like 'third Wednesday',
+ 	but again this js version seems to do what you'd expect.
+ - Strings like "2011 yesterday" are interpreted by php as 20:11 ie 8:11pm, but from 
+ 	the C source it appears that it ought to be recognised as a year, which is what
+ 	this js version does.  Seems to me you could argue it either way.
+

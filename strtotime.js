@@ -77,6 +77,7 @@ YUI.add('strtotime', function (Y) {
 
 
 
+
         ///////////////////////////////////////////////////////////////////////
         // Utility methods:
 
@@ -94,7 +95,7 @@ YUI.add('strtotime', function (Y) {
             var tmp = new Date(ts);
             if (tmp["set" + method] === undefined) {
                 return ts;
-            }                    
+            }
             tmp["set" + method](tmp["get" + method]() + d);
             return tmp.getTime();
         },
@@ -103,7 +104,7 @@ YUI.add('strtotime', function (Y) {
          @method _set
 
          Sets a timstamp
-         
+
          @param {Int} ts Timestamp
          @param {Int} val Value to set to
          @param {String} methodMethod on Date to use
@@ -132,7 +133,7 @@ YUI.add('strtotime', function (Y) {
                 mon = tmp.getUTCMonth();
 
             // go to the first of the next month and subtract a day
-            tmp.setUTCDate(1); 
+            tmp.setUTCDate(1);
             tmp.setUTCMonth((mon + 1) % 12);
             ts = tmp.getTime() - MSECS_IN_DAY;
             tmp = new Date(ts);
@@ -159,7 +160,7 @@ YUI.add('strtotime', function (Y) {
             ampm = ampm.replace(".", "");
 
             c1 = ampm.substring(0, 1).toLowerCase();
-            
+
             if (hour < 12 && c1 === "p") {
                 return hour + 12;
             }
@@ -169,7 +170,7 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         * Translates user-defined versions of 'next' to 
+         * Translates user-defined versions of 'next' to
          * default English so we know what they mean
          *
          * @method _lookupRelTextText
@@ -192,13 +193,13 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         * Gets a numeric value from a string that's either in 
+         * Gets a numeric value from a string that's either in
          * RELTEXTEXT or RELTEXTNUMBER to add (or subtract).
          *
-         * Note that 'first' always returns +1 - so can't be used 
+         * Note that 'first' always returns +1 - so can't be used
          * in matches like 'first day of March', as first there
          * does not mean +1 day.
-         * 
+         *
          *
          * @method _calculateRelTextValue
          * @param {String} text
@@ -210,23 +211,22 @@ YUI.add('strtotime', function (Y) {
             var index;
 
             switch (text) {
-                case 'this':
-                    return 0;
-                    break;
-                case 'next':
-                    return 1;
-                    break;
-                case 'last':
-                case 'previous':
-                    return -1;
-                    break;
-                default:
-                    index = strtotime.RELTEXTNUMBER.indexOf(text);
-                    if (index !== -1) {
-                        return index + 1;
-                    }
-                    return text;
-                    break;
+            case 'this':
+                return 0;
+
+            case 'next':
+                return 1;
+
+            case 'last':
+            case 'previous':
+                return -1;
+
+            default:
+                index = strtotime.RELTEXTNUMBER.indexOf(text);
+                if (index !== -1) {
+                    return index + 1;
+                }
+                return text;
 
             }
         },
@@ -255,6 +255,28 @@ YUI.add('strtotime', function (Y) {
             return text;
         },
 
+
+
+        /**
+         * Gets a timestamp for the nearest day of the week
+         * from that passed, either forward or back
+         *
+         * @method _setToDay
+         * @param {Int} ts Timestamp
+         * @param {Int} dayIndex Day of the week: Sunday = 0, Monday = 1
+         * @param {Int} direction +1 = forward, -1 = last
+         * @return {Int} Timestamp
+         */
+        _setToDay = function (ts, dayIndex, direction) {
+            var tmp = new Date(ts);
+            while (tmp.getUTCDay() !== dayIndex) {
+                tmp = new Date(tmp.getTime() + (direction * MSECS_IN_DAY));
+            }
+            return tmp.getTime();
+        },
+
+
+
         /**
          * Finds the 'third Wednesday' relative to timestamp
          * @param Int       Timestamp
@@ -278,7 +300,7 @@ YUI.add('strtotime', function (Y) {
             // 'last' needs handling differently:
             if (tofind.weekIndex === 'last') {
                 // this is the hard one:
-                // find the last day of the month and do it again 
+                // find the last day of the month and do it again
                 // backwarods
                 /*tmp.setUTCDate(_findLastDayOf(ts));
                 while (tmp.getUTCDay() !== tofind.dayIndex) {
@@ -292,24 +314,24 @@ YUI.add('strtotime', function (Y) {
 
             //thisWeek = Math.floor(new Date(ts).getUTCDate() / 7);
 
-            
-            
+
+
             // now add on the right number of weeks
             switch (tofind.weekIndex) {
-                case 'next':
-                    addWeeks = 0;//thisWeek;
-                    break;
-                case 'previous':
-                    addWeeks = -1;//thisWeek - 1;
-                    break;
-                case 'first':
-                    tmp.setUTCDate(1);
-                    addWeeks = 0;
-                    break;
-                default:
-                    tmp.setUTCDate(1);
-                    addWeeks = parseInt(tofind.weekIndex, 10);
-                    break;
+            case 'next':
+                addWeeks = 0;//thisWeek;
+                break;
+            case 'previous':
+                addWeeks = -1;//thisWeek - 1;
+                break;
+            case 'first':
+                tmp.setUTCDate(1);
+                addWeeks = 0;
+                break;
+            default:
+                tmp.setUTCDate(1);
+                addWeeks = parseInt(tofind.weekIndex, 10);
+                break;
             }
 
             // iterate through until we're on the correct day
@@ -323,28 +345,10 @@ YUI.add('strtotime', function (Y) {
         },
 
 
-        /**
-         * Gets a timestamp for the nearest day of the week
-         * from that passed, either forward or back
-         *
-         * @method _setToDay
-         * @param {Int} ts Timestamp
-         * @param {Int} dayIndex Day of the week: Sunday = 0, Monday = 1
-         * @param {Int} direction +1 = forward, -1 = last
-         * @return {Int} Timestamp
-         */
-        _setToDay = function (ts, dayIndex, direction) {
-            var tmp = new Date(ts);
-            while(tmp.getUTCDay() !== dayIndex) {
-                tmp = new Date(tmp.getTime() + (direction * MSECS_IN_DAY));
-            }
-            return tmp.getTime();
-        },
-
 
         /**
          * Moves the date first|last|next|previous week
-         * 
+         *
          * @method _findWeekOf
          * @param {Int} ts Timestamp
          * @param {String} Change
@@ -359,24 +363,24 @@ YUI.add('strtotime', function (Y) {
             change = _lookupRelTextText(change);
 
             switch (change) {
-                case 'next':
-                    return _setToDay(ts + inc, 1, 1);
-                    break;
-                case 'last':
-                case 'previous':
-                    ts = ts - MSECS_IN_WEEK; // go back a week
-                    return _setToDay(ts - inc, 1, -1);
-                    break;
-                case 'this':
-                    return _setToDay(ts, 1, -1);
-                    break;
-                default:
-                    // change may be a number
-                    if (Y.Lang.isNumber(change)) {
-                        return ts = ts + (change * MSECS_IN_WEEK);
-                    }
-                    return false;
-                    break;
+            case 'next':
+                return _setToDay(ts + inc, 1, 1);
+
+            case 'last':
+            case 'previous':
+                ts = ts - MSECS_IN_WEEK; // go back a week
+                return _setToDay(ts - inc, 1, -1);
+
+            case 'this':
+                return _setToDay(ts, 1, -1);
+
+            default:
+                // change may be a number
+                if (Y.Lang.isNumber(change)) {
+                    return ts + (change * MSECS_IN_WEEK);
+                }
+                return false;
+
             }
 
         },
@@ -391,23 +395,25 @@ YUI.add('strtotime', function (Y) {
          * @return {int} Four-digit year
          */
         _handleShortYear = function (yr) {
-            
-            var strYr;
+
+            var strYr,
+                ret;
 
             yr = parseInt(yr, 10);
-            strYr = yr + "";
-            
+            strYr = String(yr);
+
             if (strYr.length >= 4) {
                 return yr;
             }
+            ret = yr;
             if (yr < 100) {
                 if (yr < 70) {
-                    return yr + 2000;
+                    ret = yr + 2000;
                 } else {
-                    return yr + 1900;
+                    ret = yr + 1900;
                 }
             }
-            return yr;
+            return ret;
         },
 
 
@@ -421,7 +427,7 @@ YUI.add('strtotime', function (Y) {
          */
         _handleMonthText = function (res) {
 
-            var m, 
+            var m,
                 search = ['MONTHFULL', 'MONTHABBR', 'MONTHROMAN'],
                 i = 0;
 
@@ -438,11 +444,11 @@ YUI.add('strtotime', function (Y) {
 
         /**
          * Calculates the day number in the year from the weeknumber
-         * 
+         *
          * http://fossies.org/dox/php-5.3.20-src/date_2lib_2dow_8c_source.html#l00130
          *
          * @method _findDayNrFromWeekNr
-         * @param {Int} year 
+         * @param {Int} year
          * @param {Int} weekNumber
          * @param {Int} dayNumber
          * @return {Int} Day of the year
@@ -454,10 +460,10 @@ YUI.add('strtotime', function (Y) {
                 day;
 
             if (dow === 0) {
-                dow = 7
+                dow = 7;
             }
             /* then use that to figure out the offset for day 1 of week 1 */
-            day = 0 - (dow > 4 ? dow - 7 : dow);
+            day = -(dow > 4 ? dow - 7 : dow);
 
             /* Add weeks and days */
             return day + ((weekNumber - 1) * 7) + dayNumber + 1;
@@ -481,61 +487,10 @@ YUI.add('strtotime', function (Y) {
         },
 
 
-        /**
-         * Processes any relative changes held in mods.relativeFixedHash
-         *
-         * @method _processRelativeFixedHash
-         * @param {Int} ts Timestampe
-         * @param {Object} oChange   Change(s) to make
-         * @return {Int} Timestamp
-         * @private
-         */
-        _processRelativeFixedHash = function (ts, oChange, dir) {
-
-            var num,
-                tmp,
-                i;
-
-
-            // Work out the 'first Wednesday' type modifiers
-            if (oChange.weekdayOf !== undefined) {
-                ts = _findWeekdayOf(ts, oChange.weekdayOf);
-                return ts;
-            }
-            // Work out 'last week' type modifier
-            if (oChange.week !== undefined) {
-                ts = _findWeekOf(ts, oChange.week, true);
-                return ts;
-            }
-
-            // tricky ones
-            if (oChange.year !== undefined) {
-                num = dir * _calculateRelTextValue(oChange.year);
-                ts = relChange.y(ts, num);
-            }            
-            if (oChange.month !== undefined) {
-                num = dir * _calculateRelTextValue(oChange.month);
-                ts = relChange.m(ts, num);
-            }
-
-            if (oChange.weekKeepDay !== undefined) {
-                ts = _findWeekOf(ts, dir * oChange.weekKeepDay, false);
-            }
-
-            // days, weeks, hours etc
-            for (i in _timeList) {
-                if (_timeList.hasOwnProperty(i) && oChange[i] !== undefined) {
-                    num = dir * _calculateRelTextValue(oChange[i]);
-                    ts = ts + (num * _timeList[i]);
-                }
-            }
-
-            return ts;
-        },
 
         /**
          * Makes relative changes to different components of the date
-         * 
+         *
          * @property relChange.y {Function}
          * @property relChange.m {Function}
          * @property relChange.d {Function}
@@ -572,9 +527,66 @@ YUI.add('strtotime', function (Y) {
             }
         },
 
+
+
+
+        /**
+         * Processes any relative changes held in mods.relativeFixedHash
+         *
+         * @method _processRelativeFixedHash
+         * @param {Int} ts Timestampe
+         * @param {Object} oChange   Change(s) to make
+         * @return {Int} Timestamp
+         * @private
+         */
+        _processRelativeFixedHash = function (ts, oChange, dir) {
+
+            var num,
+                tmp,
+                i;
+
+
+            // Work out the 'first Wednesday' type modifiers
+            if (oChange.weekdayOf !== undefined) {
+                ts = _findWeekdayOf(ts, oChange.weekdayOf);
+                return ts;
+            }
+            // Work out 'last week' type modifier
+            if (oChange.week !== undefined) {
+                ts = _findWeekOf(ts, oChange.week, true);
+                return ts;
+            }
+
+            // tricky ones
+            if (oChange.year !== undefined) {
+                num = dir * _calculateRelTextValue(oChange.year);
+                ts = relChange.y(ts, num);
+            }
+            if (oChange.month !== undefined) {
+                num = dir * _calculateRelTextValue(oChange.month);
+                ts = relChange.m(ts, num);
+            }
+
+            if (oChange.weekKeepDay !== undefined) {
+                ts = _findWeekOf(ts, dir * oChange.weekKeepDay, false);
+            }
+
+            // days, weeks, hours etc
+            for (i in _timeList) {
+                if (_timeList.hasOwnProperty(i) && oChange[i] !== undefined) {
+                    num = dir * _calculateRelTextValue(oChange[i]);
+                    ts = ts + (num * _timeList[i]);
+                }
+            }
+
+            return ts;
+        },
+
+
+
         /**
          * Sets different components of the date
-         * 
+         *
          * @property absChange.y {Function}
          * @property absChange.m {Function}
          * @property absChange.d {Function}
@@ -611,16 +623,16 @@ YUI.add('strtotime', function (Y) {
 
 
         /**
-         * Alters the timestamp depending on the timezone parsed 
+         * Alters the timestamp depending on the timezone parsed
          * from the string
-         * 
+         *
          * @method timezoneChange
          * @param {Int} ts Timestamp
          * @param {String} tz Timezone string
          * @return {Int} Timestamp
          */
         timezoneChange = function (ts, tz) {
-            
+
             // val should be +02:30 format
             var sign = tz.substring(0, 1),
                 parts = tz.substring(1).split(":"),
@@ -652,18 +664,18 @@ YUI.add('strtotime', function (Y) {
          * from the text.  This cannot be instantiated directly: it's created
          * by the strtotime function and passed to the test functions.
          *
-         * As the string is parsed by srttotime, any relative (e.g. "-1 day") 
+         * As the string is parsed by srttotime, any relative (e.g. "-1 day")
          * or absolute changes ("noon") are held in the Modificator instance.
          * Once parsing is complete, the stored changes are processed
          * in the correct order to calculate the return timestamp.
 
-         * @constructor 
+         * @constructor
          * @class Modificator
          *
          *
          */
         Modificator = function () {
-            
+
             /**
              * Whether times are fixed (ie may not be changed by subsequent terms)
              * by a particular statement
@@ -730,9 +742,9 @@ YUI.add('strtotime', function (Y) {
 
 
             /**
-             * A list of relative (e.g. "-1 day") changes to make, 
-             * in the order that they are found in the statement.  
-             * Indexes in the array are the position that the test string 
+             * A list of relative (e.g. "-1 day") changes to make,
+             * in the order that they are found in the statement.
+             * Indexes in the array are the position that the test string
              * was found in the original string passed to strtotime()
              *
              * @property orderedRelChanges
@@ -743,9 +755,9 @@ YUI.add('strtotime', function (Y) {
              */
             this.orderedRelChanges = [];
             /**
-             * A list of absolute (e.g. "noon") changes to make, 
-             * in the order that they are found in the statement.  
-             * Indexes in the array are the position that the test string 
+             * A list of absolute (e.g. "noon") changes to make,
+             * in the order that they are found in the statement.
+             * Indexes in the array are the position that the test string
              * was found in the original string passed to strtotime()
              *
              * @property orderedAbsChanges
@@ -753,7 +765,7 @@ YUI.add('strtotime', function (Y) {
              * @default []
              * @protected
              *
-             */            
+             */
             this.orderedAbsChanges = [];
 
 
@@ -786,7 +798,7 @@ YUI.add('strtotime', function (Y) {
              * Storage for 'weekday of' type statements, that will
              * later on need other changes to be resolved before this
              * can be.
-             * 
+             *
              * @property relativeFixedHash
              * @type {Object}
              * @protected
@@ -799,7 +811,7 @@ YUI.add('strtotime', function (Y) {
             };
 
             /**
-             * Processes and stores relative changes to dates or times.  
+             * Processes and stores relative changes to dates or times.
              * This (along with updateAbs()) are the main methods to use
              * in test -passing functions
              *
@@ -808,13 +820,13 @@ YUI.add('strtotime', function (Y) {
              * @param {Object}   Properties to change
              * @param {Boolean}  Whether to add to existing (true) or set (default).
              *                      In some cases we want to make culmulative changes
-             * @param {Int}      Index that the test string was found in the 
+             * @param {Int}      Index that the test string was found in the
              *                      original string
              * @return {Object}  Object literal that we've stored
              */
             this.updateRel = function (oChange, addOrSet, index) {
                 var i,
-                    c, 
+                    c,
                     rH = Y.clone(this.relativeHash);
 
                 for (i in oChange) {
@@ -832,7 +844,7 @@ YUI.add('strtotime', function (Y) {
                         } else if (i === "relative") {
 
                             this.relativeFixedHash = Y.merge(this.relativeFixedHash, oChange[i]);
-                            
+
                         } else {
                             c = parseInt(oChange[i], 10);
                             if (addOrSet === true) {
@@ -854,7 +866,7 @@ YUI.add('strtotime', function (Y) {
              *
              * @property relativeDirection
              * @type {Int}
-             * @protected 
+             * @protected
              * @default 1
              */
             this.relativeDirection = 1;
@@ -897,7 +909,7 @@ YUI.add('strtotime', function (Y) {
              * Storage for 'last day' type statements, that will
              * later on need other changes to be resolved before this
              * can be.
-             * 
+             *
              * @property absoluteFixedHash
              * @type {Object}
              * @protected
@@ -913,7 +925,7 @@ YUI.add('strtotime', function (Y) {
             };
 
             /**
-             * Processes and stores absolute changes to dates or times.  
+             * Processes and stores absolute changes to dates or times.
              * This (along with updateRel()) are the main methods to use
              * in test -passing functions
              *
@@ -922,7 +934,7 @@ YUI.add('strtotime', function (Y) {
              * @param {Object}   Properties to change
              * @param {Boolean}  Whether to add to existing (true) or set (default).
              *                      In some cases we want to make culmulative changes
-             * @param {Int}      Index that the test string was found in the 
+             * @param {Int}      Index that the test string was found in the
              *                      original string
              * @return {Object}  Object literal that we've stored
              */
@@ -941,7 +953,7 @@ YUI.add('strtotime', function (Y) {
                             c = parseFloat(oChange[i]);
 
 
-                            if (addOrSet === true && aH[i] !== undefined) {                                                   
+                            if (addOrSet === true && aH[i] !== undefined) {
                                 aH[i] += c;
                                 // need to remember this for next time.
                                 this.absoluteHash[i] = true;
@@ -977,15 +989,15 @@ YUI.add('strtotime', function (Y) {
 
 
         },
-        
+
 
 
 
         /**
          * @method strtotime
          *
-         * Parses English (or other languages) date-related sentences into 
-         * a timestamp.  A wide range of formats are supported, as is 
+         * Parses English (or other languages) date-related sentences into
+         * a timestamp.  A wide range of formats are supported, as is
          * relative formats.
          *
          * Note that to preserve compatability with php (from which this is ported)
@@ -1033,16 +1045,16 @@ YUI.add('strtotime', function (Y) {
             // Build the regexp and tests if needed
             if (TESTS.length === 0) {
                 REGEXP = strtotime.finishRegExp(strtotime.constructRegExp());
-                TESTS = strtotime.finishTests(REGEXP, strtotime.constructTests(REGEXP))
+                TESTS = strtotime.finishTests(REGEXP, strtotime.constructTests(REGEXP));
             }
 
 
             time = Y.Lang.trim(time);
-            
+
             copyTime = time;
 
 
-            // Go through, looking for the relevant regexps 
+            // Go through, looking for the relevant regexps
             // and acting accordingly
             for (i = 0; i < TESTS.length; i = i + 1) {
 
@@ -1050,7 +1062,7 @@ YUI.add('strtotime', function (Y) {
 
                 // spaces are added because we put them on the regexs
                 // and this is easier than detecting start/end of strings
-                
+
                 // The same rule may match more than once so we keep going until it's done.
                 while ((reResult = test.re.exec(" " + copyTime + " ")) !== null) {
 
@@ -1091,30 +1103,30 @@ YUI.add('strtotime', function (Y) {
                 if (thisChange !== undefined) {
 
                     for (i in thisChange) {
-                    
+
                         if (thisChange.hasOwnProperty(i) && ignoreInAbs.indexOf(i) === -1 && thisChange[i] !== undefined) {
-                            
+
                             // can't change fixed times
                             if (i === 'h' && mods.fixTime === true) {
                                 return false;
                             }
 
                             // not an error but we skip over days if they've been fixed
-                            if (i === 'd' && mods.fixDate.d === true) {
-                                continue;
-                            }
+                            if (!(i === 'd' && mods.fixDate.d === true)) {
 
-                            // Make the actual change
-                            ms = absChange[i](ms, thisChange[i]);
+                                // Make the actual change
+                                ms = absChange[i](ms, thisChange[i]);
 
-                            // OK, that change did fix the day, so we remember that
-                            if (thisChange.fixDate.d === true) {
-                                mods.fixDate.d = true;
-                            }
+                                // OK, that change did fix the day, so we remember that
+                                if (thisChange.fixDate.d === true) {
+                                    mods.fixDate.d = true;
+                                }
 
-                            // An error occurred
-                            if (ms === false) {
-                                return false;
+                                // An error occurred
+                                if (ms === false) {
+                                    return false;
+                                }
+
                             }
 
                         }
@@ -1146,7 +1158,7 @@ YUI.add('strtotime', function (Y) {
 
                 if (thisChange !== undefined) {
                     for (i in thisChange) {
-                
+
                         if (thisChange.hasOwnProperty(i) && ['weekdayOf', 'week', 'relative'].indexOf(i) === -1 && thisChange[i] !== 0) {
 
                             ms = relChange[i](ms, mods.relativeDirection * thisChange[i]);
@@ -1192,1216 +1204,1221 @@ YUI.add('strtotime', function (Y) {
 
 
 
-        /**
-         * @method constructRegExp
-         * Builds up a set of strings that will be used in regex constructor in 
-         * the tests.  This happens once, the first time the strtotime function
-         * is used.
-         * @protected
-         * @static
-         * @return {Object}
-         */
-        strtotime.constructRegExp = function () {
-
-            ///////////////////////////////////////////////////////////////////////
-            // Regexps are basically copied from 
-            // http://svn.php.net/viewvc/php/php-src/trunk/ext/date/lib/parse_date.re?revision=320481&view=markup
-            // line 875 onwards
-            //
-            // There's some changes to use Y.Intl, and other minor changes to 
-            // use existing definitions to save some typing.  There's also extra brackets
-            // so we can get the values found and parse them.
-            //
-            // These are expressed as strings here, as they are composed as we go down,
-            // so they're only made into RegExps later.
-
-            var ret = {},
-
-                space = '[ \t]+', 
-                frac = '[.]([0-9]+)',
-                ago = strtotime.AGO,
-                hour24 = '(2[0-4]|[01]?[0-9])',
-                hour24lz = '(2[0-4]|[01][0-9])',
-                hour12 = '(1[0-2]|0?[1-9])',
-                minute = '([0-5]?[0-9])',
-                minutelz = '([0-5][0-9])',
-                second = '([0-5]?[0-9]|60)',
-                secondlz = '([0-5][0-9]|60)',
-                // The Internationalised meridian match isn't quite the same, as we can't assume 
-                // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
-                // case versions in INTL.P and INTL.p
-                meridian = strtotime.AMPM, // + space,
-                tz = '\\(? [A-Za-z]{1,6}\\)?|[A-Za-z]+([_/-][A-Za-z]+)+',
-                tzcorrection = 'GMT?([+-]' + hour24 + ':?' + minute + '?)',
-
-                daysuf = '(' + strtotime.DAYSUFFIXES.join('|') + ')',
-
-                month = '(1[0-2]|0?[0-9])',
-                day = '((3[0-1])|([0-2]?[0-9]))' + daysuf + '?',
-                year = '([0-9]{1,4})',
-                year2 = '([0-9]{2})',
-                year4 = '([0-9]{4})',
-                year4withsign = '([+-]?[0-9]{4})',
-
-                dayofyear = '(00[1-9]|0[1-9][0-9]|[1-2][0-9][0-9]|3[0-5][0-9]|36[0-6])',
-                weekofyear = '(0[1-9]|[1-4][0-9]|5[0-3])',
-                monthlz = '(0[0-9]|1[0-2])',
-                daylz = '(0[0-9]|[1-2][0-9]|3[01])',
-
-                // Use Internationalisation to get lang pack
-                dayfull = strtotime.DAYFULL.join('|'),// : 'sunday|monday|tuesday|wednesday|thursday|friday|saturday',
-                dayabbr = strtotime.DAYABBR.join('|'),// : 'sun|mon|tue|wed|thu|fri|sat|sun',
-                dayspecial = strtotime.DAYSPECIAL.join('|') || 'weekday|weekdays',  // apparently no INTL version of this
-                daytext = '(' + dayfull + '|' + dayabbr + '|' + dayspecial + ')',
-
-                monthfull = strtotime.MONTHFULL.join('|'),
-                monthabbr = strtotime.MONTHABBR.join('|'),
-                monthroman = strtotime.MONTHROMAN.join('|'),
-                monthtext = '((' + monthfull + ')|(' + monthabbr + ')|(' + monthroman + '))',
-
-                // Time
-                timetiny12 = hour12 + '(' + space + ')?' + meridian,
-                timeshort12 = hour12 + '[:.]' + minutelz + '(' + space + ')?' + meridian,
-                timelong12 = hour12 + '[:.]' + minute + '[:.]' + secondlz + '(' + space + ')?' + meridian,
-
-                timeshort24 = '(t)?' + hour24 + '[:.]' + minute,
-                timelong24 = timeshort24 + '[:.]' + second,
-                iso8601long = timelong24 + frac,
-
-                iso8601normtz = timeshort24 + '[:.]' + secondlz + '(' + space + ')?' + '(' + tzcorrection + '|' + tz + ')',
-
-                gnunocolon = '(t)?' + hour24lz + minutelz,
-                gnunocolont = 't' + hour24lz + minutelz,
-                iso8601nocolon = '(t)?' + hour24lz + minutelz + secondlz,
-
-                // Dates
-                americanshort = month + '\/' + day,
-                american = americanshort + '\/' + year,
-                iso8601dateslash = year4 + '\/' + monthlz + '\/' + daylz + '\/?',
-                dateslash = year4 + '\/' + month + '\/' + day,
-                iso8601date4 = year4withsign + '-' + monthlz + '-' + daylz,
-                iso8601date2 = year2 + '-' + monthlz + '-' + daylz,
-                gnudateshorter = year4 + '-' + month,
-                gnudateshort = year + '-' + month + '-' + day,
-                pointeddate4 = day + '[.\t-]' + month + '[.-]' + year4,
-                pointeddate2 = day + '[.\t-]' + month + '[.]' + year2,
-                datefull = day + '([ \t\.\-])*' + monthtext + '([ \t\.\-])*' + year,
-                datenoday = monthtext + '([ \t\.\-])*' + year4,
-                datenodayrev = year4 + '([ \t\.\-])*' + monthtext,
-                datetextual = monthtext + '([ \t\.\-])*' + day + '[\,\.stndrh\t ]+' + year,
-                datenoyear = monthtext + '([ \t\.\-])*' + day + '[\,\.stndrh\t ]*', // why is this one finish with * and above is +
-                datenoyearrev = day + '([ \t\.\-])*' + monthtext,
-                datenocolon = year4 + monthlz + daylz,
-
-                // Special formats
-                soap = year4 + '-' + monthlz + '-' + daylz + 'T' + hour24lz + ':' + minutelz + ':' + secondlz + frac + tzcorrection + '?',
-                xmlrpc = year4 + monthlz + daylz + 'T' + hour24 + ':' + minutelz + ':' + secondlz,
-                xmlrpcnocolon = year4 + monthlz + daylz + 't' + hour24 + minutelz + secondlz,
-                wddx = year4 + '-' + month + '-' + day + 'T' + hour24 + ':' + minute + ':' + second,
-                pgydotd = year4 + '\.?' + dayofyear,
-                pgtextshort = '(' + monthabbr + ')-' + daylz + '-' + year,
-                pgtextreverse = year + '-(' + monthabbr + ')-' + daylz,
-                mssqltime = hour12 + ':' + minutelz + ':' + secondlz + '[:\.]([0-9]+)' + meridian,
-                isoweekday = year4 + '-?W' + weekofyear + '\-?([0-7])',
-                isoweek = year4 + '-?W' + weekofyear,
-                exif = year4 + ':' + monthlz + ':' + daylz + ' ' + hour24lz + ':' + minutelz + ':' + secondlz,
-                firstdayof = strtotime.FIRSTDAYOF + '?',
-                lastdayof = strtotime.LASTDAYOF + '?',
-                backof = strtotime.BACKOF + hour24 + '(' + space + ')?' + meridian + '?',
-                frontof = strtotime.FRONTOF + hour24 + '(' + space + ')?' + meridian + '?',
-
-                // common log format
-                clf = day + '\/(' + monthabbr + ')\/' + year4 + ':' + hour24lz + ':' + minutelz + ':' + secondlz + space + tzcorrection,
-
-                // timestamp:
-                timestamp = "@(\-)?([0-9]+)",
-
-                // ? to fix some ambiguities (this is from the C source)
-                dateshortwithtimeshort12  = datenoyear + timeshort12,
-                dateshortwithtimelong12   = datenoyear + timelong12,
-                dateshortwithtimeshort  = datenoyear + timeshort24,
-                dateshortwithtimelong   = datenoyear + timelong24,
-                dateshortwithtimelongtz = datenoyear + iso8601normtz,
 
 
-                // relative regexps
-                reltextnumber = '(' + strtotime.RELTEXTNUMBER.join('|') + ')',
-
-                // these are a bit ugly because we need to provide translationability
-                // of these terms, while still knowing what they mean...
-                // All these functions are doing is iterating through the static
-                // properties to get (possibly translated) versions of the text into
-                // a string to use in the regexps.
-                reltexttext = '(' + (function () {
-                        var i,
-                            ret = [],
-                            rtt = strtotime.RELTEXTTEXT;
-
-                        for (i in rtt) {
-                            if (rtt.hasOwnProperty(i)) {
-                                ret.push(rtt[i]);
-                            }
-                        }
-                        return ret.join('|');
-                    }()) + ')', // strtotime.RELTEXTTEXT.join('|') + ')',
-                
-                reltextunit = '((' + (function () {
-                        var i,
-                            ret = [],
-                            rtt = strtotime.RELTEXTUNIT;
-
-                        for (i in rtt) {
-                            if (rtt.hasOwnProperty(i)) {
-                                ret.push(rtt[i].join('|'));
-                            }
-                        }
-                        return ret.join('|');
-                    }()) + ')s?)|' + daytext, //strtotime.RELTEXTUNIT.join('|') + ')s?)' + '|' + daytext, // no 'weeks' currently - need to check why it's separate
-
-                relnumber = '([+\-]*[ \t]*[0-9]+)',
-
-                // this is weird too, the week. So I've removed it from here as it appears in reltextunit
-                relative = relnumber + '(' + space + ')?(' + reltextunit + ')', // |week)', 
-                relativetext = '(' + reltextnumber + '|' + reltexttext + ')' + space + reltextunit,
-                relativetextweek = reltexttext + space + 'week',
 
 
-                weekdayof = '(' + reltextnumber + '|' + reltexttext + ')' + space + '(' + dayfull + '|' + dayabbr + ')' + space + 'of';
 
-            return {
-                "space": space,
-                "frac": frac,
-                "ago": ago,
-                "hour24": hour24,
-                "hour24lz": hour24lz,
-                "hour12": hour12,
-                "minute": minute,
-                "minutelz": minutelz,
-                "second": second,
-                "secondlz": secondlz,
-                // The Internationalised meridian match isn't quite the same, as we can't assume 
-                // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
-                // case versions in INTL.P and INTL.p
-                "meridian": meridian,
-                "tz": tz,
-                "tzcorrection": tzcorrection,
+    /**
+     * @method constructRegExp
+     * Builds up a set of strings that will be used in regex constructor in
+     * the tests.  This happens once, the first time the strtotime function
+     * is used.
+     * @protected
+     * @static
+     * @return {Object}
+     */
+    strtotime.constructRegExp = function () {
 
-                "daysuf": daysuf,
+        ///////////////////////////////////////////////////////////////////////
+        // Regexps are basically copied from
+        // http://svn.php.net/viewvc/php/php-src/trunk/ext/date/lib/parse_date.re?revision=320481&view=markup
+        // line 875 onwards
+        //
+        // There's some changes to use Y.Intl, and other minor changes to
+        // use existing definitions to save some typing.  There's also extra brackets
+        // so we can get the values found and parse them.
+        //
+        // These are expressed as strings here, as they are composed as we go down,
+        // so they're only made into RegExps later.
 
-                "month": month,
-                "day": day,
-                "year": year,
-                "year2": year2,
-                "year4": year4,
-                "year4withsign": year4withsign,
+        var ret = {},
 
-                "dayofyear": dayofyear,
-                "weekofyear": weekofyear,
-                "monthlz": monthlz,
-                "daylz": daylz,
+            space = '[ \t]+',
+            frac = '[.]([0-9]+)',
+            ago = strtotime.AGO,
+            hour24 = '(2[0-4]|[01]?[0-9])',
+            hour24lz = '(2[0-4]|[01][0-9])',
+            hour12 = '(1[0-2]|0?[1-9])',
+            minute = '([0-5]?[0-9])',
+            minutelz = '([0-5][0-9])',
+            second = '([0-5]?[0-9]|60)',
+            secondlz = '([0-5][0-9]|60)',
+            // The Internationalised meridian match isn't quite the same, as we can't assume
+            // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
+            // case versions in INTL.P and INTL.p
+            meridian = strtotime.AMPM, // + space,
+            tz = '\\(? [A-Za-z]{1,6}\\)?|[A-Za-z]+([_/-][A-Za-z]+)+',
+            tzcorrection = 'GMT?([+-]' + hour24 + ':?' + minute + '?)',
 
-                // Use Internationalisation to get lang pack
-                "dayfull": dayfull,
-                "dayabbr": dayabbr,
-                "dayspecial": dayspecial,  // apparently no INTL version of this
-                "daytext": daytext,
+            daysuf = '(' + strtotime.DAYSUFFIXES.join('|') + ')',
 
-                "monthfull": monthfull,
-                "monthabbr": monthabbr,
-                "monthroman": monthroman,
-                "monthtext": monthtext,
+            month = '(1[0-2]|0?[0-9])',
+            day = '((3[0-1])|([0-2]?[0-9]))' + daysuf + '?',
+            year = '([0-9]{1,4})',
+            year2 = '([0-9]{2})',
+            year4 = '([0-9]{4})',
+            year4withsign = '([+-]?[0-9]{4})',
 
-                // Time
-                "timetiny12": space + timetiny12 + space,
-                "timeshort12": space + timeshort12 + space,
-                "timelong12": space + timelong12 + space,
+            dayofyear = '(00[1-9]|0[1-9][0-9]|[1-2][0-9][0-9]|3[0-5][0-9]|36[0-6])',
+            weekofyear = '(0[1-9]|[1-4][0-9]|5[0-3])',
+            monthlz = '(0[0-9]|1[0-2])',
+            daylz = '(0[0-9]|[1-2][0-9]|3[01])',
 
-                "timeshort24": space + timeshort24 + space,
-                "timelong24": space + timelong24 + space,
-                "iso8601long": space + iso8601long + space,
+            // Use Internationalisation to get lang pack
+            dayfull = strtotime.DAYFULL.join('|'),// : 'sunday|monday|tuesday|wednesday|thursday|friday|saturday',
+            dayabbr = strtotime.DAYABBR.join('|'),// : 'sun|mon|tue|wed|thu|fri|sat|sun',
+            dayspecial = strtotime.DAYSPECIAL.join('|') || 'weekday|weekdays',  // apparently no INTL version of this
+            daytext = '(' + dayfull + '|' + dayabbr + '|' + dayspecial + ')',
 
-                "iso8601normtz": space + iso8601normtz + space,
+            monthfull = strtotime.MONTHFULL.join('|'),
+            monthabbr = strtotime.MONTHABBR.join('|'),
+            monthroman = strtotime.MONTHROMAN.join('|'),
+            monthtext = '((' + monthfull + ')|(' + monthabbr + ')|(' + monthroman + '))',
 
-                "gnunocolon": space + gnunocolon + space,
-                "gnunocolont": space + gnunocolont + space,
-                "iso8601nocolon": space + iso8601nocolon + space,
+            // Time
+            timetiny12 = hour12 + '(' + space + ')?' + meridian,
+            timeshort12 = hour12 + '[:.]' + minutelz + '(' + space + ')?' + meridian,
+            timelong12 = hour12 + '[:.]' + minute + '[:.]' + secondlz + '(' + space + ')?' + meridian,
 
-                // Dates
-                "americanshort": space + americanshort + space,
-                "american": space + american + space,
-                "iso8601dateslash": space + iso8601dateslash + space,
-                "dateslash": space + dateslash + space,
-                "iso8601date4": space + iso8601date4 + space,
-                "iso8601date2": space + iso8601date2 + space,
-                "gnudateshorter": space + gnudateshorter + space,
-                "gnudateshort": space + gnudateshort + space,
-                "pointeddate4": space + pointeddate4 + space,
-                "pointeddate2": space + pointeddate2 + space,
-                "datefull": space + datefull + space,
-                "datenoday": space + datenoday + space,
-                "datenodayrev": space + datenodayrev + space,
-                "datetextual": space + datetextual + space,
-                "datenoyear": space + datenoyear + space, // why is this one finish with * and above is +
-                "datenoyearrev": space + datenoyearrev + space,
-                "datenocolon": space + datenocolon + space,
+            timeshort24 = '(t)?' + hour24 + '[:.]' + minute,
+            timelong24 = timeshort24 + '[:.]' + second,
+            iso8601long = timelong24 + frac,
 
-                // Special formats
-                "soap": soap,
-                "xmlrpc": xmlrpc,
-                "xmlrpcnocolon": xmlrpcnocolon,
-                "wddx": wddx,
-                "pgydotd": pgydotd,
-                "pgtextshort": pgtextshort,
-                "pgtextreverse": pgtextreverse,
-                "mssqltime": mssqltime,
-                "isoweekday": isoweekday,
-                "isoweek": isoweek,
-                "exif": exif,
-                "firstdayof": firstdayof,
-                "lastdayof": lastdayof,
-                "backof": backof,
-                "frontof": frontof,
+            iso8601normtz = timeshort24 + '[:.]' + secondlz + '(' + space + ')?' + '(' + tzcorrection + '|' + tz + ')',
 
-                // common log format
-                "clf": clf,
+            gnunocolon = '(t)?' + hour24lz + minutelz,
+            gnunocolont = 't' + hour24lz + minutelz,
+            iso8601nocolon = '(t)?' + hour24lz + minutelz + secondlz,
 
-                // timestamp:
-                "timestamp": timestamp,
+            // Dates
+            americanshort = month + '\/' + day,
+            american = americanshort + '\/' + year,
+            iso8601dateslash = year4 + '\/' + monthlz + '\/' + daylz + '\/?',
+            dateslash = year4 + '\/' + month + '\/' + day,
+            iso8601date4 = year4withsign + '-' + monthlz + '-' + daylz,
+            iso8601date2 = year2 + '-' + monthlz + '-' + daylz,
+            gnudateshorter = year4 + '-' + month,
+            gnudateshort = year + '-' + month + '-' + day,
+            pointeddate4 = day + '[.\t-]' + month + '[.-]' + year4,
+            pointeddate2 = day + '[.\t-]' + month + '[.]' + year2,
+            datefull = day + '([ \t.-])*' + monthtext + '([ \t.-])*' + year,
+            datenoday = monthtext + '([ \t.-])*' + year4,
+            datenodayrev = year4 + '([ \t.-])*' + monthtext,
+            datetextual = monthtext + '([ \t.-])*' + day + '[,.stndrh\t ]+' + year,
+            datenoyear = monthtext + '([ \t.-])*' + day + '[,.stndrh\t ]*', // why is this one finish with * and above is +
+            datenoyearrev = day + '([ \t.-])*' + monthtext,
+            datenocolon = year4 + monthlz + daylz,
 
-                // ? to fix some ambiguities (this is from the C source)
-                "dateshortwithtimeshort12" : dateshortwithtimeshort12,
-                "dateshortwithtimelong12"  : dateshortwithtimelong12,
-                "dateshortwithtimeshort" : dateshortwithtimeshort,
-                "dateshortwithtimelong"  : dateshortwithtimelong,
-                "dateshortwithtimelongtz": dateshortwithtimelongtz,
+            // Special formats
+            soap = year4 + '-' + monthlz + '-' + daylz + 'T' + hour24lz + ':' + minutelz + ':' + secondlz + frac + tzcorrection + '?',
+            xmlrpc = year4 + monthlz + daylz + 'T' + hour24 + ':' + minutelz + ':' + secondlz,
+            xmlrpcnocolon = year4 + monthlz + daylz + 't' + hour24 + minutelz + secondlz,
+            wddx = year4 + '-' + month + '-' + day + 'T' + hour24 + ':' + minute + ':' + second,
+            pgydotd = year4 + '\.?' + dayofyear,
+            pgtextshort = '(' + monthabbr + ')-' + daylz + '-' + year,
+            pgtextreverse = year + '-(' + monthabbr + ')-' + daylz,
+            mssqltime = hour12 + ':' + minutelz + ':' + secondlz + '[:.]([0-9]+)' + meridian,
+            isoweekday = year4 + '-?W' + weekofyear + '-?([0-7])',
+            isoweek = year4 + '-?W' + weekofyear,
+            exif = year4 + ':' + monthlz + ':' + daylz + ' ' + hour24lz + ':' + minutelz + ':' + secondlz,
+            firstdayof = strtotime.FIRSTDAYOF + '?',
+            lastdayof = strtotime.LASTDAYOF + '?',
+            backof = strtotime.BACKOF + hour24 + '(' + space + ')?' + meridian + '?',
+            frontof = strtotime.FRONTOF + hour24 + '(' + space + ')?' + meridian + '?',
+
+            // common log format
+            clf = day + '\/(' + monthabbr + ')\/' + year4 + ':' + hour24lz + ':' + minutelz + ':' + secondlz + space + tzcorrection,
+
+            // timestamp:
+            timestamp = "@(-)?([0-9]+)",
+
+            // ? to fix some ambiguities (this is from the C source)
+            dateshortwithtimeshort12  = datenoyear + timeshort12,
+            dateshortwithtimelong12   = datenoyear + timelong12,
+            dateshortwithtimeshort  = datenoyear + timeshort24,
+            dateshortwithtimelong   = datenoyear + timelong24,
+            dateshortwithtimelongtz = datenoyear + iso8601normtz,
 
 
-                // relative regexps
-                "reltextnumber": reltextnumber,
-                "reltexttext": reltexttext,
-                "reltextunit": reltextunit, // no 'weeks' currently - need to check why it's separate
+            // relative regexps
+            reltextnumber = '(' + strtotime.RELTEXTNUMBER.join('|') + ')',
 
-                "relnumber": relnumber,
-                "relative": relative, //the week
-                "relativetext": relativetext,
-                "relativetextweek": relativetextweek,
+            // these are a bit ugly because we need to provide translationability
+            // of these terms, while still knowing what they mean...
+            // All these functions are doing is iterating through the static
+            // properties to get (possibly translated) versions of the text into
+            // a string to use in the regexps.
+            reltexttext = '(' + (function () {
+                var i,
+                    ret = [],
+                    rtt = strtotime.RELTEXTTEXT;
+
+                for (i in rtt) {
+                    if (rtt.hasOwnProperty(i)) {
+                        ret.push(rtt[i]);
+                    }
+                }
+                return ret.join('|');
+            }()) + ')', // strtotime.RELTEXTTEXT.join('|') + ')',
+
+            reltextunit = '((' + (function () {
+                var i,
+                    ret = [],
+                    rtt = strtotime.RELTEXTUNIT;
+
+                for (i in rtt) {
+                    if (rtt.hasOwnProperty(i)) {
+                        ret.push(rtt[i].join('|'));
+                    }
+                }
+                return ret.join('|');
+            }()) + ')s?)|' + daytext,
+            //strtotime.RELTEXTUNIT.join('|') + ')s?)' + '|' + daytext, 
+            // no 'weeks' currently - need to check why it's separate
+
+            relnumber = '([+-]*[ \t]*[0-9]+)',
+
+            // this is weird too, the week. So I've removed it from here as it appears in reltextunit
+            relative = relnumber + '(' + space + ')?(' + reltextunit + ')', // |week)',
+            relativetext = '(' + reltextnumber + '|' + reltexttext + ')' + space + reltextunit,
+            relativetextweek = reltexttext + space + 'week',
 
 
-                "weekdayof": weekdayof
+            weekdayof = '(' + reltextnumber + '|' + reltexttext + ')' + space + '(' + dayfull + '|' + dayabbr + ')' + space + 'of';
 
-            };
+        return {
+            "space": space,
+            "frac": frac,
+            "ago": ago,
+            "hour24": hour24,
+            "hour24lz": hour24lz,
+            "hour12": hour12,
+            "minute": minute,
+            "minutelz": minutelz,
+            "second": second,
+            "secondlz": secondlz,
+            // The Internationalised meridian match isn't quite the same, as we can't assume
+            // we can mix cases or add full stops.  So it just looks for any of the upper- or lower-
+            // case versions in INTL.P and INTL.p
+            "meridian": meridian,
+            "tz": tz,
+            "tzcorrection": tzcorrection,
+
+            "daysuf": daysuf,
+
+            "month": month,
+            "day": day,
+            "year": year,
+            "year2": year2,
+            "year4": year4,
+            "year4withsign": year4withsign,
+
+            "dayofyear": dayofyear,
+            "weekofyear": weekofyear,
+            "monthlz": monthlz,
+            "daylz": daylz,
+
+            // Use Internationalisation to get lang pack
+            "dayfull": dayfull,
+            "dayabbr": dayabbr,
+            "dayspecial": dayspecial,  // apparently no INTL version of this
+            "daytext": daytext,
+
+            "monthfull": monthfull,
+            "monthabbr": monthabbr,
+            "monthroman": monthroman,
+            "monthtext": monthtext,
+
+            // Time
+            "timetiny12": space + timetiny12 + space,
+            "timeshort12": space + timeshort12 + space,
+            "timelong12": space + timelong12 + space,
+
+            "timeshort24": space + timeshort24 + space,
+            "timelong24": space + timelong24 + space,
+            "iso8601long": space + iso8601long + space,
+
+            "iso8601normtz": space + iso8601normtz + space,
+
+            "gnunocolon": space + gnunocolon + space,
+            "gnunocolont": space + gnunocolont + space,
+            "iso8601nocolon": space + iso8601nocolon + space,
+
+            // Dates
+            "americanshort": space + americanshort + space,
+            "american": space + american + space,
+            "iso8601dateslash": space + iso8601dateslash + space,
+            "dateslash": space + dateslash + space,
+            "iso8601date4": space + iso8601date4 + space,
+            "iso8601date2": space + iso8601date2 + space,
+            "gnudateshorter": space + gnudateshorter + space,
+            "gnudateshort": space + gnudateshort + space,
+            "pointeddate4": space + pointeddate4 + space,
+            "pointeddate2": space + pointeddate2 + space,
+            "datefull": space + datefull + space,
+            "datenoday": space + datenoday + space,
+            "datenodayrev": space + datenodayrev + space,
+            "datetextual": space + datetextual + space,
+            "datenoyear": space + datenoyear + space, // why is this one finish with * and above is +
+            "datenoyearrev": space + datenoyearrev + space,
+            "datenocolon": space + datenocolon + space,
+
+            // Special formats
+            "soap": soap,
+            "xmlrpc": xmlrpc,
+            "xmlrpcnocolon": xmlrpcnocolon,
+            "wddx": wddx,
+            "pgydotd": pgydotd,
+            "pgtextshort": pgtextshort,
+            "pgtextreverse": pgtextreverse,
+            "mssqltime": mssqltime,
+            "isoweekday": isoweekday,
+            "isoweek": isoweek,
+            "exif": exif,
+            "firstdayof": firstdayof,
+            "lastdayof": lastdayof,
+            "backof": backof,
+            "frontof": frontof,
+
+            // common log format
+            "clf": clf,
+
+            // timestamp:
+            "timestamp": timestamp,
+
+            // ? to fix some ambiguities (this is from the C source)
+            "dateshortwithtimeshort12" : dateshortwithtimeshort12,
+            "dateshortwithtimelong12"  : dateshortwithtimelong12,
+            "dateshortwithtimeshort" : dateshortwithtimeshort,
+            "dateshortwithtimelong"  : dateshortwithtimelong,
+            "dateshortwithtimelongtz": dateshortwithtimelongtz,
+
+
+            // relative regexps
+            "reltextnumber": reltextnumber,
+            "reltexttext": reltexttext,
+            "reltextunit": reltextunit, // no 'weeks' currently - need to check why it's separate
+
+            "relnumber": relnumber,
+            "relative": relative, //the week
+            "relativetext": relativetext,
+            "relativetextweek": relativetextweek,
+
+
+            "weekdayof": weekdayof
 
         };
 
-
-
-        /**
-         * @method finishRegExp
-         * @static
-         * User-overridable function that is called after the default regex strings
-         * have been constructed, to allow user modification if needed.
-         *
-         * @public
-         * @param {Object}  The strings constructed by strtotime.constructRegExp
-         * @return {Object}
-         */
-        strtotime.finishRegExp = function (oRegEx) {
-            return oRegEx;
-        }
-
-
-        /**
-         * @method constructTests
-         *
-         * Builds an array of tests to carry out, and what to do if they pass
-         * - ie if there's a match to the regexp.  Each item in the array
-         * is an object with keys `re`, `fn` and `key`:
-         *
-         *   @param item.re {RegExp} A RegExp object that will be used to test the passed string
-         *   @param item.fn {Function} A function that is called if the RegExp returns a result.
-         *       
-         *       The function receives the following arguments:
-         *       @param {Array} aRes  Array (-like) returned by RegExp.exec()
-         *       @param {Int} index Position that the RegExp appeared in the original string.
-         *           This is different to aRes.index because the RegExp.exec() is in general 
-         *           called on a substring of the original string passed.  It's important to know
-         *           where in the original string the matching regexp string appears as the order
-         *           of items is important: "2am yesterday" is different to "yesterday 2am".  
-         *           Mostly, index will just be passed through to mods.updateRel() or mods.updateAbs()
-         *           where it's used to make sure that the date/time calculations happen in the 
-         *           correct order
-         *       @param {Modificator} mods An instance of Modificator that stores the changes 
-         *           that need to be made to the timestamp.
-         *
-         *   @param item.key {String} A string that identifies the test, for logging/debugging 
-         *       purposes mainly
-         *
-         * @protected
-         * @static
-         * @param {Object}  Regex strings built by constructRegExp
-         * @return {Array}
-         */
-        strtotime.constructTests = function (oRegEx) {
-
-            // The tests to carry out, and what happens
-            return [
-
-                // Fixed strings:
-                {key: 'yesterday', re: new RegExp('yesterday'), fn: function (aRes, index, mods) {
-                    Y.log('strtotime: Matched yesterday');
-                    mods.updateRel({d: -1}, null, index);
-                    mods.updateAbs({h: 0, i: 0, s: 0}, true, index);
-                }},
-
-                {key: 'now', re: new RegExp('now'), fn: function (aRes, index, mods) {
-                    Y.log('strtotime: Matched now');
-                }},
-
-                {key: 'noon', re: new RegExp('noon'), fn: function (aRes, index, mods) {
-                    Y.log('strtotime: Matched noon');
-                    mods.updateAbs({
-                        h: 12, 
-                        i: 0, 
-                        s: 0, 
-                        fixTime: true, 
-                        specialFn: function (ms, oChange) {
-                            mods.incTime(); 
-                            return ms;
-                        }
-                    }, null, index);
-                }},
-
-                {key: 'midnight|today', re: new RegExp('midnight|today'), fn: function (aRes, index, mods) {
-                    Y.log('strtotime: Matched midnight|today');
-                    mods.updateAbs({h: 0, i: 0, s:0}, null, index);
-                }},
-
-                {key: 'tomorrow', re: new RegExp('tomorrow'), fn: function (aRes, index, mods) {
-                    Y.log('strtotime: Matched tomorrow');
-                    mods.updateRel({d: 1}, null, index);                        
-                    mods.updateAbs({h: 0, i: 0, s: 0}, null, index);                    
-                }},
+    };
 
 
 
-                // Unix timestamp
-                {key: 'timestamp', re: new RegExp(oRegEx.timestamp), fn: function (aRes, index, mods) {
-                    var tmp = new Date(parseInt(aRes[2], 10) * 1000);
-                    Y.log('strtotime: Matched timestamp');
-                    mods.updateAbs({
-                        y: tmp.getUTCFullYear(),
-                        m: tmp.getUTCMonth(),
-                        d: tmp.getUTCDate(),
-                        h: tmp.getUTCHours(),
-                        i: tmp.getUTCMinutes(),
-                        s: tmp.getUTCSeconds()
-                    }, true, index);
-                    mods.incTime();
-                }},
+    /**
+     * @method finishRegExp
+     * @static
+     * User-overridable function that is called after the default regex strings
+     * have been constructed, to allow user modification if needed.
+     *
+     * @public
+     * @param {Object}  The strings constructed by strtotime.constructRegExp
+     * @return {Object}
+     */
+    strtotime.finishRegExp = function (oRegEx) {
+        return oRegEx;
+    };
+
+
+    /**
+     * @method constructTests
+     *
+     * Builds an array of tests to carry out, and what to do if they pass
+     * - ie if there's a match to the regexp.  Each item in the array
+     * is an object with keys `re`, `fn` and `key`:
+     *
+     *   @param item.re {RegExp} A RegExp object that will be used to test the passed string
+     *   @param item.fn {Function} A function that is called if the RegExp returns a result.
+     *
+     *       The function receives the following arguments:
+     *       @param {Array} aRes  Array (-like) returned by RegExp.exec()
+     *       @param {Int} index Position that the RegExp appeared in the original string.
+     *           This is different to aRes.index because the RegExp.exec() is in general
+     *           called on a substring of the original string passed.  It's important to know
+     *           where in the original string the matching regexp string appears as the order
+     *           of items is important: "2am yesterday" is different to "yesterday 2am".
+     *           Mostly, index will just be passed through to mods.updateRel() or mods.updateAbs()
+     *           where it's used to make sure that the date/time calculations happen in the
+     *           correct order
+     *       @param {Modificator} mods An instance of Modificator that stores the changes
+     *           that need to be made to the timestamp.
+     *
+     *   @param item.key {String} A string that identifies the test, for logging/debugging
+     *       purposes mainly
+     *
+     * @protected
+     * @static
+     * @param {Object}  Regex strings built by constructRegExp
+     * @return {Array}
+     */
+    strtotime.constructTests = function (oRegEx) {
+
+        // The tests to carry out, and what happens
+        return [
+
+            // Fixed strings:
+            {key: 'yesterday', re: new RegExp('yesterday'), fn: function (aRes, index, mods) {
+                Y.log('strtotime: Matched yesterday');
+                mods.updateRel({d: -1}, null, index);
+                mods.updateAbs({h: 0, i: 0, s: 0}, true, index);
+            }},
+
+            {key: 'now', re: new RegExp('now'), fn: function (aRes, index, mods) {
+                Y.log('strtotime: Matched now');
+            }},
+
+            {key: 'noon', re: new RegExp('noon'), fn: function (aRes, index, mods) {
+                Y.log('strtotime: Matched noon');
+                mods.updateAbs({
+                    h: 12,
+                    i: 0,
+                    s: 0,
+                    fixTime: true,
+                    specialFn: function (ms, oChange) {
+                        mods.incTime();
+                        return ms;
+                    }
+                }, null, index);
+            }},
+
+            {key: 'midnight|today', re: new RegExp('midnight|today'), fn: function (aRes, index, mods) {
+                Y.log('strtotime: Matched midnight|today');
+                mods.updateAbs({h: 0, i: 0, s: 0}, null, index);
+            }},
+
+            {key: 'tomorrow', re: new RegExp('tomorrow'), fn: function (aRes, index, mods) {
+                Y.log('strtotime: Matched tomorrow');
+                mods.updateRel({d: 1}, null, index);
+                mods.updateAbs({h: 0, i: 0, s: 0}, null, index);
+            }},
 
 
 
-                // Simple relative things
-                {key: 'firstdayof', re: new RegExp(oRegEx.firstdayof), fn: function (aRes, index, mods) {
-                    Y.log('strtotime: Matched firstdayof');
-                    mods.absoluteFixedHash.firstDay = 1;
-                }},
-                {key: 'lastdayof', re: new RegExp(oRegEx.lastdayof), fn: function (aRes, index, mods) {
-                    Y.log('strtotime: Matched lastdayof');
-                    mods.absoluteFixedHash.lastDay = 1;
-                }},
-
-                {key: 'frontof', re: new RegExp(oRegEx.frontof), fn: function (aRes, index, mods) {
-                    
-                    Y.log('strtotime: Matched frontof');
-                    
-                    // handle the meridian
-                    aRes[1] = _handleMeridian(aRes[1], aRes[3]);
-
-                    mods.updateAbs({
-                        h: aRes[1],
-                        i: 0,
-                        s: 0
-                    }, null, index);
-                    mods.updateRel({
-                        i: -15
-                    }, null, index);
-
-                    mods.incTime();
-                }},
-                {key: 'backof', re: new RegExp(oRegEx.backof), fn: function (aRes, index, mods) {
-                    
-                    Y.log('strtotime: Matched backof');
-                    aRes[1] = _handleMeridian(aRes[1], aRes[3]);
-
-                    mods.updateAbs({
-                        h: aRes[1],
-                        i: 0,
-                        s: 0
-                    }, null, index);                        
-                    mods.updateRel({
-                        i: 15
-                    }, null, index);
-
-                    mods.incTime();                        
-                }},
+            // Unix timestamp
+            {key: 'timestamp', re: new RegExp(oRegEx.timestamp), fn: function (aRes, index, mods) {
+                var tmp = new Date(parseInt(aRes[2], 10) * 1000);
+                Y.log('strtotime: Matched timestamp');
+                mods.updateAbs({
+                    y: tmp.getUTCFullYear(),
+                    m: tmp.getUTCMonth(),
+                    d: tmp.getUTCDate(),
+                    h: tmp.getUTCHours(),
+                    i: tmp.getUTCMinutes(),
+                    s: tmp.getUTCSeconds()
+                }, true, index);
+                mods.incTime();
+            }},
 
 
-                // complex relative things - weekday of
-                {key: 'weekdayof', re: new RegExp(oRegEx.weekdayof), fn: function (aRes, index, mods) {
-                    
-                    var modifier = aRes[1], // first, second or next, last etc
-                        ind = strtotime.RELTEXTNUMBER.indexOf(modifier),
-                        dow = aRes[4],
-                        dowIndex = strtotime.DAYFULL.indexOf(dow) !== -1 ?
+
+            // Simple relative things
+            {key: 'firstdayof', re: new RegExp(oRegEx.firstdayof), fn: function (aRes, index, mods) {
+                Y.log('strtotime: Matched firstdayof');
+                mods.absoluteFixedHash.firstDay = 1;
+            }},
+            {key: 'lastdayof', re: new RegExp(oRegEx.lastdayof), fn: function (aRes, index, mods) {
+                Y.log('strtotime: Matched lastdayof');
+                mods.absoluteFixedHash.lastDay = 1;
+            }},
+
+            {key: 'frontof', re: new RegExp(oRegEx.frontof), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: Matched frontof');
+
+                // handle the meridian
+                aRes[1] = _handleMeridian(aRes[1], aRes[3]);
+
+                mods.updateAbs({
+                    h: aRes[1],
+                    i: 0,
+                    s: 0
+                }, null, index);
+                mods.updateRel({
+                    i: -15
+                }, null, index);
+
+                mods.incTime();
+            }},
+            {key: 'backof', re: new RegExp(oRegEx.backof), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: Matched backof');
+                aRes[1] = _handleMeridian(aRes[1], aRes[3]);
+
+                mods.updateAbs({
+                    h: aRes[1],
+                    i: 0,
+                    s: 0
+                }, null, index);
+                mods.updateRel({
+                    i: 15
+                }, null, index);
+
+                mods.incTime();
+            }},
+
+
+            // complex relative things - weekday of
+            {key: 'weekdayof', re: new RegExp(oRegEx.weekdayof), fn: function (aRes, index, mods) {
+
+                var modifier = aRes[1], // first, second or next, last etc
+                    ind = strtotime.RELTEXTNUMBER.indexOf(modifier),
+                    dow = aRes[4],
+                    dowIndex = strtotime.DAYFULL.indexOf(dow) !== -1 ?
                             strtotime.DAYFULL.indexOf(dow) :
                             strtotime.DAYABBR.indexOf(dow);
 
-                    Y.log('strtotime: Matched weekdayof');
+                Y.log('strtotime: Matched weekdayof');
 
-                    if (ind !== -1) {
-                        // something like 'third Wednesday in June'
-                        mods.updateRel({
-                            weekdayOf: {
-                                dayIndex: dowIndex,
-                                weekIndex: ind
-                            }
-                        }, null, index);
-                    } else {
-                        // something like 'last Wednesday in June'
-                        mods.updateRel({
-                            weekdayOf: {
-                                dayIndex: dowIndex,
-                                weekIndex: aRes[1]
-                            }
-                        }, null, index);                        
-                    }
-                    mods.updateAbs({
-                        h: 0,
-                        i: 0,
-                        s: 0,
-                        d: 1,
-                        fixDate: {
-                            d: true
+                if (ind !== -1) {
+                    // something like 'third Wednesday in June'
+                    mods.updateRel({
+                        weekdayOf: {
+                            dayIndex: dowIndex,
+                            weekIndex: ind
                         }
-                    }, null, index);                    
-                }},
-
-
-
-                // some times
-
-                {key: 'mssqltime', re: new RegExp(oRegEx.mssqltime), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: Matched mssqltime');
-                    mods.updateAbs({
-                        h: _handleMeridian(aRes[1], aRes[5]),
-                        i: aRes[2],
-                        s: aRes[3] + '.' + aRes[4]
                     }, null, index);
-                    mods.incTime();
-                }},
-
-                {key: 'times12', re: new RegExp([oRegEx.timelong12, oRegEx.timeshort12, oRegEx.timetiny12].join('|')), fn: function (aRes, index, mods) {
-
-                    var hr,
-                        mn,
-                        sc,
-                        mr,
-                        newAbs = {};
-                    Y.log('strtotime: Matched timelong12|timeshort12|timetiny12');
-                    // get the times:
-                    hr = aRes[1] || aRes[6] || aRes[10];
-                    mn = aRes[2] || aRes[7];
-                    sc = aRes[3];
-                    mr = aRes[5] || aRes[9] || aRes[12];
-
-                    if (mr !== undefined) {
-                        hr = _handleMeridian(hr, mr);
-                    }
-
-                    newAbs.h = hr;
-                    if (mn !== undefined) {
-                        newAbs.i = mn;
-                    }
-                    if (sc !== undefined) {
-                        newAbs.s = sc;
-                    }
-
-                    mods.updateAbs(newAbs, null, index);
-                    mods.incTime();
-                }},
-
-                // This is in the wrong place, according to the C source.  It should be further
-                // down, with the other dates.  However, if if comes after 'times24' 
-                // then time24 will match the time part of the exif format
-                // and it'll break.
-                {key: 'xmlrpcAndFriends', 
-                    re: new RegExp([oRegEx.xmlrpc, oRegEx.xmlrpcnocolon, oRegEx.soap, oRegEx.wddx, oRegEx.exif].join("|")), 
-                    fn: function (aRes, index, mods) {
-
-                        Y.log('strtotime: Matched xmlrpc|xmlrpcnocolon|soap|wddx|exif');
-
-                        mods.updateAbs({
-                            y: aRes[1] || aRes[7] || aRes[13] || aRes[23] || aRes[32],
-                            m: parseInt(aRes[2] || aRes[8] || aRes[14] || aRes[24] || aRes[33], 10) - 1,
-                            d: aRes[3] || aRes[9] || aRes[15] || aRes[25] || aRes[34],
-                            h: aRes[4] || aRes[10] || aRes[16] || aRes[29] || aRes[35],
-                            i: aRes[5] || aRes[11] || aRes[17] || aRes[30] || aRes[36],
-                            s: aRes[6] || aRes[12] || aRes[18] || aRes[31] || aRes[37]
-                        }, true, index);
-
-                        if (aRes[20] !== undefined) {
-                            mods.timezoneString = aRes[20];
+                } else {
+                    // something like 'last Wednesday in June'
+                    mods.updateRel({
+                        weekdayOf: {
+                            dayIndex: dowIndex,
+                            weekIndex: aRes[1]
                         }
-
+                    }, null, index);
+                }
+                mods.updateAbs({
+                    h: 0,
+                    i: 0,
+                    s: 0,
+                    d: 1,
+                    fixDate: {
+                        d: true
                     }
+                }, null, index);
+            }},
+
+
+
+            // some times
+
+            {key: 'mssqltime', re: new RegExp(oRegEx.mssqltime), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: Matched mssqltime');
+                mods.updateAbs({
+                    h: _handleMeridian(aRes[1], aRes[5]),
+                    i: aRes[2],
+                    s: aRes[3] + '.' + aRes[4]
+                }, null, index);
+                mods.incTime();
+            }},
+
+            {key: 'times12', re: new RegExp([oRegEx.timelong12, oRegEx.timeshort12, oRegEx.timetiny12].join('|')), fn: function (aRes, index, mods) {
+
+                var hr,
+                    mn,
+                    sc,
+                    mr,
+                    newAbs = {};
+                Y.log('strtotime: Matched timelong12|timeshort12|timetiny12');
+                // get the times:
+                hr = aRes[1] || aRes[6] || aRes[10];
+                mn = aRes[2] || aRes[7];
+                sc = aRes[3];
+                mr = aRes[5] || aRes[9] || aRes[12];
+
+                if (mr !== undefined) {
+                    hr = _handleMeridian(hr, mr);
+                }
+
+                newAbs.h = hr;
+                if (mn !== undefined) {
+                    newAbs.i = mn;
+                }
+                if (sc !== undefined) {
+                    newAbs.s = sc;
+                }
+
+                mods.updateAbs(newAbs, null, index);
+                mods.incTime();
+            }},
+
+            // This is in the wrong place, according to the C source.  It should be further
+            // down, with the other dates.  However, if if comes after 'times24'
+            // then time24 will match the time part of the exif format
+            // and it'll break.
+            {key: 'xmlrpcAndFriends',
+                re: new RegExp([oRegEx.xmlrpc, oRegEx.xmlrpcnocolon, oRegEx.soap, oRegEx.wddx, oRegEx.exif].join("|")),
+                fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: Matched xmlrpc|xmlrpcnocolon|soap|wddx|exif');
+
+                    mods.updateAbs({
+                        y: aRes[1] || aRes[7] || aRes[13] || aRes[23] || aRes[32],
+                        m: parseInt(aRes[2] || aRes[8] || aRes[14] || aRes[24] || aRes[33], 10) - 1,
+                        d: aRes[3] || aRes[9] || aRes[15] || aRes[25] || aRes[34],
+                        h: aRes[4] || aRes[10] || aRes[16] || aRes[29] || aRes[35],
+                        i: aRes[5] || aRes[11] || aRes[17] || aRes[30] || aRes[36],
+                        s: aRes[6] || aRes[12] || aRes[18] || aRes[31] || aRes[37]
+                    }, true, index);
+
+                    if (aRes[20] !== undefined) {
+                        mods.timezoneString = aRes[20];
+                    }
+
+                }
                 },
 
 
 
-                {key: 'times24', re: new RegExp([oRegEx.iso8601long, oRegEx.timelong24, oRegEx.timeshort24].join('|')), fn: function (aRes, index, mods) {
-                    var hr,
-                        mn,
-                        sc,
-                        fr,
-                        newAbs = {};
+            {key: 'times24', re: new RegExp([oRegEx.iso8601long, oRegEx.timelong24, oRegEx.timeshort24].join('|')), fn: function (aRes, index, mods) {
+                var hr,
+                    mn,
+                    sc,
+                    fr,
+                    newAbs = {};
 
-                    Y.log('strtotime: Matched iso8601long|timelong24|timeshort24');
+                Y.log('strtotime: Matched iso8601long|timelong24|timeshort24');
 
-                    // get the times:
-                    hr = aRes[2] || aRes[7] || aRes[11];
-                    mn = aRes[3] || aRes[8] || aRes[12];
-                    sc = aRes[4] || aRes[9];
-                    fr = aRes[5];
+                // get the times:
+                hr = aRes[2] || aRes[7] || aRes[11];
+                mn = aRes[3] || aRes[8] || aRes[12];
+                sc = aRes[4] || aRes[9];
+                fr = aRes[5];
 
-                    newAbs.h = hr;
-                    if (mn !== undefined) {
-                        newAbs.i = mn;
+                newAbs.h = hr;
+                if (mn !== undefined) {
+                    newAbs.i = mn;
+                }
+                if (sc !== undefined) {
+                    newAbs.s = sc;
+                    if (fr !== undefined) {
+                        newAbs.s += '.' + parseInt(fr, 10);
                     }
-                    if (sc !== undefined) {
-                        newAbs.s = sc;
-                        if (fr !== undefined) {
-                            newAbs.s += '.' + parseInt(fr);
-                        }
-                    } 
+                }
 
-                    mods.updateAbs(newAbs, null, index);
-                    mods.incTime();
-                }},
+                mods.updateAbs(newAbs, null, index);
+                mods.incTime();
+            }},
 
 
 
-                {key: 'iso8601nocolon', re: new RegExp(oRegEx.iso8601nocolon), fn: function (aRes, index, mods) {
+            {key: 'iso8601nocolon', re: new RegExp(oRegEx.iso8601nocolon), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: Matched iso8601nocolon');
+                Y.log('strtotime: Matched iso8601nocolon');
+
+                mods.updateAbs({
+                    h: aRes[2],
+                    i: aRes[3],
+                    s: aRes[4]
+                }, null, index);
+            }},
+
+
+
+            // dates
+
+
+            {key: 'american', re: new RegExp(oRegEx.american + '|' + oRegEx.americanshort), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: Matched american');
+
+                var upd = {
+                    m: parseInt(aRes[1] || aRes[7], 10) - 1,
+                    d: aRes[2] || aRes[8],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                };
+                if (aRes[6] !== undefined) {
+                    upd.y = _handleShortYear(aRes[6]);
+                }
+                mods.updateAbs(upd, true, index);
+            }},
+
+            {key: 'iso8601dates', re: new RegExp([oRegEx.iso8601date4, oRegEx.iso8601dateslash, oRegEx.dateslash].join('|')),
+                fn: function (aRes, index, mods) {
+
+                    Y.log('strtotime: Matched iso8601dates');
 
                     mods.updateAbs({
-                        h: aRes[2],
-                        i: aRes[3],
-                        s: aRes[4]
-                    }, null, index);
-                }},
+                        y: aRes[1] || aRes[4] || aRes[7],
+                        m: parseInt(aRes[2] || aRes[5] || aRes[8], 10) - 1,
+                        d: aRes[3] || aRes[6] || aRes[9],
+                        h: 0,
+                        i: 0,
+                        s: 0
+                    }, true, index);
+
+                }
+                },
+
+            {key: 'iso8601date2', re: new RegExp(oRegEx.iso8601date2), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: matched iso8601date2');
+
+                var y = _handleShortYear(aRes[1]);
+
+                mods.updateAbs({
+                    y: y,
+                    m: parseInt(aRes[2], 10) - 1,
+                    d: aRes[3],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
+
+            }},
+
+            {key: 'gnudateshorter', re: new RegExp(oRegEx.gnudateshorter), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: matched gnudateshorter');
+
+                var y = _handleShortYear(aRes[1]);
+
+                mods.updateAbs({
+                    y: y,
+                    m: parseInt(aRes[2], 10) - 1,
+                    d: 1,
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
+
+            }},
+
+            {key: 'gnudateshort', re: new RegExp(oRegEx.gnudateshort), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: matched gnudateshort');
+
+                var y = _handleShortYear(aRes[1]);
+
+                mods.updateAbs({
+                    y: y,
+                    m: parseInt(aRes[2], 10) - 1,
+                    d: aRes[3],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
+
+            }},
 
 
 
-                // dates
+            {key: 'datefull', re: new RegExp(oRegEx.datefull), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: matched datefull');
+
+                var m = _handleMonthText(aRes[6]);
+
+                mods.updateAbs({
+                    y: aRes[11],
+                    m: m,
+                    d: aRes[1],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
+
+            }},
+
+            {key: 'pointeddate', re: new RegExp(oRegEx.pointeddate4 + '|' + oRegEx.pointeddate2), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: matched pointeddate');
+
+                var y = _handleShortYear(aRes[6] || aRes[12]);
+
+                if (y === false) {
+                    return false;
+                }
+
+                mods.updateAbs({
+                    y: y,
+                    m: parseInt(aRes[5] || aRes[11], 10) - 1,
+                    d: aRes[2] || aRes[3] || aRes[7] || aRes[9],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
+
+            }},
+
+            {key: 'datenoday', re: new RegExp(oRegEx.datenoday), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: matched datenoday');
+
+                var y = _handleShortYear(aRes[6]),
+                    m = _handleMonthText(aRes[1]);
+
+                if (y === false) {
+                    return false;
+                }
+
+                mods.updateAbs({
+                    y: y,
+                    m: m,
+                    d: 1,
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
+
+            }},
+
+            {key: 'datenodayrev', re: new RegExp(oRegEx.datenodayrev), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: matched datenodayrev');
+
+                var y = _handleShortYear(aRes[1]),
+                    m = _handleMonthText(aRes[3]);
+
+                if (y === false) {
+                    return false;
+                }
+
+                mods.updateAbs({
+                    y: y,
+                    m: m,
+                    d: 1,
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
+
+            }},
 
 
-                {key: 'american', re: new RegExp(oRegEx.american + '|' + oRegEx.americanshort), fn: function (aRes, index, mods) {
-                    
-                    Y.log('strtotime: Matched american');
+            {key: 'datetextual', re: new RegExp(oRegEx.datetextual + '|' + oRegEx.datenoyear), fn: function (aRes, index, mods) {
 
-                    var upd = {
-                        m: parseInt(aRes[1] || aRes[7], 10) - 1,
-                        d: aRes[2] || aRes[8],
+                Y.log('strtotime: matched datetextual');
+
+                var y = _handleShortYear(aRes[10]),
+                    upd = {
+                        m: _handleMonthText(aRes[1] || aRes[11]),
+                        d: aRes[6] || aRes[16],
                         h: 0,
                         i: 0,
                         s: 0
                     };
-                    if (aRes[6] !== undefined) {
-                        upd.y = _handleShortYear(aRes[6]);
-                    }
-                    mods.updateAbs(upd, true, index);
-                }},
 
-                {key: 'iso8601dates', re: new RegExp([oRegEx.iso8601date4, oRegEx.iso8601dateslash, oRegEx.dateslash].join('|')),
-                    fn: function (aRes, index, mods) {
+                if (y === false) {
+                    return false;
+                } else if (!isNaN(y)) {
+                    upd.y = y;
+                } /*else {
+                    // it seems that if there's no year and we have 'static' modifiers (e.g. noon)
+                    // then "Jan 1st noon" should return false,
+                    // but "noon Jan 1st" shouldn't.
+                    // Not sure if this is intended by php or a bug.
+                    // At the moment this javascript version returns the same value
+                    // (1st January {currentyear}, 12:00:00)
+                    //
+                    // This does cause some tests to fail.
+                }*/
 
-                        Y.log('strtotime: Matched iso8601dates');
+                mods.updateAbs(upd, true, index);
 
-                        mods.updateAbs({
-                            y: aRes[1] || aRes[4] || aRes[7],
-                            m: parseInt(aRes[2] || aRes[5] || aRes[8], 10) - 1,
-                            d: aRes[3] || aRes[6] || aRes[9],
-                            h: 0,
-                            i: 0,
-                            s: 0
-                        }, true, index);
+            }},
 
-                    }
-                },
 
-                {key: 'iso8601date2', re: new RegExp(oRegEx.iso8601date2), fn: function (aRes, index, mods) {
+            {key: 'datenoyearrev', re: new RegExp(oRegEx.datenoyearrev), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: matched iso8601date2');
+                Y.log('strtotime: matched datenoyearrev');
 
-                    var y = _handleShortYear(aRes[1]);
+                mods.updateAbs({
+                    m: _handleMonthText(aRes[6]),
+                    d: aRes[1],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
 
-                    mods.updateAbs({
-                        y: y,
-                        m: parseInt(aRes[2], 10) - 1,
-                        d: aRes[3],
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
+            }},
 
-                }},
+            {key: 'datenocolon', re: new RegExp(oRegEx.datenocolon), fn: function (aRes, index, mods) {
 
-                {key: 'gnudateshorter', re: new RegExp(oRegEx.gnudateshorter), fn: function (aRes, index, mods) {
+                Y.log('strtotime: matched datenocolon');
 
-                    Y.log('strtotime: matched gnudateshorter');
+                mods.updateAbs({
+                    y: aRes[1],
+                    m: parseInt(aRes[2], 10) - 1,
+                    d: aRes[3],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
 
-                    var y = _handleShortYear(aRes[1]);
+            }},
 
-                    mods.updateAbs({
-                        y: y,
-                        m: parseInt(aRes[2], 10) - 1,
-                        d: 1,
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
+            // xmlrpcAndFields was here in the original source, but now it's further up
+            // (see note above for reason)
 
-                }},
 
-                {key: 'gnudateshort', re: new RegExp(oRegEx.gnudateshort), fn: function (aRes, index, mods) {
+            {key: 'pgydotd', re: new RegExp(oRegEx.pgydotd), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: matched gnudateshort');
+                Y.log('strtotime: matched pgydotd');
 
-                    var y = _handleShortYear(aRes[1]);
+                mods.updateAbs({
+                    y: aRes[1],
+                    m: 0,
+                    d: parseInt(aRes[2], 10),
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
 
-                    mods.updateAbs({
-                        y: y,
-                        m: parseInt(aRes[2], 10) - 1,
-                        d: aRes[3],
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
 
-                }},
+            }},
 
 
-     
-                {key: 'datefull', re: new RegExp(oRegEx.datefull), fn: function (aRes, index, mods) {
+            {key: 'isoweekday', re: new RegExp(oRegEx.isoweekday), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: matched datefull');
+                Y.log('strtotime: matched isoweekday');
 
-                    var m = _handleMonthText(aRes[6]);
+                var y = parseInt(aRes[1], 10),
+                    wk = parseInt(aRes[2], 10),
+                    dy = parseInt(aRes[3], 10),
+                    days = _findDayNrFromWeekNr(y, wk, dy);
 
-                    mods.updateAbs({
-                        y: aRes[11],
-                        m: m,
-                        d: aRes[1],
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
+                mods.updateAbs({
+                    y: y,
+                    m: 0,
+                    d: days,
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
 
-                }},
-     
-                {key: 'pointeddate', re: new RegExp(oRegEx.pointeddate4 + '|' + oRegEx.pointeddate2), fn: function (aRes, index, mods) {
+            }},
 
-                    Y.log('strtotime: matched pointeddate');
 
-                    var y = _handleShortYear(aRes[6] || aRes[12]);
+            {key: 'pgtextshort', re: new RegExp(oRegEx.pgtextshort), fn: function (aRes, index, mods) {
 
-                    if (y === false) {
-                        return false;
-                    }
-
-                    mods.updateAbs({
-                        y: y,
-                        m: parseInt(aRes[5] || aRes[11], 10) - 1,
-                        d: aRes[2] || aRes[3] || aRes[7] || aRes[9],
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
+                Y.log('strtotime: matched pgtextshort');
 
-                }},
+                mods.updateAbs({
+                    y: aRes[3],
+                    m: _handleMonthText(aRes[1]),
+                    d: aRes[2],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
 
-                {key: 'datenoday', re: new RegExp(oRegEx.datenoday), fn: function (aRes, index, mods) {
+            }},
 
-                    Y.log('strtotime: matched datenoday');
-
-                    var y = _handleShortYear(aRes[6]),
-                        m = _handleMonthText(aRes[1]);
+            {key: 'pgtextreverse', re: new RegExp(oRegEx.pgtextreverse), fn: function (aRes, index, mods) {
 
-                    if (y === false) {
-                        return false;
-                    }
+                Y.log('strtotime: matched pgtextreverse');
 
-                    mods.updateAbs({
-                        y: y,
-                        m: m,
-                        d: 1,
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
+                mods.updateAbs({
+                    y: aRes[1],
+                    m: _handleMonthText(aRes[2]),
+                    d: aRes[3],
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
 
-                }},
+            }},
 
-                {key: 'datenodayrev', re: new RegExp(oRegEx.datenodayrev), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: matched datenodayrev');
+            // For the same reasons as above, this needs to come before times24
+            // instead of further down in the dates
+            {key: 'clf', re: new RegExp(oRegEx.clf), fn: function (aRes, index, mods) {
 
-                    var y = _handleShortYear(aRes[1]),
-                        m = _handleMonthText(aRes[3]);
+                Y.log('strtotime: matched clf');
 
-                    if (y === false) {
-                        return false;
-                    }
+                mods.updateAbs({
+                    y: aRes[6],
+                    m: _handleMonthText(aRes[5]),
+                    d: aRes[1],
+                    h: aRes[7],
+                    i: aRes[8],
+                    s: aRes[9]
+                }, true, index);
 
-                    mods.updateAbs({
-                        y: y,
-                        m: m,
-                        d: 1,
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
+                mods.timezoneString = aRes[10];
 
-                }},
+            }},
 
 
-                {key: 'datetextual', re: new RegExp(oRegEx.datetextual + '|' + oRegEx.datenoyear), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: matched datetextual');
+            {key: 'ago', re: new RegExp(oRegEx.ago), fn: function (aRes, index, mods) {
 
-                    var y = _handleShortYear(aRes[10]),
-                        upd = {
-                            m: _handleMonthText(aRes[1] || aRes[11]),
-                            d: aRes[6] || aRes[16],
-                            h: 0,
-                            i: 0,
-                            s: 0
-                        };
+                Y.log('strtotime: matched ago');
 
-                    if (y === false) {
-                        return false;
-                    } else if (!isNaN(y)) {
-                        upd.y = y;
-                    } else {
-                        // it seems that if there's no year and we have 'static' modifiers (e.g. noon)
-                        // then "Jan 1st noon" should return false,
-                        // but "noon Jan 1st" shouldn't.
-                        // Not sure if this is intended by php or a bug.
-                        // At the moment this javascript version returns the same value
-                        // (1st January {currentyear}, 12:00:00)
-                        // 
-                        // This does cause some tests to fail.
-                    }
+                mods.relativeDirection = -1;
 
-                    mods.updateAbs(upd, true, index);
+            }},
 
-                }},
 
 
-                {key: 'datenoyearrev', re: new RegExp(oRegEx.datenoyearrev), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: matched datenoyearrev');
 
-                    mods.updateAbs({
-                        m: _handleMonthText(aRes[6]),
-                        d: aRes[1],
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
 
-                }},
+            {key: 'daytext', re: new RegExp(oRegEx.daytext), fn: function (aRes, index, mods) {
 
-                {key: 'datenocolon', re: new RegExp(oRegEx.datenocolon), fn: function (aRes, index, mods) {
+                Y.log('strtotime: Matched daytext');
 
-                    Y.log('strtotime: matched datenocolon');
-
-                    mods.updateAbs({
-                        y: aRes[1],
-                        m: parseInt(aRes[2], 10) - 1,
-                        d: aRes[3],
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
-
-                }},
-
-                // xmlrpcAndFields was here in the original source, but now it's further up 
-                // (see note above for reason)
-
-
-                {key: 'pgydotd', re: new RegExp(oRegEx.pgydotd), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: matched pgydotd');
-
-                    mods.updateAbs({
-                        y: aRes[1],
-                        m: 0,
-                        d: parseInt(aRes[2], 10),
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
-
-                    
-                }},
-
-
-                {key: 'isoweekday', re: new RegExp(oRegEx.isoweekday), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: matched isoweekday');
-
-                    var y = parseInt(aRes[1], 10),
-                        wk = parseInt(aRes[2], 10),
-                        dy = parseInt(aRes[3], 10),
-                        days = days = _findDayNrFromWeekNr(y, wk, dy);
-
-                    mods.updateAbs({
-                        y: y,
-                        m: 0,
-                        d: days,
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
-
-                }},
-
-
-                {key: 'pgtextshort', re: new RegExp(oRegEx.pgtextshort), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: matched pgtextshort');
-
-                    mods.updateAbs({
-                        y: aRes[3],
-                        m: _handleMonthText(aRes[1]),
-                        d: aRes[2],
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
-
-                }},    
-
-                {key: 'pgtextreverse', re: new RegExp(oRegEx.pgtextreverse), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: matched pgtextreverse');
-
-                    mods.updateAbs({
-                        y: aRes[1],
-                        m: _handleMonthText(aRes[2]),
-                        d: aRes[3],
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
-
-                }},
-
-
-                // For the same reasons as above, this needs to come before times24
-                // instead of further down in the dates
-                {key: 'clf', re: new RegExp(oRegEx.clf), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: matched clf');
-
-                    mods.updateAbs({
-                        y: aRes[6],
-                        m: _handleMonthText(aRes[5]),
-                        d: aRes[1],
-                        h: aRes[7],
-                        i: aRes[8],
-                        s: aRes[9]
-                    }, true, index);
-
-                    mods.timezoneString = aRes[10];
-
-                }},
-
-
-
-                {key: 'ago', re: new RegExp(oRegEx.ago), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: matched ago');
-
-                    mods.relativeDirection = -1;
-
-                }},
-
-
-
-
-
-
-                {key: 'daytext', re: new RegExp(oRegEx.daytext), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: Matched daytext');
-
-                    var dow = aRes[0],
-                        dowIndex = strtotime.DAYFULL.indexOf(dow) !== -1 ?
+                var dow = aRes[0],
+                    dowIndex = strtotime.DAYFULL.indexOf(dow) !== -1 ?
                             strtotime.DAYFULL.indexOf(dow) :
                             strtotime.DAYABBR.indexOf(dow);
 
-                    mods.updateAbs({
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
+                mods.updateAbs({
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
 
-                    mods.updateRel({
-                        weekdayOf: {
-                            dayIndex: dowIndex
-                        }
-                    });
-
-
-                }},
-
-
-                {key: 'relativetextweek', re: new RegExp(oRegEx.relativetextweek), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: Matched relativetextweek');
-
-                    // (first|last|next|previous) week
-
-                    mods.updateRel({
-                        week: aRes[1]
-                    }, null, index);
-
-                }},
-
-                {key: 'relativetext', re: new RegExp(oRegEx.relativetext), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: Matched relativetext');
-
-                    // ((first|second|third... )|( next|first|last...))  day|month|year
-
-                    var modifier = aRes[1],
-                        period = aRes[4],
-                        enPeriod = _lookupRelTextUnit(period),
-                        upd = {relative:{}};
-
-                    upd.relative[enPeriod] = modifier;
-
-                    mods.updateRel(upd, null, index);
-
-
-                }},
-
-
-                {key: 'monthfull|monthabbr', re: new RegExp(oRegEx.monthfull + '|' + oRegEx.monthabbr), fn: function (aRes, index, mods) {
-
-                    Y.log('strtotime: Matched monthfull|monthabbr');
-
-                    var m = _handleMonthText(aRes[0]);
-
-                    mods.updateAbs({
-                        m: m,
-                        h: 0,
-                        i: 0,
-                        s: 0
-                    }, true, index);
-
-                }},
-
-
-                {key: 'dateshortwithtime12', re: new RegExp(oRegEx.dateshortwithtimeshort12 + '|' + oRegEx.dateshortwithtimelong12),
-                    fn: function (aRes, index, mods) {
-
-                        // I can't see how this is ever triggered - it seems always to get 
-                        // picked up by the component regexes.  So I can't test any implementation!
-                        //
-                        // The C source for these mentions 'fix ambiguities'... 
-                        // 
-                        Y.log('strtotime: Matched dateshortwithtime(short|long)12 but not implemented', 'warn');
-
-                        // Until anyone can get to this point and report it,
-                        // there's no implementation
-                        return false;
-                    
+                mods.updateRel({
+                    weekdayOf: {
+                        dayIndex: dowIndex
                     }
+                });
+
+
+            }},
+
+
+            {key: 'relativetextweek', re: new RegExp(oRegEx.relativetextweek), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: Matched relativetextweek');
+
+                // (first|last|next|previous) week
+
+                mods.updateRel({
+                    week: aRes[1]
+                }, null, index);
+
+            }},
+
+            {key: 'relativetext', re: new RegExp(oRegEx.relativetext), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: Matched relativetext');
+
+                // ((first|second|third... )|( next|first|last...))  day|month|year
+
+                var modifier = aRes[1],
+                    period = aRes[4],
+                    enPeriod = _lookupRelTextUnit(period),
+                    upd = {relative: {}};
+
+                upd.relative[enPeriod] = modifier;
+
+                mods.updateRel(upd, null, index);
+
+
+            }},
+
+
+            {key: 'monthfull|monthabbr', re: new RegExp(oRegEx.monthfull + '|' + oRegEx.monthabbr), fn: function (aRes, index, mods) {
+
+                Y.log('strtotime: Matched monthfull|monthabbr');
+
+                var m = _handleMonthText(aRes[0]);
+
+                mods.updateAbs({
+                    m: m,
+                    h: 0,
+                    i: 0,
+                    s: 0
+                }, true, index);
+
+            }},
+
+
+            {key: 'dateshortwithtime12', re: new RegExp(oRegEx.dateshortwithtimeshort12 + '|' + oRegEx.dateshortwithtimelong12),
+                fn: function (aRes, index, mods) {
+
+                    // I can't see how this is ever triggered - it seems always to get
+                    // picked up by the component regexes.  So I can't test any implementation!
+                    //
+                    // The C source for these mentions 'fix ambiguities'...
+                    //
+                    Y.log('strtotime: Matched dateshortwithtime(short|long)12 but not implemented', 'warn');
+
+                    // Until anyone can get to this point and report it,
+                    // there's no implementation
+                    return false;
+
+                }
                 },
 
-                {key: 'dateshortwithtimelong', 
-                    re: new RegExp(oRegEx.dateshortwithtimeshort + '|' + oRegEx.dateshortwithtimelong+ '|' + oRegEx.dateshortwithtimelongtz),
-                    fn: function (aRes, index, mods) {
+            {key: 'dateshortwithtimelong',
+                re: new RegExp(oRegEx.dateshortwithtimeshort + '|' + oRegEx.dateshortwithtimelong + '|' + oRegEx.dateshortwithtimelongtz),
+                fn: function (aRes, index, mods) {
 
-                        // I can't see how this is ever triggered - it seems always to get 
-                        // picked up by the component regexes.  So I can't test any implementation!
-                        //
-                        // The C source for these mentions 'fix ambiguities'... 
-                        // 
-                        Y.log('strtotime: Matched dateshortwithtimelong but not implemented', 'warn');
+                    // I can't see how this is ever triggered - it seems always to get
+                    // picked up by the component regexes.  So I can't test any implementation!
+                    //
+                    // The C source for these mentions 'fix ambiguities'...
+                    //
+                    Y.log('strtotime: Matched dateshortwithtimelong but not implemented', 'warn');
 
-                        // Until anyone can get to this point and report it,
-                        // there's no implementation
-                        return false;
-                    
-                    }
+                    // Until anyone can get to this point and report it,
+                    // there's no implementation
+                    return false;
+
+                }
                 },
 
 
-                {key: "relative", re: new RegExp(oRegEx.relative), fn: function (aRes, index, mods) {
+            {key: "relative", re: new RegExp(oRegEx.relative), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: matched relative');
+                Y.log('strtotime: matched relative');
 
-                    var amt = parseInt(aRes[1], 10),
-                        period = _lookupRelTextUnit(aRes[5]),
-                        upd = {relative: {}};
+                var amt = parseInt(aRes[1], 10),
+                    period = _lookupRelTextUnit(aRes[5]),
+                    upd = {relative: {}};
 
-                    if (period === "week") {
-                        // we need to treat this slightly differently
-                        // to 'last week', which sets the day to Monday
-                        // - with something like "-2 week" we don't want
-                        // to change the day
-                        period = "weekKeepDay";
-                    }
+                if (period === "week") {
+                    // we need to treat this slightly differently
+                    // to 'last week', which sets the day to Monday
+                    // - with something like "-2 week" we don't want
+                    // to change the day
+                    period = "weekKeepDay";
+                }
 
-                    upd.relative[period] = amt;
-                    mods.updateRel(upd, true, index);
+                upd.relative[period] = amt;
+                mods.updateRel(upd, true, index);
 
-                }},
-
-
-                // This is an extra one to definitely pick up t0813 as a time
-                {key: "gnunocolont", re: new RegExp(oRegEx.gnunocolont), fn: function (aRes, index, mods) {
-                    
-                    Y.log('strtotime: matched gnunocolont');
-
-                    mods.updateAbs({
-                        h: aRes[1],
-                        i: aRes[2]
-                    }, true, index);
-                }},
+            }},
 
 
-                {key: 'timezone', re: new RegExp('(' + oRegEx.tzcorrection + ')|(' + oRegEx.tz + ')'), fn : function (aRes, index, mods) {
+            // This is an extra one to definitely pick up t0813 as a time
+            {key: "gnunocolont", re: new RegExp(oRegEx.gnunocolont), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: Matched timezone');
+                Y.log('strtotime: matched gnunocolont');
 
-                    var tz = aRes[1],
-                        tzStr = aRes[5];
-
-                    if (tzStr !== undefined) {
-                        tz = strtotime.TIMEZONEMAP[Y.Lang.trim(tzStr)];
-                    }
-
-                    if (tz !== undefined) {
-
-                        mods.timezoneString = tz;
-
-                    }
-
-                }},
+                mods.updateAbs({
+                    h: aRes[1],
+                    i: aRes[2]
+                }, true, index);
+            }},
 
 
+            {key: 'timezone', re: new RegExp('(' + oRegEx.tzcorrection + ')|(' + oRegEx.tz + ')'), fn : function (aRes, index, mods) {
+
+                Y.log('strtotime: Matched timezone');
+
+                var tz = aRes[1],
+                    tzStr = aRes[5];
+
+                if (tzStr !== undefined) {
+                    tz = strtotime.TIMEZONEMAP[Y.Lang.trim(tzStr)];
+                }
+
+                if (tz !== undefined) {
+
+                    mods.timezoneString = tz;
+
+                }
+
+            }},
 
 
 
 
-                // this appears further up in the C source: possibly a source of error (as gnunocolon)
-                {key: 'year4', re: new RegExp(oRegEx.year4), fn: function (aRes, index, mods) {
 
-                    Y.log('strtotime: matched year4');
 
-                    mods.updateAbs({
-                        y: aRes[1]
-                    }, true, index);
+            // this appears further up in the C source: possibly a source of error (as gnunocolon)
+            {key: 'year4', re: new RegExp(oRegEx.year4), fn: function (aRes, index, mods) {
 
-                }},
+                Y.log('strtotime: matched year4');
 
-                // This seems like an error.  In the php C source this is listed 
-                // after timeshort24.  However, if you do so it matches years
-                // that appear as part of longer dates and goes wrong.
-                {key: 'gnunocolon', re: new RegExp(oRegEx.gnunocolon), fn: function (aRes, index, mods) {
+                mods.updateAbs({
+                    y: aRes[1]
+                }, true, index);
 
-                    Y.log('strtotime: Matched gnunocolon');
+            }},
 
-                    mods.updateAbs({
-                        specialFn: function (ms, oChange) {
+            // This seems like an error.  In the php C source this is listed
+            // after timeshort24.  However, if you do so it matches years
+            // that appear as part of longer dates and goes wrong.
+            {key: 'gnunocolon', re: new RegExp(oRegEx.gnunocolon), fn: function (aRes, index, mods) {
 
-                            var t = aRes[1];
-                            // trying to set the time more than once should return an error
-                            // This seems to be checked in the C source
-                            // in the gnunocolon (and possibly elsewhere)
-                            // but not as a general check
-                            switch (mods.hasTime) {
-                                case 1:
-                                    // explicit time and time's already set
-                                    if (t === "t") {
-                                        return false;
-                                    }
-                                    return absChange.y(ms, parseFloat("" + aRes[2] + aRes[3]));
-                                    break
+                Y.log('strtotime: Matched gnunocolon');
 
-                                case 0:
-                                    mods.incTime();
-                                    ms = absChange.h(ms, aRes[2]);
-                                    return absChange.i(ms, aRes[3]);
-                                    break;
+                mods.updateAbs({
+                    specialFn: function (ms, oChange) {
 
-                                default:
-                                    // more than once is an error
-                                    return false;
-                                    break;
+                        var t = aRes[1];
+                        // trying to set the time more than once should return an error
+                        // This seems to be checked in the C source
+                        // in the gnunocolon (and possibly elsewhere)
+                        // but not as a general check
+                        switch (mods.hasTime) {
+                        case 1:
+                            // explicit time and time's already set
+                            if (t === "t") {
+                                return false;
                             }
+                            return absChange.y(ms, parseFloat(String(aRes[2] + aRes[3])));
+
+                        case 0:
+                            mods.incTime();
+                            ms = absChange.h(ms, aRes[2]);
+                            return absChange.i(ms, aRes[3]);
+
+                        default:
+                            // more than once is an error
+                            return false;
+
                         }
-                    }, null, index);
+                    }
+                }, null, index);
 
-                }}              
+            }}
 
-            ];
+        ];
 
-        };
+    };
 
-        /**
-         * @method finishTests
-         * @static
-         * User-overridable function that is called after the default
-         * test builder (constructTests) to allow user modification if 
-         * needed.
-         *
-         * @public
-         * @param {Object}  Regex strings built earlier
-         * @param {Array}   Array of tests built by default process
-         * @return {Array}
-         */
-        strtotime.finishTests = function (oRegEx, aTests) {
-            return aTests;
-        };
+    /**
+     * @method finishTests
+     * @static
+     * User-overridable function that is called after the default
+     * test builder (constructTests) to allow user modification if
+     * needed.
+     *
+     * @public
+     * @param {Object}  Regex strings built earlier
+     * @param {Array}   Array of tests built by default process
+     * @return {Array}
+     */
+    strtotime.finishTests = function (oRegEx, aTests) {
+        return aTests;
+    };
 
 
-        /**
-         * Resets the built Regexp object and Test array that are used
-         * by strtotime.
-         *
-         * You may need this if you're changing languages on the fly so
-         * that you can re-build the regexps (and possibly tests) the 
-         * next time you use the strtotime function.
-         *
-         * @method resetTests
-         * @public
-         * @static
-         *
-         */ 
-        strtotime.resetTests = function () {
-            TESTS = [];
-            REGEXP = {};
-        };
+    /**
+     * Resets the built Regexp object and Test array that are used
+     * by strtotime.
+     *
+     * You may need this if you're changing languages on the fly so
+     * that you can re-build the regexps (and possibly tests) the
+     * next time you use the strtotime function.
+     *
+     * @method resetTests
+     * @public
+     * @static
+     *
+     */
+    strtotime.resetTests = function () {
+        TESTS = [];
+        REGEXP = {};
+    };
 
 
 
@@ -2417,21 +2434,21 @@ YUI.add('strtotime', function (Y) {
     // packs (e.g. 'next') for dates: implementers can also overwrite these
     // too if they want to.
     //
-    
+
 
     /**
      * Array of terms meaning 'weekday'
-     * 
+     *
      * @property DAYSPECIAL
      * @static
-     * 
+     *
      * @type {Array}
      * @default ['weekday', 'weekdays']
      */
     strtotime.DAYSPECIAL = ['weekday', 'weekdays'];
     /**
      * Terms meaning 'first day of'
-     * 
+     *
      * @property FIRSTDAYOF
      * @static
      * @type {String}
@@ -2463,7 +2480,7 @@ YUI.add('strtotime', function (Y) {
      * @static
      * @type {String}
      * @default 'front of'
-     */    
+     */
     strtotime.FRONTOF = 'front of ';
 
     /**
@@ -2476,7 +2493,7 @@ YUI.add('strtotime', function (Y) {
      * @static
      * @type {Array}
      */
-    strtotime.DAYFULL = INTL.A ? INTL.A : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    strtotime.DAYFULL = INTL.A || ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     /**
      * Array of shortened day names of the week.
      * Must be in order: must start with Sun (as day 0).
@@ -2487,12 +2504,12 @@ YUI.add('strtotime', function (Y) {
      * @static
      * @type {Array}
      */
-    strtotime.DAYABBR = INTL.a ? INTL.a : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    strtotime.DAYABBR = INTL.a || ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     /**
      * String that will be used in RegExp constructor to identify am / pm.
      *
-     * By default php can handle full stops and mixed capitalisation: for 
+     * By default php can handle full stops and mixed capitalisation: for
      * internationalised versions we can't reliably and generally do this.
      *
      * So if you're using the Intl module there is a small incompatibility with
@@ -2505,9 +2522,9 @@ YUI.add('strtotime', function (Y) {
      * @static
      * @type {String}
      */
-    strtotime.AMPM = INTL.p || INTL.P ? 
-        '(' + (INTL.P ? INTL.P.join('|') : '') + (INTL.P && INTL.p ? '|' : '') + (INTL.p ? INTL.p.join('|') : '') + ')' :
-        '([AaPp].?[Mm].?)';
+    strtotime.AMPM = INTL.p || INTL.P ?
+            '(' + (INTL.P ? INTL.P.join('|') : '') + (INTL.P && INTL.p ? '|' : '') + (INTL.p ? INTL.p.join('|') : '') + ')' :
+            '([AaPp].?[Mm].?)';
 
      /**
       * Array of ordinals (first, second, third etc)
@@ -2517,14 +2534,14 @@ YUI.add('strtotime', function (Y) {
       * @static
       * @type {Array}
       */
-    strtotime.RELTEXTNUMBER = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
+    strtotime.RELTEXTNUMBER = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth'];
 
      /**
       * Object of text terms for 'next', 'last', 'previous', 'this'
       * keys are fixed: substitute other strings if you need
       * translations.  Don't remove keys, or add them.  strtotime
       * won't know what to do with them.
-      * 
+      *
       * @property RELTEXTTEXT
       * @static
       * @var {Object}
@@ -2541,7 +2558,7 @@ YUI.add('strtotime', function (Y) {
       * Object literal of time terms, allowing for translations
       * Each key is the English version used by strtotime internally:
       * don't change or add keys.
-      * The value for each must be an array, allowing mulitple 
+      * The value for each must be an array, allowing mulitple
       * words for one meaning.
       *
       * @property RELTEXTUNIT
@@ -2567,10 +2584,10 @@ YUI.add('strtotime', function (Y) {
      * @property MONTHFULL
      * @static
      * @type {Array}
-     * @default ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
+     * @default ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
         'September', 'October', 'November', 'December']
      */
-    strtotime.MONTHFULL = INTL.B ? INT.B : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
+    strtotime.MONTHFULL = INTL.B || ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
         'September', 'October', 'November', 'December'];
 
     /**
@@ -2582,7 +2599,7 @@ YUI.add('strtotime', function (Y) {
      * @type {Array}
      * @default ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
      */
-    strtotime.MONTHABBR = INTL.b ? INTL.b : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    strtotime.MONTHABBR = INTL.b || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     /**
      * Array of Roman numeral months (or could be anything, actually).
@@ -2628,7 +2645,53 @@ YUI.add('strtotime', function (Y) {
      * @property TIMEZONEMAP
      * @type {Object}
      */
-    Z = {};
+    Z = {
+        'AKST9AKDT': T9m,
+        'Arctic/Longyearbyen': T1,
+        'CET': T1,
+        'Chile/Continental': T4m,
+        'Chile/EasterIsland': T6m,
+        'CST6CDT': T6m,
+        'Cuba': T5m,
+        'EET': T2,
+        'Egypt': T2,
+        'Eire': T0,
+        'EST': T5m,
+        'EST5EDT': T5m,
+        'GB': T0,
+        'GB-Eire': T0,
+        'Greenwich': T0,
+        'Hong Kong': T8,
+        'HST': T10m,
+        'Iceland': T0,
+        'Iran': '+03:30',
+        'Israel': T2,
+        'Jamaica': T5m,
+        'Japan': T9,
+        'JST-9': T9,
+        'Kwajalein': T12,
+        'Libya': T2,
+        'MET': T1,
+        'MST': T7m,
+        'MST7MDT': T7m,
+        'Navajo': T7m,
+        'NZ': T12,
+        'NZ-CHAT': '+12:45',
+        'Poland': T1,
+        'Portugal': T0,
+        'PRC': T8,
+        'PST8PDT': T8m,
+        'ROC': T8,
+        'ROK': T9,
+        'Singapore': T8,
+        'Turkey': T2,
+        'UCT': T0,
+        'Universal': T0,
+        'UTC': T0,
+        'WET': T0,
+        'W-SU': T4,
+        'Zulu': T0
+    };
     Z[AFRICA + 'Abidjan'] = T0;
     Z[AFRICA + 'Accra'] = T0;
     Z[AFRICA + 'Addis_Ababa'] = T3;
@@ -2683,7 +2746,6 @@ YUI.add('strtotime', function (Y) {
     Z[AFRICA + 'Tripoli'] = T2;
     Z[AFRICA + 'Tunis'] = T1;
     Z[AFRICA + 'Windhoek'] = T1;
-    Z['AKST9AKDT'] = T9m;
     Z[AMERICA + 'Adak'] = T10m;
     Z[AMERICA + 'Anchorage'] = T9m;
     Z[AMERICA + 'Anguilla'] = T4m;
@@ -2719,7 +2781,7 @@ YUI.add('strtotime', function (Y) {
     Z[AMERICA + 'Cambridge_Bay'] = T7m;
     Z[AMERICA + 'Campo_Grande'] = T4m;
     Z[AMERICA + 'Cancun'] = T6m;
-    Z[AMERICA + 'Caracas'] = '−04:30',
+    Z[AMERICA + 'Caracas'] = '−04:30';
     Z[AMERICA + 'Catamarca'] = T3m;
     Z[AMERICA + 'Cayenne'] = T3m;
     Z[AMERICA + 'Cayman'] = T5m;
@@ -2830,7 +2892,7 @@ YUI.add('strtotime', function (Y) {
     Z[AMERICA + 'Shiprock'] = T7m;
     Z[AMERICA + 'Sitka'] = T9m;
     Z[AMERICA + 'St_Barthelemy'] = T4m;
-    Z[AMERICA + 'St_Johns'] = '−03:30',
+    Z[AMERICA + 'St_Johns'] = '−03:30';
     Z[AMERICA + 'St_Kitts'] = T4m;
     Z[AMERICA + 'St_Lucia'] = T4m;
     Z[AMERICA + 'St_Thomas'] = T4m;
@@ -2859,7 +2921,7 @@ YUI.add('strtotime', function (Y) {
     Z[ANTARCTICA + 'South_Pole'] = T12;
     Z[ANTARCTICA + 'Syowa'] = T3;
     Z[ANTARCTICA + 'Vostok'] = T6;
-    Z['Arctic/Longyearbyen'] = T1;
+
     Z[ASIA + 'Aden'] = T3;
     Z[ASIA + 'Almaty'] = T6;
     Z[ASIA + 'Amman'] = T2;
@@ -2875,11 +2937,11 @@ YUI.add('strtotime', function (Y) {
     Z[ASIA + 'Beirut'] = T2;
     Z[ASIA + 'Bishkek'] = T6;
     Z[ASIA + 'Brunei'] = T8;
-    Z[ASIA + 'Calcutta'] = '+05:30',
+    Z[ASIA + 'Calcutta'] = '+05:30';
     Z[ASIA + 'Choibalsan'] = T8;
     Z[ASIA + 'Chongqing'] = T8;
     Z[ASIA + 'Chungking'] = T8;
-    Z[ASIA + 'Colombo'] = '+05:30',
+    Z[ASIA + 'Colombo'] = '+05:30';
     Z[ASIA + 'Dacca'] = T6;
     Z[ASIA + 'Damascus'] = T2;
     Z[ASIA + 'Dhaka'] = T6;
@@ -2897,13 +2959,13 @@ YUI.add('strtotime', function (Y) {
     Z[ASIA + 'Jakarta'] = T7;
     Z[ASIA + 'Jayapura'] = T9;
     Z[ASIA + 'Jerusalem'] = T2;
-    Z[ASIA + 'Kabul'] = '+04:30',
+    Z[ASIA + 'Kabul'] = '+04:30';
     Z[ASIA + 'Kamchatka'] = T12;
     Z[ASIA + 'Karachi'] = T5;
     Z[ASIA + 'Kashgar'] = T8;
-    Z[ASIA + 'Kathmandu'] = '+05:45',
-    Z[ASIA + 'Katmandu'] = '+05:45',
-    Z[ASIA + 'Kolkata'] = '+05:30',
+    Z[ASIA + 'Kathmandu'] = '+05:45';
+    Z[ASIA + 'Katmandu'] = '+05:45';
+    Z[ASIA + 'Kolkata'] = '+05:30';
     Z[ASIA + 'Krasnoyarsk'] = T8;
     Z[ASIA + 'Kuala_Lumpur'] = T8;
     Z[ASIA + 'Kuching'] = T8;
@@ -2924,7 +2986,7 @@ YUI.add('strtotime', function (Y) {
     Z[ASIA + 'Pyongyang'] = T9;
     Z[ASIA + 'Qatar'] = T3;
     Z[ASIA + 'Qyzylorda'] = T6;
-    Z[ASIA + 'Rangoon'] = '+06:30',
+    Z[ASIA + 'Rangoon'] = '+06:30';
     Z[ASIA + 'Riyadh'] = T3;
     Z[ASIA + 'Saigon'] = T7;
     Z[ASIA + 'Sakhalin'] = T11;
@@ -2935,7 +2997,7 @@ YUI.add('strtotime', function (Y) {
     Z[ASIA + 'Taipei'] = T8;
     Z[ASIA + 'Tashkent'] = T5;
     Z[ASIA + 'Tbilisi'] = T4;
-    Z[ASIA + 'Tehran'] = '+03:30',
+    Z[ASIA + 'Tehran'] = '+03:30';
     Z[ASIA + 'Tel_Aviv'] = T2;
     Z[ASIA + 'Thimbu'] = T6;
     Z[ASIA + 'Thimphu'] = T6;
@@ -2962,28 +3024,28 @@ YUI.add('strtotime', function (Y) {
     Z[ATLANTIC + 'St_Helena'] = T0;
     Z[ATLANTIC + 'Stanley'] = T3m;
     Z[AUSTRALIA + 'ACT'] = T10;
-    Z[AUSTRALIA + 'Adelaide'] = '+09:30',
+    Z[AUSTRALIA + 'Adelaide'] = '+09:30';
     Z[AUSTRALIA + 'Brisbane'] = T10;
-    Z[AUSTRALIA + 'Broken_Hill'] = '+09:30',
+    Z[AUSTRALIA + 'Broken_Hill'] = '+09:30';
     Z[AUSTRALIA + 'Canberra'] = T10;
     Z[AUSTRALIA + 'Currie'] = T10;
-    Z[AUSTRALIA + 'Darwin'] = '+09:30',
-    Z[AUSTRALIA + 'Eucla'] = '+08:45',
+    Z[AUSTRALIA + 'Darwin'] = '+09:30';
+    Z[AUSTRALIA + 'Eucla'] = '+08:45';
     Z[AUSTRALIA + 'Hobart'] = T10;
-    Z[AUSTRALIA + 'LHI'] = '+10:30',
+    Z[AUSTRALIA + 'LHI'] = '+10:30';
     Z[AUSTRALIA + 'Lindeman'] = T10;
-    Z[AUSTRALIA + 'Lord_Howe'] = '+10:30',
+    Z[AUSTRALIA + 'Lord_Howe'] = '+10:30';
     Z[AUSTRALIA + 'Melbourne'] = T10;
-    Z[AUSTRALIA + 'North'] = '+09:30',
+    Z[AUSTRALIA + 'North'] = '+09:30';
     Z[AUSTRALIA + 'NSW'] = T10;
     Z[AUSTRALIA + 'Perth'] = T8;
     Z[AUSTRALIA + 'Queensland'] = T10;
-    Z[AUSTRALIA + 'South'] = '+09:30',
+    Z[AUSTRALIA + 'South'] = '+09:30';
     Z[AUSTRALIA + 'Sydney'] = T10;
     Z[AUSTRALIA + 'Tasmania'] = T10;
     Z[AUSTRALIA + 'Victoria'] = T10;
     Z[AUSTRALIA + 'West'] = T8;
-    Z[AUSTRALIA + 'Yancowinna'] = '+09:30',
+    Z[AUSTRALIA + 'Yancowinna'] = '+09:30';
     Z[BRAZIL + 'Acre'] = T4m;
     Z[BRAZIL + 'DeNoronha'] = T2m;
     Z[BRAZIL + 'East'] = T3m;
@@ -2993,20 +3055,10 @@ YUI.add('strtotime', function (Y) {
     Z[CANADA + 'Eastern'] = T5m;
     Z[CANADA + 'East-Saskatchewan'] = T6m;
     Z[CANADA + 'Mountain'] = T7m;
-    Z[CANADA + 'Newfoundland'] = '−03:30',
+    Z[CANADA + 'Newfoundland'] = '−03:30';
     Z[CANADA + 'Pacific'] = T8m;
     Z[CANADA + 'Saskatchewan'] = T6m;
     Z[CANADA + 'Yukon'] = T8m;
-    Z['CET'] = T1;
-    Z['Chile/Continental'] = T4m;
-    Z['Chile/EasterIsland'] = T6m;
-    Z['CST6CDT'] = T6m;
-    Z['Cuba'] = T5m;
-    Z['EET'] = T2;
-    Z['Egypt'] = T2;
-    Z['Eire'] = T0;
-    Z['EST'] = T5m;
-    Z['EST5EDT'] = T5m;
     Z[ETC + GMT] = T0;
     Z[ETC + GMT + '+0'] = T0;
     Z[ETC + 'UCT'] = T0;
@@ -3071,20 +3123,14 @@ YUI.add('strtotime', function (Y) {
     Z[EUROPE + 'Zagreb'] = T1;
     Z[EUROPE + 'Zaporozhye'] = T2;
     Z[EUROPE + 'Zurich'] = T1;
-    Z['GB'] = T0;
-    Z['GB-Eire'] = T0;
     Z[GMT] = T0;
     Z[GMT + '+0'] = T0;
     Z[GMT + '0'] = T0;
     Z[GMT + '-0'] = T0;
-    Z['Greenwich'] = T0;
-    Z['Hong Kong'] = T8;
-    Z['HST'] = T10m;
-    Z['Iceland'] = T0;
     Z[INDIAN + 'Antananarivo'] = T3;
     Z[INDIAN + 'Chagos'] = T6;
     Z[INDIAN + 'Christmas'] = T7;
-    Z[INDIAN + 'Cocos'] = '+06:30',
+    Z[INDIAN + 'Cocos'] = '+06:30';
     Z[INDIAN + 'Comoro'] = T3;
     Z[INDIAN + 'Kerguelen'] = T5;
     Z[INDIAN + 'Mahe'] = T4;
@@ -3092,25 +3138,12 @@ YUI.add('strtotime', function (Y) {
     Z[INDIAN + 'Mauritius'] = T4;
     Z[INDIAN + 'Mayotte'] = T3;
     Z[INDIAN + 'Reunion'] = T4;
-    Z['Iran'] = '+03:30',
-    Z['Israel'] = T2;
-    Z['Jamaica'] = T5m;
-    Z['Japan'] = T9;
-    Z['JST-9'] = T9;
-    Z['Kwajalein'] = T12;
-    Z['Libya'] = T2;
-    Z['MET'] = T1;
     Z[MEXICO + 'BajaNorte'] = T8m;
     Z[MEXICO + 'BajaSur'] = T7m;
     Z[MEXICO + 'General'] = T6m;
-    Z['MST'] = T7m;
-    Z['MST7MDT'] = T7m;
-    Z['Navajo'] = T7m;
-    Z['NZ'] = T12;
-    Z['NZ-CHAT'] = '+12:45',
     Z[PACIFIC + 'Apia'] = T13;
     Z[PACIFIC + 'Auckland'] = T12;
-    Z[PACIFIC + 'Chatham'] = '+12:45',
+    Z[PACIFIC + 'Chatham'] = '+12:45';
     Z[PACIFIC + 'Chuuk'] = T10;
     Z[PACIFIC + 'Easter'] = T6m;
     Z[PACIFIC + 'Efate'] = T11;
@@ -3124,15 +3157,15 @@ YUI.add('strtotime', function (Y) {
     Z[PACIFIC + 'Guam'] = T10;
     Z[PACIFIC + 'Honolulu'] = T10m;
     Z[PACIFIC + 'Johnston'] = T10m;
-    Z[PACIFIC + 'Kiritimati'] = '+14:00',
+    Z[PACIFIC + 'Kiritimati'] = '+14:00';
     Z[PACIFIC + 'Kosrae'] = T11;
     Z[PACIFIC + 'Kwajalein'] = T12;
     Z[PACIFIC + 'Majuro'] = T12;
-    Z[PACIFIC + 'Marquesas'] = '−09:30',
+    Z[PACIFIC + 'Marquesas'] = '−09:30';
     Z[PACIFIC + 'Midway'] = T11m;
     Z[PACIFIC + 'Nauru'] = T12;
     Z[PACIFIC + 'Niue'] = T11m;
-    Z[PACIFIC + 'Norfolk'] = '+11:30',
+    Z[PACIFIC + 'Norfolk'] = '+11:30';
     Z[PACIFIC + 'Noumea'] = T11;
     Z[PACIFIC + 'Pago_Pago'] = T11m;
     Z[PACIFIC + 'Palau'] = T9;
@@ -3150,16 +3183,6 @@ YUI.add('strtotime', function (Y) {
     Z[PACIFIC + 'Wake'] = T12;
     Z[PACIFIC + 'Wallis'] = T12;
     Z[PACIFIC + 'Yap'] = T10;
-    Z['Poland'] = T1;
-    Z['Portugal'] = T0;
-    Z['PRC'] = T8;
-    Z['PST8PDT'] = T8m;
-    Z['ROC'] = T8;
-    Z['ROK'] = T9;
-    Z['Singapore'] = T8;
-    Z['Turkey'] = T2;
-    Z['UCT'] = T0;
-    Z['Universal'] = T0;
     Z[US + 'Alaska'] = T9m;
     Z[US + 'Aleutian'] = T10m;
     Z[US + 'Arizona'] = T7m;
@@ -3173,10 +3196,7 @@ YUI.add('strtotime', function (Y) {
     Z[US + 'Pacific'] = T8m;
     Z[US + 'Pacific-New'] = T8m;
     Z[US + 'Samoa'] = T11m;
-    Z['UTC'] = T0;
-    Z['WET'] = T0;
-    Z['W-SU'] = T4;
-    Z['Zulu'] = T0;
+
 
     strtotime.TIMEZONEMAP = Z;
 
